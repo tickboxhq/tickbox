@@ -7,14 +7,13 @@ on:
     branches: [main]
 
 # Cancel any in-flight run for the same branch / PR when a new push lands.
-# Saves runner minutes and keeps the latest run authoritative.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    name: Lint, typecheck, test, build, size-check
+    name: Lint, build, typecheck, test, size-check
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -40,14 +39,17 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # Build runs before typecheck because each package's tsconfig references
+      # the dist/ d.ts of its workspace dependencies (e.g. @tickboxhq/react
+      # imports @tickboxhq/core via its published `types` field).
+      - name: Build
+        run: pnpm build
+
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Test
         run: pnpm test
-
-      - name: Build
-        run: pnpm build
 
       - name: Bundle size check
         run: ./scripts/check-bundle-sizes.sh

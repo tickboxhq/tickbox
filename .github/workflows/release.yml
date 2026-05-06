@@ -4,9 +4,6 @@ on:
   push:
     tags: ['v*']
 
-# Only one release at a time. If two tags land back-to-back, the second
-# waits — saves us from racing two `npm publish` calls for the same
-# version.
 concurrency:
   group: release
   cancel-in-progress: false
@@ -18,9 +15,7 @@ jobs:
     timeout-minutes: 15
 
     permissions:
-      # Required to create a GitHub release.
       contents: write
-      # Required for npm provenance attestations via OIDC.
       id-token: write
 
     steps:
@@ -43,20 +38,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Verify (lint + typecheck + test)
-        run: |
-          pnpm lint
-          pnpm typecheck
-          pnpm test
+      - name: Lint
+        run: pnpm lint
 
+      # Build before typecheck/test so workspace deps have their dist/ d.ts
+      # files in place when tsc resolves them.
       - name: Build
         run: pnpm build
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
 
       - name: Bundle size check
         run: ./scripts/check-bundle-sizes.sh
 
-      # Publish in dependency order so consumers never see a vue@x.y.z that
-      # transitively requires a core@x.y.z which hasn't appeared yet.
       - name: Publish @tickboxhq/core
         working-directory: packages/core
         run: pnpm publish --access public --no-git-checks --provenance
