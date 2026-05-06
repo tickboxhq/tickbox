@@ -1,41 +1,121 @@
 # Tickbox
 
-A cookie consent SDK for UK websites. The defaults are tuned to the UK Data (Use and Access) Act 2025, which came into force in February 2026 and added a "statistical purposes" exemption to PECR. So if you only run privacy-first analytics like Plausible or Fathom, the SDK won't show a consent banner under UK rules, just a small notice with an easy opt-out.
+A cookie consent SDK for UK websites. The defaults are tuned to the UK Data (Use and Access) Act 2025, which came into force in February 2026 and added a "statistical purposes" exemption to PECR. If your site only runs privacy-friendly analytics, you don't need a consent banner under UK rules. Notice and an easy opt-out is enough.
 
 ```bash
-npm install @tickboxhq/react
+npm install @tickboxhq/react   # or @tickboxhq/vue, or add @tickboxhq/nuxt as a module
 ```
+
+## Two scenarios
+
+### 1. No consent banner needed
+
+Your site uses GoatCounter, Plausible, Fathom, or similar. Maybe a server-side counter. Nothing that profiles individuals. Under DUAA, this falls into the statistical-purposes exemption.
+
+```ts
+// consent.config.ts
+import { defineConsent, jurisdictions } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: { version: '2026-05-06', url: '/privacy' },
+  categories: {
+    necessary: { required: true },
+    analytics: {
+      vendors: ['goatcounter', 'plausible'],
+      default: true,
+    },
+  },
+})
+```
+
+The first time someone visits, a small notice slides in: "We use privacy-friendly analytics. [Manage] [Opt out] [Got it]". After they acknowledge it, the notice is gone for good (unless you bump `policy.version`). No interruptive consent banner.
+
+### 2. Full consent flow needed
+
+You're running Google Ads or Meta Pixel. You've got Hotjar session recordings. You're feeding a CDP. Any of those, and DUAA doesn't help you. You need opt-in consent.
+
+```ts
+import { defineConsent, jurisdictions } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: { version: '2026-05-06', url: '/privacy' },
+  categories: {
+    necessary: { required: true },
+    analytics: { vendors: ['plausible'] },        // still exempt
+    marketing: {
+      vendors: ['google-ads', 'meta-pixel', 'tiktok-pixel'],
+      default: false,
+    },
+    session_replay: {
+      vendors: ['hotjar', 'fullstory'],
+      default: false,
+    },
+    ai_training: {
+      vendors: ['gptbot', 'claudebot'],
+      default: false,
+    },
+  },
+})
+```
+
+This time you get a proper consent banner with first-layer "Reject all" and "Accept all" buttons (equal visual prominence, as the ICO requires). Marketing, session replay, and AI training all stay off until the visitor opts in. Analytics still uses the lighter notice flow because Plausible qualifies for the DUAA exemption on its own.
+
+If you mix exempt and non-exempt vendors in the same category, the whole category escalates to consent mode. So `analytics: { vendors: ['plausible', 'google-analytics'] }` requires consent.
+
+## Use it
+
+In React:
 
 ```tsx
 import { ConsentProvider, useConsent } from '@tickboxhq/react'
-import { defineConsent, jurisdictions } from '@tickboxhq/core'
+import config from './consent.config'
 
-const config = defineConsent({
-  jurisdiction: jurisdictions.UK_DUAA,
-  categories: {
-    necessary: { required: true },
-    analytics: { vendors: ['plausible', 'fathom'] },
-    marketing: { vendors: ['google-ads', 'meta-pixel'] },
-    ai_training: { vendors: ['gptbot', 'claudebot'], default: false },
-  },
-})
-
-export default function App() {
+function App() {
   return (
     <ConsentProvider config={config}>
       <YourApp />
     </ConsentProvider>
   )
 }
+
+function MetaPixel() {
+  const { granted } = useConsent('marketing')
+  if (!granted) return null
+  return <script src="..." />
+}
 ```
 
-The preset knows which analytics vendors qualify for the UK exemption. Just Plausible? No banner. Add Google Ads or Meta Pixel? You get a consent flow for those, because they don't qualify.
+In Vue or Nuxt, the Nuxt module auto-imports `useConsent` and auto-registers `<ConsentBanner>`, so there's no manual setup beyond adding the module:
 
-The provider and banner are headless. You bring the buttons and layout; the package handles state, the cookie, script gating, and Consent Mode v2.
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@tickboxhq/nuxt'],
+})
+```
 
-Config is a TypeScript file in your repo. Changes go through pull requests like anything else.
+```vue
+<!-- any component -->
+<script setup>
+const { granted, deny } = useConsent('marketing')
+</script>
+```
 
-There's an `ai_training` category baked into the schema. The plan is to use it to generate `/ai.txt` and `/llms.txt` automatically, so AI crawlers know whether they're allowed to train on the content.
+The Nuxt module also reads the consent cookie on the server via `useRequestHeaders`, so SSR'd HTML reflects the visitor's saved choice on the first paint.
+
+## What it handles
+
+- Cookie storage with a versioned schema (SameSite=Lax, Secure on HTTPS)
+- Script tag gating: `<script type="text/plain" data-tb-category="marketing">` flips to `text/javascript` once consent is granted
+- Google Consent Mode v2: `gtag('consent', 'update', ...)` fires on every change
+- A `tickbox:consent-changed` DOM event for custom integrations
+- SSR cookie reading in the Nuxt module so initial markup matches the visitor's choice
+
+## Known limitations
+
+Tag-gating activates blocked scripts on grant, but it can't unload a script that's already executed. For revocation in-session, vendors usually expose their own opt-out hook (`localStorage.skipgc = 't'` for GoatCounter, `_paq.push(['optUserOut'])` for Matomo, and so on). The full polish list is in `BACKLOG.md`.
 
 ## Packages
 
@@ -44,7 +124,7 @@ There's an `ai_training` category baked into the schema. The plan is to use it t
 | `@tickboxhq/core` | early — types, jurisdictions, store, side-effects |
 | `@tickboxhq/react` | early — provider, hook, headless banner |
 | `@tickboxhq/vue` | early — provider, composable, headless banner |
-| `@tickboxhq/nuxt` | not yet — Nuxt module wrapping the Vue adapter |
+| `@tickboxhq/nuxt` | early — Nuxt 3/4 module |
 | `@tickboxhq/cli` | not yet — `tickbox init`, `scan`, `validate` |
 
 ## Status
