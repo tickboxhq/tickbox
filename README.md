@@ -105,6 +105,18 @@ const { granted, deny } = useConsent('marketing')
 
 The Nuxt module also reads the consent cookie on the server via `useRequestHeaders`, so SSR'd HTML reflects the visitor's saved choice on the first paint.
 
+## Examples
+
+The [`examples/`](./examples) folder has runnable starter projects for each supported stack:
+
+- [`vanilla/`](./examples/vanilla) — plain HTML + JS via the core package
+- [`react/`](./examples/react) — React + Vite
+- [`nextjs/`](./examples/nextjs) — Next.js App Router
+- [`vue/`](./examples/vue) — Vue 3 + Vite
+- [`nuxt/`](./examples/nuxt) — Nuxt 4 module
+
+Each one installs Tickbox from npm, so you can copy any folder out of this repo and use it as a starting point.
+
 ## What it handles
 
 - Cookie storage with a versioned schema (SameSite=Lax, Secure on HTTPS)
