@@ -85,4 +85,60 @@ describe('resolveCategories — EU GDPR', () => {
     const [analytics] = resolveCategories(config, EU_GDPR)
     expect(analytics?.mode).toBe('consent')
   })
+
+  it('classifies advertising vendors as consent-required', () => {
+    const config = defineConsent({
+      jurisdiction: EU_GDPR,
+      categories: { marketing: { vendors: ['google-ads', 'meta-pixel'] } },
+    })
+    const [marketing] = resolveCategories(config, EU_GDPR)
+    expect(marketing?.mode).toBe('consent')
+  })
+
+  it('classifies session-replay vendors as consent-required', () => {
+    const config = defineConsent({
+      jurisdiction: EU_GDPR,
+      categories: { replay: { vendors: ['hotjar', 'fullstory'] } },
+    })
+    const [replay] = resolveCategories(config, EU_GDPR)
+    expect(replay?.mode).toBe('consent')
+  })
+
+  it('classifies chat widgets as consent-required', () => {
+    const config = defineConsent({
+      jurisdiction: EU_GDPR,
+      categories: { chat: { vendors: ['intercom', 'crisp'] } },
+    })
+    const [chat] = resolveCategories(config, EU_GDPR)
+    expect(chat?.mode).toBe('consent')
+  })
+})
+
+describe('UK_DUAA preset — vendor coverage', () => {
+  it('classifies Snapchat Pixel and Bing UET as consent', () => {
+    const config = defineConsent({
+      jurisdiction: UK_DUAA,
+      categories: { marketing: { vendors: ['snapchat-pixel', 'bing-uet'] } },
+    })
+    const [marketing] = resolveCategories(config, UK_DUAA)
+    expect(marketing?.mode).toBe('consent')
+  })
+
+  it('classifies Klaviyo and Iterable as consent (marketing automation)', () => {
+    const config = defineConsent({
+      jurisdiction: UK_DUAA,
+      categories: { marketing: { vendors: ['klaviyo', 'iterable'] } },
+    })
+    const [marketing] = resolveCategories(config, UK_DUAA)
+    expect(marketing?.mode).toBe('consent')
+  })
+
+  it('classifies Intercom and Drift as consent (chat widgets)', () => {
+    const config = defineConsent({
+      jurisdiction: UK_DUAA,
+      categories: { chat: { vendors: ['intercom', 'drift'] } },
+    })
+    const [chat] = resolveCategories(config, UK_DUAA)
+    expect(chat?.mode).toBe('consent')
+  })
 })

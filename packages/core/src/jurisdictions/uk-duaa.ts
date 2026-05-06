@@ -1,64 +1,13 @@
-import type { Jurisdiction } from '../types.js'
-
-/**
- * Vendors classified as eligible for the DUAA "statistical purposes" exemption:
- * privacy-first analytics with aggregated, non-identifying data and no ad features.
- *
- * These do **not** require consent under the UK Data (Use and Access) Act 2025
- * but still require clear notice and an easy way to object.
- *
- * Treat the list as a starting position; specific deployments may still need
- * consent depending on configuration (e.g. session replay, cross-domain tracking).
- */
-const DUAA_STATISTICAL_VENDORS = [
-  'plausible',
-  'fathom',
-  'simpleanalytics',
-  'pirsch',
-  'goatcounter',
-  'umami',
-  'tinybird-analytics',
-  'cloudflare-web-analytics',
-] as const
-
-/**
- * Vendors that require full opt-in consent under DUAA — anything that touches
- * advertising, individual-level tracking, session replay, or cross-site profiles.
- */
-const DUAA_CONSENT_REQUIRED_VENDORS = [
-  // Advertising
-  'google-ads',
-  'google-analytics',
-  'ga4',
-  'meta-pixel',
-  'facebook-pixel',
-  'tiktok-pixel',
-  'linkedin-insight',
-  'twitter-pixel',
-  'pinterest-tag',
-  'reddit-pixel',
-  // Session replay / individual tracking
-  'hotjar',
-  'fullstory',
-  'microsoft-clarity',
-  'mouseflow',
-  'logrocket',
-  // CDPs / marketing automation
-  'segment',
-  'rudderstack',
-  'hubspot',
-  'mixpanel',
-  'amplitude',
-  // AI training crawlers (always require explicit opt-in/out)
-  'gptbot',
-  'claudebot',
-  'anthropic-ai',
-  'google-extended',
-  'perplexitybot',
-  'ccbot',
-  'bytespider',
-  'applebot-extended',
-] as const
+import type { ConsentMode, Jurisdiction } from '../types.js'
+import {
+  ADVERTISING_VENDORS,
+  AI_TRAINING_CRAWLERS,
+  CDP_AND_PRODUCT_ANALYTICS,
+  CHAT_WIDGETS,
+  MARKETING_AUTOMATION,
+  PRIVACY_FRIENDLY_ANALYTICS,
+  SESSION_REPLAY_VENDORS,
+} from './vendors.js'
 
 /**
  * United Kingdom — Data (Use and Access) Act 2025 (DUAA).
@@ -78,10 +27,17 @@ const DUAA_CONSENT_REQUIRED_VENDORS = [
 export const UK_DUAA: Jurisdiction = {
   id: 'UK_DUAA',
   name: 'United Kingdom (Data (Use and Access) Act 2025)',
-  vendorRules: {
-    ...Object.fromEntries(DUAA_STATISTICAL_VENDORS.map((v) => [v, 'notice' as const])),
-    ...Object.fromEntries(DUAA_CONSENT_REQUIRED_VENDORS.map((v) => [v, 'consent' as const])),
-  },
+  vendorRules: classify({
+    notice: PRIVACY_FRIENDLY_ANALYTICS,
+    consent: [
+      ...ADVERTISING_VENDORS,
+      ...SESSION_REPLAY_VENDORS,
+      ...CDP_AND_PRODUCT_ANALYTICS,
+      ...MARKETING_AUTOMATION,
+      ...CHAT_WIDGETS,
+      ...AI_TRAINING_CRAWLERS,
+    ],
+  }),
   defaultMode: 'consent',
   ui: {
     rejectButtonOnFirstLayer: true,
@@ -89,4 +45,16 @@ export const UK_DUAA: Jurisdiction = {
     honorGPC: false,
   },
   countries: ['GB'],
+}
+
+function classify(buckets: {
+  notice?: readonly string[]
+  consent?: readonly string[]
+  always?: readonly string[]
+}): Record<string, ConsentMode> {
+  const result: Record<string, ConsentMode> = {}
+  for (const v of buckets.always ?? []) result[v] = 'always'
+  for (const v of buckets.notice ?? []) result[v] = 'notice'
+  for (const v of buckets.consent ?? []) result[v] = 'consent'
+  return result
 }

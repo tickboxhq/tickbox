@@ -4,6 +4,16 @@ import { UK_DUAA } from './uk-duaa.js'
 
 export { UK_DUAA } from './uk-duaa.js'
 export { EU_GDPR } from './eu-gdpr.js'
+export {
+  ADVERTISING_VENDORS,
+  AI_TRAINING_CRAWLERS,
+  ALL_TRACKING_VENDORS,
+  CDP_AND_PRODUCT_ANALYTICS,
+  CHAT_WIDGETS,
+  MARKETING_AUTOMATION,
+  PRIVACY_FRIENDLY_ANALYTICS,
+  SESSION_REPLAY_VENDORS,
+} from './vendors.js'
 
 /**
  * Map of all built-in jurisdiction presets, keyed by their ID for ergonomic

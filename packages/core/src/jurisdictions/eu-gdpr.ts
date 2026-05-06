@@ -1,22 +1,28 @@
-import type { Jurisdiction } from '../types.js'
+import type { ConsentMode, Jurisdiction } from '../types.js'
+import { ALL_TRACKING_VENDORS } from './vendors.js'
 
 /**
  * European Union — GDPR + ePrivacy Directive ("Cookie Law").
  *
- * EU rules don't have the DUAA "statistical exemption" — analytics that
- * involve client-side storage on a user's device generally require opt-in
- * consent, even for first-party privacy-friendly tools (positions vary by
- * DPA; CNIL has been more permissive than others). This preset takes the
- * conservative position: treat all tracking categories as consent-required.
+ * EU rules don't have UK DUAA's "statistical purposes" exemption. Even
+ * privacy-first first-party analytics (Plausible, Fathom, etc.) are still
+ * within scope of the ePrivacy Directive's storage / access provisions, so
+ * the conservative position is to require opt-in consent.
+ *
+ * Some national regulators (notably CNIL in France) take a more permissive
+ * view for strictly first-party, aggregated analytics under specific
+ * configurations. This preset doesn't try to encode those nuances — it picks
+ * the safest pan-EU classification. Override per-vendor in your config if
+ * you've assessed a specific vendor under your DPA's guidance.
  *
  * UI requirements (EDPB / national DPAs):
  *  - "Reject All" on first banner layer with equal prominence
- *  - GPC: not yet mandatory but increasingly recognised
+ *  - GPC: not yet mandatory but increasingly recognised. Default off.
  */
 export const EU_GDPR: Jurisdiction = {
   id: 'EU_GDPR',
   name: 'European Union (GDPR / ePrivacy)',
-  vendorRules: {},
+  vendorRules: Object.fromEntries(ALL_TRACKING_VENDORS.map((v) => [v, 'consent' as ConsentMode])),
   defaultMode: 'consent',
   ui: {
     rejectButtonOnFirstLayer: true,

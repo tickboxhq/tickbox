@@ -26,10 +26,10 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 
 - [ ] **Tag-gating can't unload running scripts.** Once a `<script>` has executed, denying consent doesn't reverse what it did. Document this limitation in README + provide a recipe (page reload, vendor-specific opt-out flags like `localStorage.skipgc` for GoatCounter, `_paq.push(['optUserOut'])` for Matomo).
 - [ ] **`apply.ts` hardcodes category names** (`marketing`, `analytics`, `functional`, `preferences`) for the Google Consent Mode v2 mapping. Make the mapping configurable per project.
-- [ ] **Vendor classification lists** in `jurisdictions/uk-duaa.ts` are hardcoded literals. Need a strategy: pulled from a Tickbox CDN at runtime? Generated from an upstream registry? Decide before the list grows past ~50 vendors.
+- [ ] **Vendor classification lists** are hardcoded literals (now in `jurisdictions/vendors.ts`, shared between presets). Need a strategy: pulled from a Tickbox CDN at runtime? Generated from an upstream registry? Decide before the list grows past ~150 vendors.
 - [ ] **Config validation** — if a user passes garbage as `jurisdiction`, the runtime error appears far from the source. Add a Zod / Valibot schema or hand-rolled validator that runs in dev mode.
 - [ ] **`StoreOptions.onApply` is a half-public API** — exported via the type but not really meant to be set by users. Either promote it to a first-class extension point or make it internal.
-- [ ] **`EU_GDPR` preset has empty `vendorRules`.** Should mirror the DUAA list but classify everything as `consent` (no statistical exemption under EU rules).
+- [x] **`EU_GDPR` preset** populated. Mirrors the shared vendor list with everything classified as `consent` (no statistical exemption under EU rules).
 - [ ] **Banner UX for `notice` mode** — currently the store's `shouldShowBanner` only triggers for `consent` mode. Notice-mode categories don't open the banner automatically. The manager-app integration handles this with a custom `storedAt === null` check, but the SDK should make this a first-class behaviour.
 
 ## Documentation
