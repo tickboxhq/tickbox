@@ -20,10 +20,7 @@
       "require": "./dist/module.cjs"
     }
   },
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "files": ["dist", "README.md"],
   "scripts": {
     "build": "nuxt-module-build build",
     "prepack": "nuxt-module-build build",

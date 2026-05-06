@@ -33,6 +33,10 @@ for pkg_json in packages/*/package.json; do
   "
 done
 
+# Run biome to normalise the JSON formatting (single-line short arrays etc.)
+# so the resulting commit doesn't fail the CI lint step.
+pnpm lint:fix > /dev/null 2>&1 || true
+
 git add packages/*/package.json
 git commit -m "Bump packages to $new_version"
 git tag -a "v$new_version" -m "v$new_version"

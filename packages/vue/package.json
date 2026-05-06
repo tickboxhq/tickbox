@@ -19,10 +19,7 @@
     }
   },
   "sideEffects": false,
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  "files": ["dist", "README.md"],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
