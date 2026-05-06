@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+# Only one release at a time. If two tags land back-to-back, the second
+# waits — saves us from racing two `npm publish` calls for the same
+# version.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, verify, publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      # Required to create a GitHub release.
+      contents: write
+      # Required for npm provenance attestations via OIDC.
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify (lint + typecheck + test)
+        run: |
+          pnpm lint
+          pnpm typecheck
+          pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Bundle size check
+        run: ./scripts/check-bundle-sizes.sh
+
+      # Publish in dependency order so consumers never see a vue@x.y.z that
+      # transitively requires a core@x.y.z which hasn't appeared yet.
+      - name: Publish @tickboxhq/core
+        working-directory: packages/core
+        run: pnpm publish --access public --no-git-checks --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @tickboxhq/react
+        working-directory: packages/react
+        run: pnpm publish --access public --no-git-checks --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @tickboxhq/vue
+        working-directory: packages/vue
+        run: pnpm publish --access public --no-git-checks --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @tickboxhq/nuxt
+        working-directory: packages/nuxt
+        run: pnpm publish --access public --no-git-checks --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: false

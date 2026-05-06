@@ -174,6 +174,24 @@ Tag-gating activates blocked scripts on grant, but it can't unload a script that
 | `@tickboxhq/nuxt` | early — Nuxt 3/4 module |
 | `@tickboxhq/cli` | not yet — `tickbox init`, `scan`, `validate` |
 
+## Releasing
+
+Versions are bumped in lockstep across all packages. To cut a release:
+
+```bash
+./scripts/bump-version.sh 0.0.2
+git push origin main && git push origin v0.0.2
+```
+
+The tag triggers the Release workflow, which:
+
+1. Runs lint + typecheck + tests + build
+2. Checks bundle sizes against the budgets in `scripts/check-bundle-sizes.sh`
+3. Publishes all four packages to npm with provenance attestations
+4. Creates a GitHub release with auto-generated notes
+
+Required secret: `NPM_TOKEN` (a granular access token with publish access to the `@tickboxhq` scope and "bypass 2FA" enabled). Add it under the repo's Settings → Secrets and variables → Actions.
+
 ## Status
 
 Pre-alpha. Made by [Tiny Systems Ltd](https://github.com/tickboxhq).

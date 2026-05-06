@@ -16,11 +16,11 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 
 ## CI / release
 
-- [ ] GitHub Actions workflow: typecheck + test + lint on PR.
-- [ ] Bundle-size budgets enforced in CI (e.g. `size-limit`). Fail if core > 12KB, react > 4KB, vue > 5KB.
-- [ ] Changesets or similar for semver + CHANGELOG generation.
-- [ ] Provenance + signed releases via `npm publish --provenance` on tag.
-- [ ] `CHANGELOG.md` template + first entry.
+- [x] GitHub Actions workflow: typecheck + test + lint on PR. (`.github/workflows/ci.yml`)
+- [x] Bundle-size budgets enforced in CI. (`scripts/check-bundle-sizes.sh`, ran from CI)
+- [x] Provenance + signed releases via `npm publish --provenance` on tag. (`.github/workflows/release.yml`)
+- [ ] Changesets or similar for semver + CHANGELOG generation. (Currently using `scripts/bump-version.sh` for lockstep versions.)
+- [ ] `CHANGELOG.md` template + first entry. (Auto-generated GitHub release notes cover most of this.)
 
 ## Design issues
 
