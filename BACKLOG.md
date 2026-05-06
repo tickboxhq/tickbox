@@ -4,7 +4,7 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 
 ## Test coverage gaps
 
-- [ ] `apply.ts` — script rewriting, gtag Consent Mode v2 mapping, custom event dispatch. Zero tests today.
+- [x] `apply.ts` — script rewriting, gtag Consent Mode v2 mapping, custom event dispatch. (16 tests added in v0.0.5)
 - [ ] `store.hydrate()` — cookie present / absent / corrupt / wrong schema version / policy version mismatch.
 - [ ] `storage.ts` — round-trip with various cookie names, domains, and edge cases (empty cookie jar, cookies with `=` in payload, etc.).
 - [ ] `resolveJurisdictionByCountry` — known + unknown country codes, lowercase input, fallback behaviour.
