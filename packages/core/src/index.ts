@@ -1,3 +1,4 @@
+export { type AiTxtOptions, generateAiBotRobotsRules, generateAiTxt } from './ai-txt.js'
 export { applyConsent, TAG_ATTRIBUTE } from './apply.js'
 export { defineConsent } from './define-consent.js'
 export { isGPCSignaled } from './gpc.js'
