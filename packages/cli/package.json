@@ -1,0 +1,39 @@
+{
+  "name": "@tickboxhq/cli",
+  "version": "0.0.0",
+  "description": "Tickbox CLI — scan a URL for tracking vendors, validate a consent config",
+  "license": "MIT",
+  "homepage": "https://tickbox.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tickboxhq/tickbox.git",
+    "directory": "packages/cli"
+  },
+  "type": "module",
+  "bin": {
+    "tickbox": "./dist/cli.js"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@tickboxhq/core": "workspace:*",
+    "picocolors": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
