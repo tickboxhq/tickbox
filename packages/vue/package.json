@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/vue",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Vue 3 bindings for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
