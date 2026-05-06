@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tickbox vanilla — UK PECR + Google Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 1) Consent Mode v2 default — sets dataLayer state. No network requests. -->
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag(){ dataLayer.push(arguments) }
+      gtag('consent','default',{
+        ad_storage:'denied',
+        ad_user_data:'denied',
+        ad_personalization:'denied',
+        analytics_storage:'denied',
+        functionality_storage:'denied',
+        personalization_storage:'denied',
+        security_storage:'granted',
+        wait_for_update:500,
+      })
+    </script>
+
+    <!-- 2) GA loader — gated. Browser DOES NOT fetch this src while type=text/plain.
+         Tickbox rewrites the type to text/javascript once consent is granted. -->
+    <script
+      type="text/plain"
+      data-tb-category="analytics"
+      src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"
+      async
+    ></script>
+
+    <!-- 3) GA config — also gated. -->
+    <script type="text/plain" data-tb-category="analytics">
+      gtag('js', new Date())
+      gtag('config', 'G-XXXXXXXX', {
+        send_page_view: true,
+        anonymize_ip: true,
+        client_storage: 'none',
+      })
+    </script>
+
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 4rem auto; padding: 0 1rem; }
+      .banner {
+        position: fixed; bottom: 1rem; left: 1rem; right: 1rem; max-width: 32rem; margin: 0 auto;
+        background: white; border-radius: 0.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        padding: 1rem 1.25rem; display: none;
+      }
+      .banner.visible { display: block; }
+      .banner button { margin-left: 0.5rem; padding: 0.4rem 0.8rem; border-radius: 0.25rem; border: 0; cursor: pointer; }
+      .banner .reject { background: #e5e7eb; color: #111; }
+      .banner .accept { background: #0ea5e9; color: white; }
+      .row { display: flex; justify-content: flex-end; align-items: center; margin-top: 0.75rem; }
+    </style>
+  </head>
+  <body>
+    <h1>UK PECR + Google Analytics</h1>
+    <p>Open DevTools → Network. <strong>No requests to <code>googletagmanager.com</code> or <code>google-analytics.com</code> until you click Accept.</strong></p>
+    <p>Replace <code>G-XXXXXXXX</code> in this file with your GA4 Measurement ID before deploying.</p>
+
+    <button id="reset">Reset consent (clear cookie)</button>
+
+    <div class="banner" id="banner" role="dialog" aria-label="Cookie preferences">
+      <p>We use Google Analytics. Reject if you'd rather not be tracked.</p>
+      <div class="row">
+        <button class="reject" id="reject">Reject all</button>
+        <button class="accept" id="accept">Accept all</button>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        ConsentStore,
+        applyConsent,
+        defineConsent,
+        jurisdictions,
+      } from 'https://esm.sh/@tickboxhq/core@0.0.1'
+
+      const config = defineConsent({
+        jurisdiction: jurisdictions.UK_DUAA,
+        policy: { version: '2026-05-06', url: '/privacy' },
+        categories: {
+          necessary: { required: true },
+          analytics: {
+            vendors: ['google-analytics', 'ga4'],
+            default: false,
+          },
+        },
+      })
+
+      const store = new ConsentStore(config, {
+        jurisdiction: config.jurisdiction,
+        applyEffects: true,
+        onApply: applyConsent,
+      })
+
+      const banner = document.getElementById('banner')
+      store.subscribe((state) => {
+        banner.classList.toggle('visible', state.ready && state.isOpen)
+      })
+
+      document.getElementById('accept').addEventListener('click', () => store.grantAll())
+      document.getElementById('reject').addEventListener('click', () => store.denyAll())
+      document.getElementById('reset').addEventListener('click', () => {
+        document.cookie = '__tb_consent=; Path=/; Max-Age=0'
+        location.reload()
+      })
+
+      store.hydrate()
+    </script>
+  </body>
+</html>

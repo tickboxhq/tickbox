@@ -1,30 +1,28 @@
 # Tickbox examples
 
-Each subfolder is a standalone, runnable example showing Tickbox in one framework. They install Tickbox from npm (not the local workspace), so you can copy any folder out of this repo and use it as a starting point.
+Each subfolder is a framework. Inside each framework folder, there's one folder per scenario. Every scenario is a runnable starter project that installs Tickbox from npm.
 
-| Folder | Stack | What it shows |
-| --- | --- | --- |
-| [`vanilla/`](./vanilla) | Plain HTML + JS | `@tickboxhq/core` directly, no framework, custom banner via the DOM |
-| [`react/`](./react) | React + Vite | `<ConsentProvider>`, `useConsent`, custom banner |
-| [`nextjs/`](./nextjs) | Next.js (App Router) | Client-component provider, auto-gated `<script>` tags |
-| [`vue/`](./vue) | Vue 3 + Vite | `<ConsentProvider>`, `useConsent` composable, custom banner |
-| [`nuxt/`](./nuxt) | Nuxt 4 | `@tickboxhq/nuxt` module with auto-imports + scoped-slot banner |
+## Frameworks
 
-## Run any example
+- [`vanilla/`](./vanilla) — plain HTML + JS via `@tickboxhq/core`
+- [`react/`](./react) — React + Vite
+- [`nextjs/`](./nextjs) — Next.js App Router
+- [`vue/`](./vue) — Vue 3 + Vite
+- [`nuxt/`](./nuxt) — Nuxt 4 module
+
+## Scenarios available in each framework
+
+| Scenario | What it shows |
+| --- | --- |
+| `basic/` | Mixed vendors (privacy-friendly + consent-required), custom banner, demonstrates the SDK API |
+| `uk-pecr-google-analytics/` | PECR-correct Google Analytics: `type="text/plain"` script gating + Consent Mode v2 default-denied. No requests to Google before consent. |
+
+## Run any scenario
 
 ```bash
-cd examples/<name>
+cd examples/<framework>/<scenario>
 npm install
 npm run dev
 ```
 
 (Vanilla doesn't need a build step — just open `index.html`.)
-
-## Two scenarios in every example
-
-Each `consent.config.ts` (or inline config in vanilla) shows both:
-
-1. A category that **doesn't need a banner** under DUAA (privacy-first analytics like Plausible/GoatCounter resolve to `notice` mode)
-2. A category that **does need consent** (Google Ads, Meta Pixel etc. resolve to `consent` mode)
-
-Drop your own vendors into the lists and the resolution updates automatically.

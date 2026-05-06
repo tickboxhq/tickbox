@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tickbox React — UK PECR + Google Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 1) Consent Mode v2 default — sets dataLayer state. No network requests. -->
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag(){ dataLayer.push(arguments) }
+      gtag('consent','default',{
+        ad_storage:'denied',
+        ad_user_data:'denied',
+        ad_personalization:'denied',
+        analytics_storage:'denied',
+        functionality_storage:'denied',
+        personalization_storage:'denied',
+        security_storage:'granted',
+        wait_for_update:500,
+      })
+    </script>
+
+    <!-- 2) GA loader — gated by Tickbox. Browser does not fetch src
+         while type=text/plain. Replace G-XXXXXXXX with your GA4 ID. -->
+    <script type="text/plain" data-tb-category="analytics"
+            src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX" async></script>
+
+    <!-- 3) GA config — also gated. -->
+    <script type="text/plain" data-tb-category="analytics">
+      gtag('js', new Date())
+      gtag('config', 'G-XXXXXXXX', {
+        send_page_view: true,
+        anonymize_ip: true,
+        client_storage: 'none',
+      })
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

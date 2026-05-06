@@ -1,20 +1,8 @@
-# Tickbox React example
+# React examples
 
-React + Vite. Shows the provider, the `useConsent` hook, and the headless `<ConsentBanner>` with a render-prop.
+React + Vite. Each scenario is a runnable starter project.
 
-## Run it
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:5173/.
-
-## What's wired up
-
-- `src/consent.config.ts` declares two categories: an exempt one (Plausible) and a consent-required one (Google Ads, Meta Pixel)
-- `src/main.tsx` wraps the app in `<ConsentProvider config={config}>`
-- `src/App.tsx` reads marketing consent via `useConsent('marketing')` and renders the banner via `<ConsentBanner>`
-
-The banner only opens on first visit (or when `policy.version` changes). Use the "Reset consent" button to test the flow again.
+| Folder | What it shows |
+| --- | --- |
+| [`basic/`](./basic) | `<ConsentProvider>` + `useConsent` hook + headless `<ConsentBanner>` |
+| [`uk-pecr-google-analytics/`](./uk-pecr-google-analytics) | PECR-correct GA setup: `type="text/plain"` gating in `index.html` + Consent Mode v2 default-denied |

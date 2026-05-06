@@ -1,22 +1,8 @@
-# Tickbox vanilla example
+# Vanilla examples
 
-Plain HTML, no build step. Tickbox loaded from `esm.sh` so it works straight from the file system or any static host.
+Plain HTML + JavaScript, no build step. Runs from the file system or any static host.
 
-## Run it
-
-Just open `index.html` in your browser. Or serve it:
-
-```bash
-npx serve .
-```
-
-## What's in it
-
-- Inline `<script type="module">` imports `@tickboxhq/core` from a CDN
-- Custom banner styled in CSS, shown/hidden by subscribing to the store
-- A `<script type="text/plain" data-tb-category="marketing">` tag that activates only when marketing consent is granted (`applyConsent` rewrites the type)
-- A reset button so you can keep testing the first-visit flow
-
-## Worth noting
-
-This example uses `https://esm.sh/@tickboxhq/core@0.0.1` for zero-build convenience. For production, install `@tickboxhq/core` via npm and bundle it.
+| Folder | What it shows |
+| --- | --- |
+| [`basic/`](./basic) | Mixed vendors (Plausible + Google Ads) with a custom DOM banner |
+| [`uk-pecr-google-analytics/`](./uk-pecr-google-analytics) | PECR-correct GA setup: `type="text/plain"` gating + Consent Mode v2 default-denied |

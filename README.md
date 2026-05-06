@@ -1,6 +1,8 @@
 # Tickbox
 
-A cookie consent SDK for UK websites. The defaults are tuned to the UK Data (Use and Access) Act 2025, which came into force in February 2026 and added a "statistical purposes" exemption to PECR. If your site only runs privacy-friendly analytics, you don't need a consent banner under UK rules. Notice and an easy opt-out is enough.
+A developer-first cookie consent SDK. UK and EU jurisdictions out of the box.
+
+If your site only runs privacy-friendly analytics, UK visitors don't see a banner. The new UK Data (Use and Access) Act 2025, in force since February 2026, added a "statistical purposes" exemption to PECR. Notice and an easy opt-out is enough. EU visitors, and anyone using ad or tracking vendors, get a proper opt-in flow on the same config.
 
 ```bash
 npm install @tickboxhq/react   # or @tickboxhq/vue, or add @tickboxhq/nuxt as a module
@@ -64,6 +66,34 @@ This time you get a proper consent banner with first-layer "Reject all" and "Acc
 
 If you mix exempt and non-exempt vendors in the same category, the whole category escalates to consent mode. So `analytics: { vendors: ['plausible', 'google-analytics'] }` requires consent.
 
+## Loading third-party scripts the PECR-correct way
+
+Important pitfall to avoid: Google Consent Mode v2 alone is **not enough** for PECR compliance. With Consent Mode default-denied, Google's gtag.js still loads from `googletagmanager.com` and fires "cookieless pings" to `google-analytics.com`. PECR Regulation 6(1) treats those pings as tracker requests, regardless of cookies. Compliance scanners catch this.
+
+The fix: gate the script tags themselves with `type="text/plain" data-tb-category="..."`. Browsers don't fetch `src` on a `text/plain` script and don't execute its inline code, so no request leaves until Tickbox flips the type after consent.
+
+```html
+<!-- BEFORE: this loads gtag.js immediately, sends cookieless pings — PECR violation -->
+<script src="https://www.googletagmanager.com/gtag/js?id=G-XXX" async></script>
+<script>gtag('config', 'G-XXX')</script>
+
+<!-- AFTER: type="text/plain" stops the browser from fetching or executing.
+     Tickbox rewrites the type once consent is granted. -->
+<script>
+  window.dataLayer=window.dataLayer||[]
+  function gtag(){dataLayer.push(arguments)}
+  gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',wait_for_update:500})
+</script>
+<script type="text/plain" data-tb-category="analytics"
+        src="https://www.googletagmanager.com/gtag/js?id=G-XXX" async></script>
+<script type="text/plain" data-tb-category="analytics">
+  gtag('js', new Date())
+  gtag('config', 'G-XXX')
+</script>
+```
+
+The first inline script (Consent Mode default) is safe to run pre-consent — it only sets `dataLayer` state and makes no network calls. The two gated scripts only execute once the visitor accepts analytics. Combined, this gives you Google Consent Mode v2 *plus* PECR-correct gating.
+
 ## Use it
 
 In React:
@@ -107,7 +137,7 @@ The Nuxt module also reads the consent cookie on the server via `useRequestHeade
 
 ## Examples
 
-The [`examples/`](./examples) folder has runnable starter projects for each supported stack:
+The [`examples/`](./examples) folder has runnable starter projects, organised by framework. Each framework folder has its own scenarios:
 
 - [`vanilla/`](./examples/vanilla) — plain HTML + JS via the core package
 - [`react/`](./examples/react) — React + Vite
@@ -115,7 +145,12 @@ The [`examples/`](./examples) folder has runnable starter projects for each supp
 - [`vue/`](./examples/vue) — Vue 3 + Vite
 - [`nuxt/`](./examples/nuxt) — Nuxt 4 module
 
-Each one installs Tickbox from npm, so you can copy any folder out of this repo and use it as a starting point.
+Inside each framework folder you'll find scenarios such as:
+
+- `basic/` — mixed vendors, demonstrates DUAA-exempt + consent-required side by side
+- `uk-pecr-google-analytics/` — PECR-correct GA setup with tag-gating + Consent Mode v2
+
+Each scenario installs Tickbox from npm, so you can copy any folder out of this repo and use it as a starting point.
 
 ## What it handles
 
