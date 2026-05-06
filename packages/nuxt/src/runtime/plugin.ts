@@ -32,7 +32,9 @@ export default defineNuxtPlugin({
       jurisdiction: config.jurisdiction,
       storage: config.storage,
       applyEffects: true,
-      onApply: import.meta.client ? applyConsent : undefined,
+      onApply: import.meta.client
+        ? (state) => applyConsent(state, { consentMode: config.consentMode })
+        : undefined,
     })
 
     if (import.meta.server) {

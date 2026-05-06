@@ -230,6 +230,146 @@ describe('applyConsent — Google Consent Mode v2', () => {
   })
 })
 
+describe('applyConsent — custom Consent Mode v2 mapping', () => {
+  it('routes a non-default category name to analytics_storage', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ stats: true }), {
+      consentMode: { analytics_storage: { category: 'stats' } },
+    })
+
+    expect(gtag).toHaveBeenCalledWith(
+      'consent',
+      'update',
+      expect.objectContaining({ analytics_storage: 'granted' }),
+    )
+  })
+
+  it('lets the user re-route ad keys to a different category', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ advertising: true }), {
+      consentMode: {
+        ad_storage: { category: 'advertising' },
+        ad_user_data: { category: 'advertising' },
+        ad_personalization: { category: 'advertising' },
+      },
+    })
+
+    expect(gtag).toHaveBeenCalledWith(
+      'consent',
+      'update',
+      expect.objectContaining({
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+      }),
+    )
+  })
+
+  it('keeps default rules for keys not present in the override', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ stats: true, marketing: false }), {
+      consentMode: { analytics_storage: { category: 'stats' } },
+    })
+
+    // analytics_storage uses the override (stats=true → granted),
+    // ad_storage stays on the default mapping (marketing=false → denied).
+    expect(gtag).toHaveBeenCalledWith(
+      'consent',
+      'update',
+      expect.objectContaining({
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
+      }),
+    )
+  })
+
+  it('removes a key from the gtag call when set to null', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ marketing: true }), {
+      consentMode: {
+        ad_storage: null,
+        ad_user_data: null,
+        ad_personalization: null,
+      },
+    })
+
+    const params = gtag.mock.calls[0]?.[2] as Record<string, unknown>
+    expect(params).not.toHaveProperty('ad_storage')
+    expect(params).not.toHaveProperty('ad_user_data')
+    expect(params).not.toHaveProperty('ad_personalization')
+    expect(params).toHaveProperty('analytics_storage')
+    expect(params).toHaveProperty('security_storage')
+  })
+
+  it('skips the gtag call entirely when every key is nulled', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ marketing: true }), {
+      consentMode: {
+        ad_storage: null,
+        ad_user_data: null,
+        ad_personalization: null,
+        analytics_storage: null,
+        functionality_storage: null,
+        personalization_storage: null,
+        security_storage: null,
+      },
+    })
+
+    expect(gtag).not.toHaveBeenCalled()
+  })
+
+  it('respects per-rule default when category is absent from decisions', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({}), {
+      consentMode: {
+        analytics_storage: { category: 'stats', default: 'granted' },
+      },
+    })
+
+    expect(gtag).toHaveBeenCalledWith(
+      'consent',
+      'update',
+      expect.objectContaining({ analytics_storage: 'granted' }),
+    )
+  })
+
+  it('treats a category-less rule as a static value', () => {
+    const gtag = vi.fn()
+    // biome-ignore lint/suspicious/noExplicitAny: assigning a global for the test
+    ;(globalThis as any).gtag = gtag
+
+    applyConsent(makeState({ marketing: true }), {
+      consentMode: { ad_storage: { default: 'denied' } },
+    })
+
+    // marketing=true would normally grant ad_storage, but the override
+    // strips the category and forces denied.
+    expect(gtag).toHaveBeenCalledWith(
+      'consent',
+      'update',
+      expect.objectContaining({ ad_storage: 'denied' }),
+    )
+  })
+})
+
 describe('applyConsent — DOM event', () => {
   it('dispatches tickbox:consent-changed with decisions in detail', () => {
     const listener = vi.fn()

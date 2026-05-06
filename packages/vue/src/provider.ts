@@ -33,7 +33,9 @@ export const ConsentProvider = defineComponent({
       jurisdiction: j,
       storage: props.config.storage,
       applyEffects: props.applyEffects,
-      onApply: props.applyEffects ? applyConsent : undefined,
+      onApply: props.applyEffects
+        ? (state) => applyConsent(state, { consentMode: props.config.consentMode })
+        : undefined,
     })
 
     provide(ConsentStoreKey, store)

@@ -50,6 +50,61 @@ export type Jurisdiction = {
   countries?: readonly string[]
 }
 
+/**
+ * The seven Google Consent Mode v2 storage / signal keys.
+ * @see https://developers.google.com/tag-platform/security/guides/consent
+ */
+export type GtagConsentKey =
+  | 'ad_storage'
+  | 'ad_user_data'
+  | 'ad_personalization'
+  | 'analytics_storage'
+  | 'functionality_storage'
+  | 'personalization_storage'
+  | 'security_storage'
+
+/**
+ * Rule that maps one gtag consent key to a Tickbox category.
+ *
+ * - `category`: the consent category ID (from `ConsentConfig.categories`) that
+ *   controls this gtag key. When the category flips granted/denied, the gtag
+ *   key flips with it.
+ * - `default`: the value sent when the category is absent from the user's
+ *   stored decisions, or when `category` itself is omitted. If omitted,
+ *   defaults to `'denied'` for ad/analytics keys and `'granted'` for
+ *   functionality/personalization/security keys.
+ */
+export type ConsentModeRule = {
+  category?: string
+  default?: 'granted' | 'denied'
+}
+
+/**
+ * Custom mapping from Tickbox category IDs to Google Consent Mode v2 keys.
+ *
+ * Merged shallowly with the built-in defaults, so any keys you don't override
+ * keep their defaults. Pass `null` for a key to remove it from the
+ * `gtag('consent','update', ...)` call entirely.
+ *
+ * @example
+ * ```ts
+ * defineConsent({
+ *   categories: {
+ *     necessary: { required: true },
+ *     advertising: { vendors: [...], default: false },  // not 'marketing'
+ *     stats: { vendors: ['plausible'] },                // not 'analytics'
+ *   },
+ *   consentMode: {
+ *     ad_storage: { category: 'advertising' },
+ *     ad_user_data: { category: 'advertising' },
+ *     ad_personalization: { category: 'advertising' },
+ *     analytics_storage: { category: 'stats' },
+ *   },
+ * })
+ * ```
+ */
+export type ConsentModeMapping = Partial<Record<GtagConsentKey, ConsentModeRule | null>>
+
 export type ConsentConfig = {
   /**
    * The jurisdiction governing this site, or `'auto'` to detect by visitor country.
@@ -71,6 +126,11 @@ export type ConsentConfig = {
   }
   /** Cookie storage options. */
   storage?: StorageOptions
+  /**
+   * Override the default Tickbox-category → Google Consent Mode v2 key
+   * mapping. Merged shallowly with the built-in defaults.
+   */
+  consentMode?: ConsentModeMapping
 }
 
 export type StorageOptions = {

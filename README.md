@@ -94,6 +94,30 @@ The fix: gate the script tags themselves with `type="text/plain" data-tb-categor
 
 The first inline script (Consent Mode default) is safe to run pre-consent — it only sets `dataLayer` state and makes no network calls. The two gated scripts only execute once the visitor accepts analytics. Combined, this gives you Google Consent Mode v2 *plus* PECR-correct gating.
 
+### Custom category names for Consent Mode v2
+
+The default mapping wires `marketing` → `ad_storage`/`ad_user_data`/`ad_personalization`, `analytics` → `analytics_storage`, `functional` → `functionality_storage`, and `preferences` → `personalization_storage`. If your project uses different category names, override the mapping in `consent.config.ts`:
+
+```ts
+defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  categories: {
+    necessary: { required: true },
+    advertising: { vendors: ['google-ads'], default: false },  // not 'marketing'
+    stats: { vendors: ['plausible'] },                         // not 'analytics'
+  },
+  consentMode: {
+    ad_storage: { category: 'advertising' },
+    ad_user_data: { category: 'advertising' },
+    ad_personalization: { category: 'advertising' },
+    analytics_storage: { category: 'stats' },
+    // any keys you don't override keep their defaults
+  },
+})
+```
+
+Pass `null` for a key to drop it from the `gtag('consent','update', ...)` call entirely.
+
 ## Use it
 
 In React:

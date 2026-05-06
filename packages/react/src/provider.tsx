@@ -34,7 +34,9 @@ export function ConsentProvider({
       jurisdiction: j,
       storage: config.storage,
       applyEffects,
-      onApply: applyEffects ? applyConsent : undefined,
+      onApply: applyEffects
+        ? (state) => applyConsent(state, { consentMode: config.consentMode })
+        : undefined,
     })
   }, [config, jurisdiction, applyEffects])
 

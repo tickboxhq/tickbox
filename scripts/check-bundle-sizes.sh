@@ -10,7 +10,7 @@ set -eu
 # Update these when you intentionally make a package bigger.
 
 budgets='
-packages/core/dist/index.js:15000
+packages/core/dist/index.js:18000
 packages/react/dist/index.js:5500
 packages/vue/dist/index.js:6500
 packages/nuxt/dist/module.mjs:2500

@@ -25,7 +25,7 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 ## Design issues
 
 - [ ] **Tag-gating can't unload running scripts.** Once a `<script>` has executed, denying consent doesn't reverse what it did. Document this limitation in README + provide a recipe (page reload, vendor-specific opt-out flags like `localStorage.skipgc` for GoatCounter, `_paq.push(['optUserOut'])` for Matomo).
-- [ ] **`apply.ts` hardcodes category names** (`marketing`, `analytics`, `functional`, `preferences`) for the Google Consent Mode v2 mapping. Make the mapping configurable per project.
+- [x] **`apply.ts` hardcodes category names** for Google Consent Mode v2 mapping. (Configurable via `ConsentConfig.consentMode` in v0.0.7)
 - [ ] **Vendor classification lists** are hardcoded literals (now in `jurisdictions/vendors.ts`, shared between presets). Need a strategy: pulled from a Tickbox CDN at runtime? Generated from an upstream registry? Decide before the list grows past ~150 vendors.
 - [ ] **Config validation** — if a user passes garbage as `jurisdiction`, the runtime error appears far from the source. Add a Zod / Valibot schema or hand-rolled validator that runs in dev mode.
 - [ ] **`StoreOptions.onApply` is a half-public API** — exported via the type but not really meant to be set by users. Either promote it to a first-class extension point or make it internal.

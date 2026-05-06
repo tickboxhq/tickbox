@@ -1,5 +1,5 @@
 export { type AiTxtOptions, generateAiBotRobotsRules, generateAiTxt } from './ai-txt.js'
-export { applyConsent, TAG_ATTRIBUTE } from './apply.js'
+export { type ApplyOptions, applyConsent, TAG_ATTRIBUTE } from './apply.js'
 export { defineConsent } from './define-consent.js'
 export { isGPCSignaled } from './gpc.js'
 export { jurisdictions, resolveJurisdictionByCountry } from './jurisdictions/index.js'
@@ -11,6 +11,9 @@ export type {
   CategoryId,
   ConsentConfig,
   ConsentMode,
+  ConsentModeMapping,
+  ConsentModeRule,
+  GtagConsentKey,
   Jurisdiction,
   JurisdictionId,
   ResolvedCategory,
