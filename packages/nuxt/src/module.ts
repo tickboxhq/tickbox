@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import {
   addComponent,
   addImports,
@@ -59,7 +60,16 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
       '~~': nuxt.options.rootDir,
       '@@': nuxt.options.rootDir,
     }
-    const resolvedConfigPath = resolveAlias(options.configPath ?? '~/consent.config', aliases)
+    const resolvedConfigPathWithoutExt = resolveAlias(
+      options.configPath ?? '~/consent.config',
+      aliases,
+    )
+    // The resolver doesn't add file extensions. Vite handles that at compile
+    // time, but Nitro uses Node's ESM loader at runtime which is strict —
+    // we need an absolute path with the actual extension. Probe the common
+    // ones and use whichever exists.
+    const resolvedConfigPath =
+      findExisting(resolvedConfigPathWithoutExt) ?? resolvedConfigPathWithoutExt
 
     // Generate a virtual template that re-exports the user's config. The
     // template lands in `.nuxt/tickbox-config.mjs`. The Vue/client plugin
@@ -115,5 +125,14 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
     }
   },
 })
+
+function findExisting(basePath: string): string | undefined {
+  // Already includes an extension or is an explicit path?
+  if (existsSync(basePath)) return basePath
+  for (const ext of ['.ts', '.mts', '.mjs', '.js', '.cjs']) {
+    if (existsSync(`${basePath}${ext}`)) return `${basePath}${ext}`
+  }
+  return undefined
+}
 
 export default tickboxModule
