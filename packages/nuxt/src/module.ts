@@ -62,12 +62,21 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
     const resolvedConfigPath = resolveAlias(options.configPath ?? '~/consent.config', aliases)
 
     // Generate a virtual template that re-exports the user's config. The
-    // template lands in `.nuxt/tickbox-config.mjs` and is reachable from any
-    // runtime context (Vite + Nitro) via Nuxt's built-in `#build/` alias.
+    // template lands in `.nuxt/tickbox-config.mjs`. The Vue/client plugin
+    // imports it via Nuxt's built-in `#build/` alias. Nitro server runtime
+    // can't use `#build/` (Nuxt's impound plugin blocks Vue-app aliases in
+    // server context), so we expose the same file via a Nitro-specific
+    // alias `#tickbox-config`.
+    const templateFile = `${nuxt.options.buildDir}/tickbox-config.mjs`
     addTemplate({
       filename: 'tickbox-config.mjs',
       write: true,
       getContents: () => `export { default } from ${JSON.stringify(resolvedConfigPath)}\n`,
+    })
+    // biome-ignore lint/suspicious/noExplicitAny: nitro:config hook types live in @nitrojs/core, not @nuxt/schema
+    ;(nuxt.hook as any)('nitro:config', (nitroConfig: { alias?: Record<string, string> }) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      nitroConfig.alias['#tickbox-config'] = templateFile
     })
 
     // Make Vue type augmentations available everywhere.
