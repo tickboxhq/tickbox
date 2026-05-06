@@ -2,6 +2,7 @@ import {
   addComponent,
   addImports,
   addPlugin,
+  addServerHandler,
   addTemplate,
   createResolver,
   defineNuxtModule,
@@ -17,6 +18,21 @@ export interface ModuleOptions {
    * @default '~/consent.config'
    */
   configPath?: string
+
+  /**
+   * Register a Nitro route at `/ai.txt` that serves the Spawning.ai-format
+   * AI training opt-out file generated from the consent config.
+   *
+   * EU AI Act Article 53 (in force August 2026) requires general-purpose AI
+   * providers to respect machine-readable opt-out signals. The `ai.txt` file
+   * is the convention this satisfies.
+   *
+   * Set to `false` to skip registering the route (e.g. if you want to serve
+   * a static file instead, or write your own handler).
+   *
+   * @default true
+   */
+  aiTxt?: boolean
 }
 
 const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
@@ -29,6 +45,7 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
   },
   defaults: {
     configPath: '~/consent.config',
+    aiTxt: true,
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -77,6 +94,16 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
       filePath: '@tickboxhq/vue',
       export: 'ConsentBanner',
     })
+
+    // Register the /ai.txt Nitro route. Reads the same `#build/tickbox-config`
+    // virtual template the client plugin uses, so a single source of truth
+    // governs both the cookie banner and the AI opt-out signal.
+    if (options.aiTxt !== false) {
+      addServerHandler({
+        route: '/ai.txt',
+        handler: resolver.resolve('./runtime/server/ai-txt'),
+      })
+    }
   },
 })
 

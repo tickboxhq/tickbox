@@ -6,3 +6,4 @@ Nuxt 4. Each scenario is a runnable starter project. The `@tickboxhq/nuxt` modul
 | --- | --- |
 | [`basic/`](./basic) | Auto-imports + auto-registered `<ConsentBanner>` + `useConsent` |
 | [`uk-pecr-google-analytics/`](./uk-pecr-google-analytics) | PECR-correct GA setup: gated `<script>` tags via `nuxt.config.ts` head + Consent Mode v2 default-denied |
+| [`ai-training-optout/`](./ai-training-optout) | The module's auto-registered `/ai.txt` Nitro route + pattern for augmenting `robots.txt` |

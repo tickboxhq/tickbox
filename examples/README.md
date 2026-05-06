@@ -12,10 +12,11 @@ Each subfolder is a framework. Inside each framework folder, there's one folder 
 
 ## Scenarios available in each framework
 
-| Scenario | What it shows |
-| --- | --- |
-| `basic/` | Mixed vendors (privacy-friendly + consent-required), custom banner, demonstrates the SDK API |
-| `uk-pecr-google-analytics/` | PECR-correct Google Analytics: `type="text/plain"` script gating + Consent Mode v2 default-denied. No requests to Google before consent. |
+| Scenario | Frameworks | What it shows |
+| --- | --- | --- |
+| `basic/` | all | Mixed vendors (privacy-friendly + consent-required), custom banner, demonstrates the SDK API |
+| `uk-pecr-google-analytics/` | all | PECR-correct Google Analytics: `type="text/plain"` script gating + Consent Mode v2 default-denied. No requests to Google before consent. |
+| `ai-training-optout/` | vanilla, nextjs, nuxt | `/ai.txt` (Spawning.ai format) and `robots.txt` AI-bot rules generated from the consent config. Vite-only React/Vue can use the build-time pattern from `vanilla/` |
 
 ## Run any scenario
 

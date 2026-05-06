@@ -40,6 +40,7 @@
   "devDependencies": {
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.13.0",
+    "h3": "^1.13.0",
     "typescript": "^5.7.2"
   }
 }

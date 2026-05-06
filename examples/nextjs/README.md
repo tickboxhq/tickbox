@@ -6,3 +6,4 @@ Next.js App Router. Each scenario is a runnable starter project.
 | --- | --- |
 | [`basic/`](./basic) | Client-Component provider, `useConsent` hook, headless `<ConsentBanner>` |
 | [`uk-pecr-google-analytics/`](./uk-pecr-google-analytics) | PECR-correct GA setup: gated `<script>` tags rendered from the root layout, Consent Mode v2 default-denied |
+| [`ai-training-optout/`](./ai-training-optout) | App Router route handler at `/ai.txt` plus pattern for augmenting `robots.txt` with AI-bot Disallow rules |

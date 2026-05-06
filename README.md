@@ -149,6 +149,7 @@ Inside each framework folder you'll find scenarios such as:
 
 - `basic/` — mixed vendors, demonstrates DUAA-exempt + consent-required side by side
 - `uk-pecr-google-analytics/` — PECR-correct GA setup with tag-gating + Consent Mode v2
+- `ai-training-optout/` — `/ai.txt` and `robots.txt` AI-bot rules generated from the consent config
 
 Each scenario installs Tickbox from npm, so you can copy any folder out of this repo and use it as a starting point.
 
@@ -159,6 +160,7 @@ Each scenario installs Tickbox from npm, so you can copy any folder out of this 
 - Google Consent Mode v2: `gtag('consent', 'update', ...)` fires on every change
 - A `tickbox:consent-changed` DOM event for custom integrations
 - SSR cookie reading in the Nuxt module so initial markup matches the visitor's choice
+- AI training opt-out: `generateAiTxt(config)` and `generateAiBotRobotsRules(config)` produce Spawning.ai-format `/ai.txt` content and `robots.txt` Disallow rules. The Nuxt module auto-registers a Nitro route at `/ai.txt`. Pairs with EU AI Act Article 53 (in force August 2026)
 
 ## Known limitations
 
