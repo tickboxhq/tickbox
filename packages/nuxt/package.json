@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/nuxt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Nuxt 3/4 module for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
@@ -20,7 +20,10 @@
       "require": "./dist/module.cjs"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "nuxt-module-build build",
     "prepack": "nuxt-module-build build",

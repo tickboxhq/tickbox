@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Vue 3 bindings for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
@@ -19,7 +19,10 @@
     }
   },
   "sideEffects": false,
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
