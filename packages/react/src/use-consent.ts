@@ -5,6 +5,7 @@ import { ConsentContext } from './context.js'
 export type ConsentApi = {
   ready: boolean
   isOpen: boolean
+  noticeOpen: boolean
   decisions: Record<string, boolean>
   resolved: ResolvedCategory[]
   storedAt: number | null
@@ -16,6 +17,7 @@ export type ConsentApi = {
   reset: () => void
   open: () => void
   close: () => void
+  dismissNotice: () => void
   isGranted: (id: string) => boolean
 }
 
@@ -48,6 +50,7 @@ export function useConsent(categoryId?: string): ConsentApi | CategoryApi {
   return {
     ready: state.ready,
     isOpen: state.isOpen,
+    noticeOpen: state.noticeOpen,
     decisions: state.decisions,
     resolved: state.resolved,
     storedAt: state.storedAt,
@@ -59,6 +62,7 @@ export function useConsent(categoryId?: string): ConsentApi | CategoryApi {
     reset: () => store.reset(),
     open: () => store.open(),
     close: () => store.close(),
+    dismissNotice: () => store.dismissNotice(),
     isGranted: (id) => state.decisions[id] === true,
   }
 }
@@ -81,6 +85,7 @@ function categoryApi(
 const initialState: ConsentState = {
   ready: false,
   isOpen: false,
+  noticeOpen: false,
   decisions: {},
   resolved: [],
   storedAt: null,

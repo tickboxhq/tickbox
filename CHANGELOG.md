@@ -2,6 +2,19 @@
 
 Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [Unreleased]
+
+### Added
+- First-class support for `notice`-mode UI. New `ConsentState.noticeOpen` flag is set on first visit when a site has only `notice`-mode categories (e.g. UK DUAA-exempt analytics like Plausible / GoatCounter). The consent banner takes priority when both modes are present, so the two flags are mutually exclusive.
+- New `dismissNotice()` method on `ConsentStore` — closes the notice without persisting a decision.
+- New components: `<ConsentNotice>` in `@tickboxhq/react` and `@tickboxhq/vue`. Same headless render-prop pattern as `<ConsentBanner>`, but gates on `noticeOpen` instead of `isOpen`.
+- `@tickboxhq/nuxt` auto-registers `<ConsentNotice>` alongside `<ConsentBanner>`.
+- `useConsent()` returns `noticeOpen` and `dismissNotice` (React + Vue).
+- 9 new tests in `@tickboxhq/core` covering notice-mode behaviour: first-visit notice, banner-over-notice priority, save closing both, return-visit suppression, policy-version refresh reopening notice, dismiss-without-persist, reset reopening the right flag.
+
+### Changed
+- `reset()` now reopens whichever flag applies (banner if there's a consent-mode category, otherwise notice). Previously it always reopened the banner even on notice-only sites.
+
 ## [0.0.10] - 2026-05-06
 
 ### Fixed

@@ -11,8 +11,15 @@ import type {
 export type ConsentState = {
   /** True after the store has hydrated from the cookie (client-only). */
   ready: boolean
-  /** True when the banner / preference centre should be visible. */
+  /** True when the consent banner / preference centre should be visible. */
   isOpen: boolean
+  /**
+   * True when a notice card should be visible — set when the site has any
+   * `notice`-mode category and no `consent`-mode category (the consent banner
+   * already covers notice-mode categories in its list, so we don't show both).
+   * Closes when the user saves, resets, or explicitly dismisses.
+   */
+  noticeOpen: boolean
   /** Map of category ID → granted (true) / denied (false). */
   decisions: Record<string, boolean>
   /** Resolved categories for the active jurisdiction. */
@@ -54,6 +61,7 @@ export class ConsentStore {
     this.state = {
       ready: false,
       isOpen: false,
+      noticeOpen: false,
       decisions: defaultDecisions(resolved),
       resolved,
       storedAt: null,
@@ -80,18 +88,23 @@ export class ConsentStore {
 
   private applyHydration(stored: StoredConsent | null): void {
     if (stored) {
+      const refresh = needsRefresh(stored, this.config)
+      const wantsBanner = refresh && shouldShowBanner(this.state.resolved)
       this.state = {
         ...this.state,
         ready: true,
-        isOpen: needsRefresh(stored, this.config),
+        isOpen: wantsBanner,
+        noticeOpen: refresh && !wantsBanner && shouldShowNotice(this.state.resolved),
         decisions: mergeDecisions(this.state.resolved, stored.c),
         storedAt: stored.ts,
       }
     } else {
+      const wantsBanner = shouldShowBanner(this.state.resolved)
       this.state = {
         ...this.state,
         ready: true,
-        isOpen: shouldShowBanner(this.state.resolved),
+        isOpen: wantsBanner,
+        noticeOpen: !wantsBanner && shouldShowNotice(this.state.resolved),
       }
     }
     this.emit()
@@ -129,10 +142,10 @@ export class ConsentStore {
     this.update(next, { close: true })
   }
 
-  /** Persist the current decisions and close the banner. */
+  /** Persist the current decisions and close both the banner and the notice. */
   save(): void {
     const ts = this.persist(this.state.decisions)
-    this.state = { ...this.state, isOpen: false, storedAt: ts }
+    this.state = { ...this.state, isOpen: false, noticeOpen: false, storedAt: ts }
     this.emit()
   }
 
@@ -148,12 +161,26 @@ export class ConsentStore {
     this.emit()
   }
 
-  /** Wipe stored consent and reopen the banner. */
+  /**
+   * Close the notice card without persisting. Most sites won't need this —
+   * `save()` already closes the notice as part of acknowledgement. Use this
+   * when you want to hide the notice without recording a decision (e.g.
+   * routing away from a page where it's inappropriate to show it).
+   */
+  dismissNotice(): void {
+    if (!this.state.noticeOpen) return
+    this.state = { ...this.state, noticeOpen: false }
+    this.emit()
+  }
+
+  /** Wipe stored consent and reopen the banner / notice as appropriate. */
   reset(): void {
+    const wantsBanner = shouldShowBanner(this.state.resolved)
     this.state = {
       ...this.state,
       decisions: defaultDecisions(this.state.resolved),
-      isOpen: true,
+      isOpen: wantsBanner,
+      noticeOpen: !wantsBanner && shouldShowNotice(this.state.resolved),
       storedAt: null,
     }
     this.emit()
@@ -227,4 +254,8 @@ function needsRefresh(stored: StoredConsent, config: ConsentConfig): boolean {
 
 function shouldShowBanner(resolved: ResolvedCategory[]): boolean {
   return resolved.some((r) => r.mode === 'consent' && !r.required)
+}
+
+function shouldShowNotice(resolved: ResolvedCategory[]): boolean {
+  return resolved.some((r) => r.mode === 'notice' && !r.required)
 }

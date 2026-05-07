@@ -114,6 +114,14 @@ const tickboxModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>
       export: 'ConsentBanner',
     })
 
+    // Same for the notice card — used by sites with only `notice`-mode
+    // categories (e.g. DUAA-exempt analytics).
+    addComponent({
+      name: 'ConsentNotice',
+      filePath: '@tickboxhq/vue',
+      export: 'ConsentNotice',
+    })
+
     // Register the /ai.txt Nitro route. Reads the same `#build/tickbox-config`
     // virtual template the client plugin uses, so a single source of truth
     // governs both the cookie banner and the AI opt-out signal.

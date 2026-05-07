@@ -5,6 +5,7 @@ import { ConsentStoreKey } from './keys.js'
 export type ConsentApi = {
   ready: ComputedRef<boolean>
   isOpen: ComputedRef<boolean>
+  noticeOpen: ComputedRef<boolean>
   decisions: ComputedRef<Record<string, boolean>>
   resolved: ComputedRef<ResolvedCategory[]>
   storedAt: ComputedRef<number | null>
@@ -16,6 +17,7 @@ export type ConsentApi = {
   reset: () => void
   open: () => void
   close: () => void
+  dismissNotice: () => void
   isGranted: (id: string) => boolean
 }
 
@@ -58,6 +60,7 @@ export function useConsent(categoryId?: string): ConsentApi | CategoryApi {
   return {
     ready: computed(() => stateRef.value.ready),
     isOpen: computed(() => stateRef.value.isOpen),
+    noticeOpen: computed(() => stateRef.value.noticeOpen),
     decisions: computed(() => stateRef.value.decisions),
     resolved: computed(() => stateRef.value.resolved),
     storedAt: computed(() => stateRef.value.storedAt),
@@ -69,6 +72,7 @@ export function useConsent(categoryId?: string): ConsentApi | CategoryApi {
     reset: () => store.reset(),
     open: () => store.open(),
     close: () => store.close(),
+    dismissNotice: () => store.dismissNotice(),
     isGranted: (id) => stateRef.value.decisions[id] === true,
   }
 }

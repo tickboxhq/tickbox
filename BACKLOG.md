@@ -30,7 +30,7 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 - [ ] **Config validation** — if a user passes garbage as `jurisdiction`, the runtime error appears far from the source. Add a Zod / Valibot schema or hand-rolled validator that runs in dev mode.
 - [ ] **`StoreOptions.onApply` is a half-public API** — exported via the type but not really meant to be set by users. Either promote it to a first-class extension point or make it internal.
 - [x] **`EU_GDPR` preset** populated. Mirrors the shared vendor list with everything classified as `consent` (no statistical exemption under EU rules).
-- [ ] **Banner UX for `notice` mode** — currently the store's `shouldShowBanner` only triggers for `consent` mode. Notice-mode categories don't open the banner automatically. The manager-app integration handles this with a custom `storedAt === null` check, but the SDK should make this a first-class behaviour.
+- [x] **Banner UX for `notice` mode** — the store now exposes `noticeOpen` alongside `isOpen`, with `<ConsentNotice>` components in React + Vue and Nuxt auto-registration. Consent banner takes priority when both modes are present.
 
 ## Documentation
 
@@ -54,7 +54,7 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 
 - [x] `@tickboxhq/cli` first cut — `scan` + `validate`. (Shipped in v0.0.8.)
 - [ ] `tickbox init` — interactive scaffold for new projects.
-- [ ] `tickbox scan --render` — Playwright-based JS-rendered scan.
+- [ ] Rendered scans (JS-executed, network-captured) — **decided to host, not bundle in CLI**. Either expose `smesolutions.uk` scanner via API and have `tickbox scan --render` POST to it, or fold into the Tickbox dashboard. Avoids shipping ~300 MB of Chromium to every developer's machine and matches how OneTrust/Cookiebot/Termly all do it.
 - [x] `/ai.txt` generator (in `@tickboxhq/core` since v0.0.6) and Nitro route (in `@tickboxhq/nuxt` since v0.0.6).
 - [ ] `/llms.txt` generator. (Different from `/ai.txt` — `llms.txt` is a curated-index file for AI consumption, not an opt-out.)
 - [ ] Cloud beacon — POST consent events to audit-log endpoint.

@@ -11,7 +11,7 @@ This file is the working "what to pick up next" doc. The full backlog lives in `
 - README humanised, `examples/` folder has 5 frameworks × 3 scenarios
 - `BACKLOG.md` tracks all polish items
 
-## Top three for the next session
+## Top picks for the next session
 
 ### 1. Banner UX for `notice` mode in the store
 
@@ -23,17 +23,7 @@ This file is the working "what to pick up next" doc. The full backlog lives in `
 
 **Estimate:** half a day.
 
-### 2. Playwright-rendered scan in `@tickboxhq/cli`
-
-**Problem:** `tickbox scan` only sees the server HTML. Pages where vendors are injected by JavaScript (via Google Tag Manager, dynamic imports, single-page-app routing) report no vendors found.
-
-**Fix:** Add a `--render` flag that drives the URL through Playwright with a real browser, captures network requests, matches them against `VENDOR_PATTERNS`. Playwright is heavy (~300 MB browser), so install it on demand: prompt the user to run `npx playwright install chromium` if not already installed.
-
-**Acceptance:** `tickbox scan --render https://gtm-using-site.com` lists pixel tags that fire after JS hydration. Without `--render` the existing static-HTML behaviour is unchanged.
-
-**Estimate:** 1–2 days. The first half is wrangling Playwright lifecycle (install detection, browser launch, network interception); the second is adding meaningful output.
-
-### 3. Documentation site at `docs.tickbox.dev`
+### 2. Documentation site at `docs.tickbox.dev`
 
 **Problem:** README is ~280 lines and growing. It tries to be a pitch, install guide, API reference, and FAQ at once.
 
@@ -54,6 +44,12 @@ Deploy at `docs.tickbox.dev` (subdomain of the existing domain).
 **Estimate:** 1–2 days. The hard part is structuring the content; the tool itself is mostly mechanical.
 
 ## Other items worth considering
+
+### Rendered scan via SaaS, not CLI
+
+Static-HTML `tickbox scan` misses vendors injected by JavaScript (GTM, dynamic imports, SPA routing). The original plan was a `--render` Playwright flag in the CLI, but that would ship a 300 MB Chromium download to every developer's machine and duplicate the scanner infra already running at `smesolutions.uk`.
+
+Better split: CLI stays static and lightweight (fast feedback in dev workflows). Rendered scans live in the cloud — either expose `smesolutions.uk`'s scanner via an API and have `tickbox scan --render` POST to it, or fold it into the future Tickbox dashboard. Bonus: it's a natural wedge for the paid tier (local CLI = free, scheduled/CI scans = cloud). Most CMP competitors (OneTrust, Cookiebot, Termly) already run scanners as hosted services for the same reason.
 
 ### `tickbox init` — interactive scaffold
 
