@@ -1,6 +1,6 @@
 # Backlog
 
-Things to polish before v0.1 / first paying customer. Not blockers for own-dogfooding.
+Things to polish before v0.1 / first paying customer. Not blockers for own-dogfooding. For the prioritised "what to pick up next" slice, see `NEXT.md`.
 
 ## Test coverage gaps
 
@@ -20,7 +20,7 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 - [x] Bundle-size budgets enforced in CI. (`scripts/check-bundle-sizes.sh`, ran from CI)
 - [x] Provenance + signed releases via `npm publish --provenance` on tag. (`.github/workflows/release.yml`)
 - [ ] Changesets or similar for semver + CHANGELOG generation. (Currently using `scripts/bump-version.sh` for lockstep versions.)
-- [ ] `CHANGELOG.md` template + first entry. (Auto-generated GitHub release notes cover most of this.)
+- [x] `CHANGELOG.md` covering v0.0.1 through v0.0.10. (Added end of session 2026-05-06.)
 
 ## Design issues
 
@@ -52,8 +52,11 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 
 ## Productisation (later, not pre-v0.1)
 
-- [ ] `@tickboxhq/cli` — `tickbox init`, `tickbox scan`, `tickbox validate`, `tickbox diff`.
+- [x] `@tickboxhq/cli` first cut — `scan` + `validate`. (Shipped in v0.0.8.)
+- [ ] `tickbox init` — interactive scaffold for new projects.
+- [ ] `tickbox scan --render` — Playwright-based JS-rendered scan.
+- [x] `/ai.txt` generator (in `@tickboxhq/core` since v0.0.6) and Nitro route (in `@tickboxhq/nuxt` since v0.0.6).
+- [ ] `/llms.txt` generator. (Different from `/ai.txt` — `llms.txt` is a curated-index file for AI consumption, not an opt-out.)
 - [ ] Cloud beacon — POST consent events to audit-log endpoint.
-- [ ] `/ai.txt` and `/llms.txt` generators (probably as Nitro plugin in `@tickboxhq/nuxt` first, then Edge Worker).
-- [ ] Hosted dashboard (later).
+- [ ] Hosted dashboard.
 - [ ] Bundle a default styled banner (`<ConsentBannerDefault>`) for users who don't want to bring their own design system.
