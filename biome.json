@@ -23,6 +23,18 @@
       }
     }
   },
+  "overrides": [
+    {
+      "include": ["packages/banner-default/src/react/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

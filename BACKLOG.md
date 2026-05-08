@@ -59,4 +59,4 @@ Things to polish before v0.1 / first paying customer. Not blockers for own-dogfo
 - [ ] `/llms.txt` generator. (Different from `/ai.txt` — `llms.txt` is a curated-index file for AI consumption, not an opt-out.)
 - [ ] Cloud beacon — POST consent events to audit-log endpoint.
 - [ ] Hosted dashboard.
-- [ ] Bundle a default styled banner (`<ConsentBannerDefault>`) for users who don't want to bring their own design system.
+- [x] Bundle a default styled banner — shipped as `@tickboxhq/banner-default` with `<ConsentBannerDefault>` + `<ConsentNoticeDefault>` for React and Vue. GitHub-ish look, themeable via CSS custom properties.

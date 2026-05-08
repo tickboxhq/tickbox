@@ -2,28 +2,17 @@
 
 This file is the working "what to pick up next" doc. The full backlog lives in `BACKLOG.md`. This is the prioritised slice.
 
-## State at end of session 2026-05-06
+## State at end of session 2026-05-08
 
-- Five npm packages published at `0.0.10`: `@tickboxhq/{core,react,vue,nuxt,cli}`
-- 65 tests passing (50 core + 10 cli + 3 react + 2 vue)
-- CI + release workflows green and self-validating
-- Three production sites running Tickbox: `tinysystems.io` (manager), `pictag.io` (PECR-correct GA), `smesolutions.uk` (AI training opt-out only)
-- README humanised, `examples/` folder has 5 frameworks × 3 scenarios
-- `BACKLOG.md` tracks all polish items
+- Six npm packages: `@tickboxhq/{core,react,vue,nuxt,cli}@0.0.11` plus `@tickboxhq/banner-default` queued for release alongside the next bump
+- 88 tests passing (59 core + 10 cli + 3 react + 2 vue + 14 banner-default)
+- CI + release workflows green and self-validating; release.yml updated to publish banner-default after vue
+- Three production sites running Tickbox: `tinysystems.io` (manager, simplified to use `noticeOpen` flag), `pictag.io` (PECR-correct GA), `smesolutions.uk` (AI training opt-out only)
+- `BACKLOG.md` tracks all remaining polish items
 
 ## Top picks for the next session
 
-### 1. Banner UX for `notice` mode in the store
-
-**Problem:** The store's `shouldShowBanner()` only opens the banner for `consent` mode categories. For `notice` mode (DUAA-exempt analytics), the banner stays closed by default. Today the workaround is a custom `storedAt === null` check — used in the `manager` app's `ConsentNotice.vue` — to drive a separate notice UI.
-
-**Fix:** Add first-class support for opening the notice card on first visit. Maybe a new `noticeOpen` field on `ConsentState`, or extend `isOpen` to encode "consent vs. notice" instead of a single boolean. Either way the SDK should drive it, not the user.
-
-**Acceptance:** A site with only DUAA-exempt analytics (Plausible, GoatCounter, etc.) sees a notice card on first visit without writing a `storedAt === null` watcher. Existing manager app integration simplifies to one prop.
-
-**Estimate:** half a day.
-
-### 2. Documentation site at `docs.tickbox.dev`
+### 1. Documentation site at `docs.tickbox.dev`
 
 **Problem:** README is ~280 lines and growing. It tries to be a pitch, install guide, API reference, and FAQ at once.
 

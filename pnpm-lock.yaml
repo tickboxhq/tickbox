@@ -15,6 +15,46 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  packages/banner-default:
+    dependencies:
+      '@tickboxhq/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@testing-library/react':
+        specifier: ^16.1.0
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@tickboxhq/react':
+        specifier: workspace:*
+        version: link:../react
+      '@tickboxhq/vue':
+        specifier: workspace:*
+        version: link:../vue
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.14
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.10(@vue/compiler-dom@3.5.34)(@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
+      happy-dom:
+        specifier: ^15.11.7
+        version: 15.11.7
+      react:
+        specifier: ^19.0.0
+        version: 19.2.5
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.14)(typescript@5.9.3)(yaml@2.8.4)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.17)(happy-dom@15.11.7)(terser@5.46.2)
+      vue:
+        specifier: ^3.5.13
+        version: 3.5.34(typescript@5.9.3)
+
   packages/cli:
     dependencies:
       '@tickboxhq/core':

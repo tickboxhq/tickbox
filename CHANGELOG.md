@@ -5,6 +5,12 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 ## [Unreleased]
 
 ### Added
+- New package: `@tickboxhq/banner-default` — drop-in styled `<ConsentBannerDefault>` and `<ConsentNoticeDefault>` components for sites that don't want to design their own consent UI. GitHub-ish look (system font, 6px corners, subtle border + soft shadow), light/dark via `prefers-color-scheme`, themeable through CSS custom properties. Two sub-entries: `@tickboxhq/banner-default/react` and `@tickboxhq/banner-default/vue`. Equal-prominence Accept/Reject buttons, customise modal with per-category toggles, focus trap and Escape-to-close.
+- 14 new tests covering banner render, modal toggle, copy overrides, and the consent-banner-priority rule for sites that have both modes.
+
+## [0.0.11] - 2026-05-07
+
+### Added
 - First-class support for `notice`-mode UI. New `ConsentState.noticeOpen` flag is set on first visit when a site has only `notice`-mode categories (e.g. UK DUAA-exempt analytics like Plausible / GoatCounter). The consent banner takes priority when both modes are present, so the two flags are mutually exclusive.
 - New `dismissNotice()` method on `ConsentStore` — closes the notice without persisting a decision.
 - New components: `<ConsentNotice>` in `@tickboxhq/react` and `@tickboxhq/vue`. Same headless render-prop pattern as `<ConsentBanner>`, but gates on `noticeOpen` instead of `isOpen`.
