@@ -66,17 +66,13 @@ function BannerInner({
               {copy.policyLinkLabel}
             </a>
           )}
-          <button type="button" className="tb-btn tb-btn-secondary" onClick={() => api.denyAll()}>
+          <button type="button" className="tb-btn tb-btn-equal" onClick={() => api.denyAll()}>
             {copy.rejectLabel}
           </button>
-          <button
-            type="button"
-            className="tb-btn tb-btn-secondary"
-            onClick={() => setShowModal(true)}
-          >
+          <button type="button" className="tb-btn tb-btn-ghost" onClick={() => setShowModal(true)}>
             {copy.customiseLabel}
           </button>
-          <button type="button" className="tb-btn tb-btn-primary" onClick={() => api.grantAll()}>
+          <button type="button" className="tb-btn tb-btn-equal" onClick={() => api.grantAll()}>
             {copy.acceptLabel}
           </button>
         </div>
@@ -191,7 +187,7 @@ function CustomiseModal({
           })}
         </div>
         <div className="tb-modal-foot">
-          <button type="button" className="tb-btn tb-btn-secondary" onClick={() => api.denyAll()}>
+          <button type="button" className="tb-btn tb-btn-equal" onClick={() => api.denyAll()}>
             {copy.rejectLabel}
           </button>
           <button type="button" className="tb-btn tb-btn-primary" onClick={() => api.save()}>

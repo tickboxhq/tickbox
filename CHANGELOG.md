@@ -5,8 +5,15 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 ## [Unreleased]
 
 ### Added
-- New package: `@tickboxhq/banner-default` — drop-in styled `<ConsentBannerDefault>` and `<ConsentNoticeDefault>` components for sites that don't want to design their own consent UI. GitHub-ish look (system font, 6px corners, subtle border + soft shadow), light/dark via `prefers-color-scheme`, themeable through CSS custom properties. Two sub-entries: `@tickboxhq/banner-default/react` and `@tickboxhq/banner-default/vue`. Equal-prominence Accept/Reject buttons, customise modal with per-category toggles, focus trap and Escape-to-close.
-- 14 new tests covering banner render, modal toggle, copy overrides, and the consent-banner-priority rule for sites that have both modes.
+- New package: `@tickboxhq/banner-default` — drop-in styled `<ConsentBannerDefault>` and `<ConsentNoticeDefault>` components for sites that don't want to design their own consent UI. GitHub-ish look (system font, 6px corners, subtle border + soft shadow), light/dark via `prefers-color-scheme`, themeable through CSS custom properties. Two sub-entries: `@tickboxhq/banner-default/react` and `@tickboxhq/banner-default/vue`. Customise modal with per-category toggles, focus trap and Escape-to-close.
+- New `ConsentSlotApi` type exported from `@tickboxhq/vue` — describes the snapshot of plain values passed to `<ConsentBanner>` and `<ConsentNotice>` slot scopes (distinct from `ConsentApi`, which is the reactive shape returned by `useConsent()`).
+- 15 tests covering banner render, modal toggle, copy overrides, the consent-banner-priority rule, and a regression test for the Vue customise click.
+
+### Fixed
+- **Equal-prominence design for Accept All / Reject All.** Previous v0.0.12 release styled Accept All as a primary button (dark grey) and Reject All as secondary (white with border), which violates UK ICO and EU EDPB guidance treating unequal visual weight on consent buttons as a dark pattern. Both buttons now use the new `.tb-btn-equal` class with identical styling. Customise is rendered as a ghost button to differentiate it as a different *kind* of action. README documents the rule and how to brand-style without breaking it.
+- Vue `<ConsentBannerDefault>` modal didn't open when Customise was clicked. The `showModal` ref lived in the outer component's setup, but the slot-only render boundary didn't track it. Fixed by extracting an inner `BannerInner` component that owns the state in the same scope as the render.
+- Vue `<ConsentBanner>` slot now exposes `noticeOpen` and `dismissNotice` for parity with `<ConsentNotice>` (was missing despite being in the type).
+- Vue banner-default no longer accesses `.value` on slot api fields — the `<ConsentBanner>` and `<ConsentNotice>` slots pass unwrapped snapshots, not refs. The old code happened to type-check via the misnamed `ConsentApi` type but would have crashed at runtime had a user ever opened the customise modal.
 
 ## [0.0.11] - 2026-05-07
 

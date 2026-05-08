@@ -1,4 +1,4 @@
-import type { ConsentApi } from '@tickboxhq/vue'
+import type { ConsentSlotApi } from '@tickboxhq/vue'
 import { ConsentBanner } from '@tickboxhq/vue'
 import { type PropType, defineComponent, h, onMounted, ref } from 'vue'
 import { type BannerCopy, DEFAULT_BANNER_COPY } from '../shared/copy.js'
@@ -14,6 +14,11 @@ export type ConsentBannerDefaultProps = {
  * Drop-in styled consent banner for Vue. Mounts only when the headless
  * `<ConsentBanner>` says it should be open. "Customise" opens a modal
  * with per-category toggles.
+ *
+ * Equal-prominence design: Accept All and Reject All use identical button
+ * styling. UK ICO and EU EDPB guidance treats unequal visual weight on
+ * those buttons as a dark pattern. Customise is rendered as a ghost button
+ * so the two consent paths stay symmetrical.
  *
  * @example
  * ```vue
@@ -35,83 +40,101 @@ export const ConsentBannerDefault = defineComponent({
   },
   setup(props) {
     onMounted(() => injectStyles())
-    const showModal = ref(false)
     return () =>
       h(ConsentBanner, null, {
-        default: (api: unknown) => renderBanner(api as ConsentApi, props, showModal),
+        default: (api: unknown) =>
+          h(BannerInner, {
+            api: api as ConsentSlotApi,
+            userCopy: props.copy ?? {},
+            policyUrl: props.policyUrl,
+            theme: props.theme,
+          }),
       })
   },
 })
 
-function renderBanner(
-  api: ConsentApi,
-  props: ConsentBannerDefaultProps,
-  showModal: ReturnType<typeof ref<boolean>>,
-) {
-  const copy: BannerCopy = { ...DEFAULT_BANNER_COPY, ...(props.copy ?? {}) }
+/**
+ * Inner component that owns `showModal` state. Keeping it in the same
+ * scope as the render guarantees Vue's reactivity wires up correctly
+ * (slot-only render functions don't track refs from outer scopes).
+ */
+const BannerInner = defineComponent({
+  name: 'ConsentBannerDefaultInner',
+  props: {
+    api: { type: Object as PropType<ConsentSlotApi>, required: true },
+    userCopy: { type: Object as PropType<Partial<BannerCopy>>, required: true },
+    policyUrl: { type: String as PropType<string | undefined>, default: undefined },
+    theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
+  },
+  setup(props) {
+    const showModal = ref(false)
 
-  const themeAttrs = props.theme ? { 'data-tb-theme': props.theme } : {}
+    return () => {
+      const copy: BannerCopy = { ...DEFAULT_BANNER_COPY, ...props.userCopy }
+      const themeAttrs = props.theme ? { 'data-tb-theme': props.theme } : {}
 
-  return h('div', null, [
-    h(
-      'div',
-      {
-        class: 'tb-root tb-banner',
-        role: 'region',
-        'aria-label': copy.title,
-        ...themeAttrs,
-      },
-      [
-        h('div', { class: 'tb-banner-text' }, [
-          h('p', { class: 'tb-banner-title' }, copy.title),
-          h('p', { class: 'tb-banner-desc' }, copy.description),
-        ]),
-        h('div', { class: 'tb-banner-actions' }, [
-          props.policyUrl
-            ? h('a', { class: 'tb-link', href: props.policyUrl }, copy.policyLinkLabel)
-            : null,
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'tb-btn tb-btn-secondary',
-              onClick: () => api.denyAll(),
-            },
-            copy.rejectLabel,
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'tb-btn tb-btn-secondary',
-              onClick: () => {
-                showModal.value = true
-              },
-            },
-            copy.customiseLabel,
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'tb-btn tb-btn-primary',
-              onClick: () => api.grantAll(),
-            },
-            copy.acceptLabel,
-          ),
-        ]),
-      ],
-    ),
-    showModal.value
-      ? renderModal(api, copy, props.theme, () => {
-          showModal.value = false
-        })
-      : null,
-  ])
-}
+      return h('div', null, [
+        h(
+          'div',
+          {
+            class: 'tb-root tb-banner',
+            role: 'region',
+            'aria-label': copy.title,
+            ...themeAttrs,
+          },
+          [
+            h('div', { class: 'tb-banner-text' }, [
+              h('p', { class: 'tb-banner-title' }, copy.title),
+              h('p', { class: 'tb-banner-desc' }, copy.description),
+            ]),
+            h('div', { class: 'tb-banner-actions' }, [
+              props.policyUrl
+                ? h('a', { class: 'tb-link', href: props.policyUrl }, copy.policyLinkLabel)
+                : null,
+              h(
+                'button',
+                {
+                  type: 'button',
+                  class: 'tb-btn tb-btn-equal',
+                  onClick: () => props.api.denyAll(),
+                },
+                copy.rejectLabel,
+              ),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  class: 'tb-btn tb-btn-ghost',
+                  onClick: () => {
+                    showModal.value = true
+                  },
+                },
+                copy.customiseLabel,
+              ),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  class: 'tb-btn tb-btn-equal',
+                  onClick: () => props.api.grantAll(),
+                },
+                copy.acceptLabel,
+              ),
+            ]),
+          ],
+        ),
+        showModal.value
+          ? renderModal(props.api, copy, props.theme, () => {
+              showModal.value = false
+            })
+          : null,
+      ])
+    }
+  },
+})
 
 function renderModal(
-  api: ConsentApi,
+  api: ConsentSlotApi,
   copy: BannerCopy,
   theme: 'light' | 'dark' | undefined,
   onClose: () => void,
@@ -157,8 +180,8 @@ function renderModal(
           h(
             'div',
             { class: 'tb-modal-body' },
-            api.resolved.value.map((cat) => {
-              const checked = api.decisions.value[cat.id] === true
+            api.resolved.map((cat) => {
+              const checked = api.decisions[cat.id] === true
               const id = `tb-cat-${cat.id}`
               return h('div', { key: cat.id, class: 'tb-cat' }, [
                 h('div', { class: 'tb-cat-text' }, [
@@ -192,7 +215,7 @@ function renderModal(
               'button',
               {
                 type: 'button',
-                class: 'tb-btn tb-btn-secondary',
+                class: 'tb-btn tb-btn-equal',
                 onClick: () => api.denyAll(),
               },
               copy.rejectLabel,

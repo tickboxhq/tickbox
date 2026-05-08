@@ -1,4 +1,4 @@
-export { ConsentBanner } from './banner.js'
+export { ConsentBanner, type ConsentSlotApi } from './banner.js'
 export { ConsentStoreKey } from './keys.js'
 export { ConsentNotice } from './notice.js'
 export { ConsentProvider } from './provider.js'

@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue'
+import type { ConsentSlotApi } from './banner.js'
 import { useConsent } from './use-consent.js'
 
 /**
@@ -27,7 +28,7 @@ export const ConsentNotice = defineComponent({
     const api = useConsent()
     return () => {
       if (!api.ready.value || !api.noticeOpen.value) return null
-      return slots.default?.({
+      const slotApi: ConsentSlotApi = {
         ready: api.ready.value,
         isOpen: api.isOpen.value,
         noticeOpen: api.noticeOpen.value,
@@ -44,7 +45,8 @@ export const ConsentNotice = defineComponent({
         close: api.close,
         dismissNotice: api.dismissNotice,
         isGranted: api.isGranted,
-      })
+      }
+      return slots.default?.(slotApi)
     }
   },
 })

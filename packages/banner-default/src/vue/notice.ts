@@ -1,4 +1,4 @@
-import type { ConsentApi } from '@tickboxhq/vue'
+import type { ConsentSlotApi } from '@tickboxhq/vue'
 import { ConsentNotice } from '@tickboxhq/vue'
 import { type PropType, defineComponent, h, onMounted } from 'vue'
 import { DEFAULT_NOTICE_COPY, type NoticeCopy } from '../shared/copy.js'
@@ -28,12 +28,12 @@ export const ConsentNoticeDefault = defineComponent({
     onMounted(() => injectStyles())
     return () =>
       h(ConsentNotice, null, {
-        default: (api: unknown) => renderNotice(api as ConsentApi, props),
+        default: (api: unknown) => renderNotice(api as ConsentSlotApi, props),
       })
   },
 })
 
-function renderNotice(api: ConsentApi, props: ConsentNoticeDefaultProps) {
+function renderNotice(api: ConsentSlotApi, props: ConsentNoticeDefaultProps) {
   const copy: NoticeCopy = { ...DEFAULT_NOTICE_COPY, ...(props.copy ?? {}) }
   const optOutId = props.optOutCategoryId ?? 'analytics'
 
@@ -61,7 +61,7 @@ function renderNotice(api: ConsentApi, props: ConsentNoticeDefaultProps) {
             type: 'button',
             class: 'tb-btn tb-btn-secondary',
             onClick: () => {
-              if (api.resolved.value.some((r) => r.id === optOutId)) {
+              if (api.resolved.some((r) => r.id === optOutId)) {
                 api.deny(optOutId)
               }
               api.save()

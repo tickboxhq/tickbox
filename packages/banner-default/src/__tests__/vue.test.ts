@@ -64,6 +64,19 @@ describe('ConsentBannerDefault (Vue)', () => {
     expect(wrapper.text()).not.toContain('Cookies and tracking')
   })
 
+  it('opens the customise modal when Customise is clicked', async () => {
+    const wrapper = mount(wrap(consentConfig, ConsentBannerDefault as never))
+    await nextTick()
+    expect(wrapper.text()).not.toContain('Save preferences')
+    const customise = wrapper.findAll('button').find((b) => b.text() === 'Customise')
+    expect(customise).toBeTruthy()
+    await customise!.trigger('click')
+    await nextTick()
+    expect(wrapper.text()).toContain('Save preferences')
+    // Banner should still be present alongside the modal
+    expect(wrapper.text()).toContain('Cookies and tracking')
+  })
+
   it('does not render when there is no consent-mode category', async () => {
     const wrapper = mount(wrap(noticeConfig, ConsentBannerDefault as never))
     await nextTick()

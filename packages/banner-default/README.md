@@ -98,6 +98,22 @@ The full set: `--tb-bg`, `--tb-fg`, `--tb-fg-muted`, `--tb-border`, `--tb-shadow
 
 Light/dark follows `prefers-color-scheme`. Pass `theme="light"` or `theme="dark"` to override.
 
+### Equal prominence — read this before re-styling
+
+Accept All and Reject All on the first banner layer use the `.tb-btn-equal` class and look identical by default. This is deliberate. UK ICO and EU EDPB guidance treats unequal visual weight on those buttons as a dark pattern, and ICO has fined sites for it.
+
+If you want to add brand colours, apply them to `.tb-btn-equal` so both buttons change together:
+
+```css
+.tb-root .tb-btn-equal {
+  background: #0070c4;
+  color: #fff;
+  border-color: #0070c4;
+}
+```
+
+Do NOT use `--tb-primary-bg` to brand the Accept button alone — `--tb-primary-bg` is reserved for the modal Save button (a second-layer action where the user has already engaged with the customise flow, so equal-prominence rules don't apply the same way). Overriding it won't affect the first-layer banner buttons.
+
 ## Banner vs notice
 
 Use the banner when you have any `consent`-mode categories — most EU sites. It's a bottom bar with Accept all / Reject all / Customise, and Customise opens a modal with per-category toggles.

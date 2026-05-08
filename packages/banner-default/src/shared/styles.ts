@@ -169,6 +169,18 @@ export const TICKBOX_STYLES = `
   border-color: var(--tb-border);
 }
 .tb-btn-secondary:hover { background: var(--tb-secondary-bg-hover); }
+/*
+ * Style for Accept All and Reject All on the first banner layer. They MUST
+ * look identical — UK ICO and EU EDPB treat unequal visual weight on those
+ * buttons as a dark pattern. Customisation should not break this symmetry;
+ * if you need to apply brand colours, apply them here, not to one button.
+ */
+.tb-btn-equal {
+  background: var(--tb-secondary-bg);
+  color: var(--tb-secondary-fg);
+  border-color: var(--tb-border);
+}
+.tb-btn-equal:hover { background: var(--tb-secondary-bg-hover); }
 .tb-btn-ghost {
   background: transparent;
   color: var(--tb-fg-muted);
