@@ -8,6 +8,7 @@ export default defineConfig({
       title: 'Tickbox',
       description:
         'Developer-first cookie consent SDK for the UK and EU. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.',
+      customCss: ['./src/styles/custom.css'],
       logo: {
         src: './src/assets/logo.svg',
         replacesTitle: false,

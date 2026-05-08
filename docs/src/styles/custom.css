@@ -1,0 +1,36 @@
+/* Tighten Starlight's default font scale — defaults read too large on
+   wide screens, especially headings. Numbers picked to be readable but
+   not shouty. */
+:root {
+  --sl-text-base: 0.95rem;
+  --sl-text-sm: 0.85rem;
+  --sl-text-xs: 0.75rem;
+  --sl-text-lg: 1.05rem;
+  --sl-text-xl: 1.2rem;
+  --sl-text-2xl: 1.4rem;
+  --sl-text-3xl: 1.65rem;
+  --sl-text-4xl: 1.95rem;
+  --sl-text-5xl: 2.25rem;
+  --sl-text-6xl: 2.6rem;
+  --sl-text-h1: 1.95rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.2rem;
+  --sl-text-h4: 1.05rem;
+  --sl-text-h5: 0.95rem;
+  --sl-line-height: 1.6;
+  --sl-line-height-headings: 1.3;
+}
+
+/* Stop tables from wrapping inline code mid-word. Prefers shrinking the
+   first column (usually package/option names) to keeping the package
+   name on one line. */
+.sl-markdown-content table code {
+  white-space: nowrap;
+}
+
+/* Slightly tighter content max-width so paragraphs are readable on
+   wide displays. Starlight's default is ~46rem; bumping a touch wider
+   to fit code blocks comfortably. */
+:root {
+  --sl-content-width: 50rem;
+}
