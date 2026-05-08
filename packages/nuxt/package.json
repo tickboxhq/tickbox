@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/nuxt",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Nuxt 3/4 module for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",

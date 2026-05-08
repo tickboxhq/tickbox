@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/banner-default",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Drop-in styled consent banner and notice components for Tickbox",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
@@ -41,10 +41,18 @@
     "vue": "^3.4.0"
   },
   "peerDependenciesMeta": {
-    "@tickboxhq/react": { "optional": true },
-    "@tickboxhq/vue": { "optional": true },
-    "react": { "optional": true },
-    "vue": { "optional": true }
+    "@tickboxhq/react": {
+      "optional": true
+    },
+    "@tickboxhq/vue": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",
