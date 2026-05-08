@@ -6,7 +6,16 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["dist", "node_modules", ".turbo", "coverage", "*.log", "examples"]
+    "ignore": [
+      "dist",
+      "node_modules",
+      ".turbo",
+      "coverage",
+      "*.log",
+      "examples",
+      ".astro",
+      "docs/.astro"
+    ]
   },
   "formatter": {
     "enabled": true,

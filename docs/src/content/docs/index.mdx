@@ -1,0 +1,64 @@
+---
+title: Tickbox
+description: Developer-first cookie consent SDK for the UK and EU. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.
+template: splash
+hero:
+  tagline: A developer-first cookie consent SDK for the UK and EU. PECR-correct script gating, Google Consent Mode v2, AI training opt-out — out of the box.
+  actions:
+    - text: Get started
+      link: /getting-started/overview/
+      icon: right-arrow
+      variant: primary
+    - text: GitHub
+      link: https://github.com/tickboxhq/tickbox
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## What it does
+
+<CardGrid>
+  <Card title="UK and EU jurisdictions" icon="approve-check">
+    Built-in presets for UK Data (Use and Access) Act 2025 and EU GDPR. UK sites running only privacy-friendly analytics get a notice card; full consent banner kicks in for ad and tracking vendors.
+  </Card>
+  <Card title="PECR-correct gating" icon="shield">
+    Real script-tag gating with `type="text/plain" data-tb-category`. No pre-consent network requests, even with Google Consent Mode v2 default-denied. Compliance scanners pass.
+  </Card>
+  <Card title="Headless or styled" icon="puzzle">
+    Headless render-prop components for full control, or drop-in `<ConsentBannerDefault>` for a working consent UI in two lines of code.
+  </Card>
+  <Card title="AI training opt-out" icon="rocket">
+    `/ai.txt` (Spawning.ai format) and per-bot `robots.txt` rules generated from the same config. Pairs with EU AI Act Article 53 (in force August 2026).
+  </Card>
+</CardGrid>
+
+## Install
+
+```bash
+# pick your framework
+npm install @tickboxhq/react       # React / Next.js
+npm install @tickboxhq/vue         # Vue 3
+npm install @tickboxhq/nuxt        # Nuxt module
+npm install @tickboxhq/core        # vanilla JS / other frameworks
+```
+
+## Five-line example
+
+```ts
+import { defineConsent, jurisdictions } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: { version: '2026-05-08', url: '/privacy' },
+  categories: {
+    necessary: { required: true },
+    analytics: { vendors: ['plausible'], default: true },
+  },
+})
+```
+
+That's a UK site running Plausible. No banner — UK DUAA's statistical-purposes exemption covers it. Just a one-time notice card. Add Google Ads and the SDK switches the same site to a full opt-in flow on its own.
+
+→ [Get started](/getting-started/overview/)
