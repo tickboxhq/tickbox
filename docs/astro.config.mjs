@@ -44,7 +44,19 @@ export default defineConfig({
         },
         {
           label: 'Recipes',
-          items: [{ label: 'Google Analytics (PECR-correct)', slug: 'recipes/google-analytics' }],
+          items: [
+            { label: 'Google Analytics (PECR-correct)', slug: 'recipes/google-analytics' },
+            { label: 'Plausible / GoatCounter', slug: 'recipes/plausible-goatcounter' },
+            { label: 'Multi-jurisdiction (UK + EU)', slug: 'recipes/multi-jurisdiction' },
+            { label: 'Cloudflare bot blocking', slug: 'recipes/cloudflare-bots' },
+          ],
+        },
+        {
+          label: 'Migrations',
+          items: [
+            { label: 'From OneTrust', slug: 'migrations/onetrust' },
+            { label: 'From Cookiebot', slug: 'migrations/cookiebot' },
+          ],
         },
       ],
       head: [
