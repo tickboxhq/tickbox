@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/core",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Core types, jurisdictions, and storage primitives for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
