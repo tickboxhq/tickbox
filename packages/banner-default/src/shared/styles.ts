@@ -68,6 +68,8 @@ export const TICKBOX_STYLES = `
   left: 16px;
   right: 16px;
   bottom: 16px;
+  max-width: 1100px;
+  margin-inline: auto;
   z-index: var(--tb-z);
   background: var(--tb-bg);
   color: var(--tb-fg);
@@ -97,6 +99,7 @@ export const TICKBOX_STYLES = `
 }
 .tb-banner-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }

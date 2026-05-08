@@ -4,6 +4,12 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+### Fixed
+- Banner stretched edge-to-edge on wide screens. Added `max-width: 1100px` plus `margin-inline: auto` so the banner stays centred and readable on ultrawide displays.
+- Privacy policy link sat on a different baseline from the action buttons. Added `align-items: center` to `.tb-banner-actions`.
+
+## [0.0.13] - 2026-05-08
+
 ### Added
 - New package: `@tickboxhq/banner-default` — drop-in styled `<ConsentBannerDefault>` and `<ConsentNoticeDefault>` components for sites that don't want to design their own consent UI. GitHub-ish look (system font, 6px corners, subtle border + soft shadow), light/dark via `prefers-color-scheme`, themeable through CSS custom properties. Two sub-entries: `@tickboxhq/banner-default/react` and `@tickboxhq/banner-default/vue`. Customise modal with per-category toggles, focus trap and Escape-to-close.
 - New `ConsentSlotApi` type exported from `@tickboxhq/vue` — describes the snapshot of plain values passed to `<ConsentBanner>` and `<ConsentNotice>` slot scopes (distinct from `ConsentApi`, which is the reactive shape returned by `useConsent()`).
