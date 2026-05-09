@@ -22,4 +22,4 @@ export function CookieBanner() {
 }
 ```
 
-If you already detect locale on the server with `next-intl`, pass it down: `<ConsentBannerDefault locale={locale} />`. Built-in translations: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Full guide and the SSR caveat for `'auto'` are in [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).
+If you already detect locale on the server with `next-intl`, pass it down: `<ConsentBannerDefault locale={locale} />`. Built-in translations: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. Full guide and the SSR caveat for `'auto'` are in [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).

@@ -8,7 +8,7 @@ import { injectStyles } from '../shared/styles.js'
 export type ConsentBannerDefaultProps = {
   /**
    * BCP-47 language tag (`'en'`, `'de'`, `'fr-CH'`, ...) or `'auto'`.
-   * Built-in: en, de, fr, es, it, nl, pt, pl. Falls back from the full
+   * Built-in: en, de, fr, es, it, nl, pt, pl, uk. Falls back from the full
    * tag to the language prefix, then to English.
    */
   locale?: string

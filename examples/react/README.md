@@ -18,4 +18,4 @@ import config from './consent.config'
 <ConsentBannerDefault locale="auto" policyUrl={config.policy?.url} />
 ```
 
-Translations included: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag (`fr-CH` falls back to `fr`) or `'auto'` to read `navigator.language`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).
+Translations included: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. Pass any BCP-47 tag (`fr-CH` falls back to `fr`, `uk-UA` to `uk`) or `'auto'` to read `navigator.language`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).

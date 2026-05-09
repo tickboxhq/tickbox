@@ -7,6 +7,7 @@ import * as it from './it.js'
 import * as nl from './nl.js'
 import * as pl from './pl.js'
 import * as pt from './pt.js'
+import * as uk from './uk.js'
 
 export type LocalePack = {
   banner: BannerCopy
@@ -22,6 +23,7 @@ export const locales: Record<string, LocalePack> = {
   nl: { banner: nl.banner, notice: nl.notice },
   pt: { banner: pt.banner, notice: pt.notice },
   pl: { banner: pl.banner, notice: pl.notice },
+  uk: { banner: uk.banner, notice: uk.notice },
 }
 
 export type LocaleCode = keyof typeof locales

@@ -9,7 +9,7 @@ export type ConsentBannerDefaultProps = {
    * BCP-47 language tag (`'en'`, `'de'`, `'fr-CH'`, ...) or `'auto'` to
    * read from `navigator.language`. Falls back from the full tag to the
    * language prefix, then to English. Built-in: en, de, fr, es, it, nl,
-   * pt, pl.
+   * pt, pl, uk.
    */
   locale?: string
   /**

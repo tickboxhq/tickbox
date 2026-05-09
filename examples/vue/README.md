@@ -22,4 +22,4 @@ import config from './consent.config'
 </template>
 ```
 
-Translations included: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag or `'auto'`. If you already use `vue-i18n`, bind the active locale: `<ConsentBannerDefault :locale="locale" />`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).
+Translations included: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. Pass any BCP-47 tag or `'auto'`. If you already use `vue-i18n`, bind the active locale: `<ConsentBannerDefault :locale="locale" />`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).

@@ -10,6 +10,12 @@ describe('resolveLocalePack', () => {
     expect(resolveLocalePack('de').banner.acceptLabel).toBe('Alle akzeptieren')
   })
 
+  it('resolves Ukrainian (uk)', () => {
+    expect(resolveLocalePack('uk').banner.acceptLabel).toBe('Прийняти всі')
+    expect(resolveLocalePack('uk-UA').banner.acceptLabel).toBe('Прийняти всі')
+    expect(resolveLocalePack('uk').notice.acknowledgeLabel).toBe('Зрозуміло')
+  })
+
   it('falls back from BCP-47 tag to language prefix', () => {
     expect(resolveLocalePack('pt-BR').banner.acceptLabel).toBe('Aceitar tudo')
     expect(resolveLocalePack('de-AT').banner.acceptLabel).toBe('Alle akzeptieren')

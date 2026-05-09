@@ -85,7 +85,7 @@ Both components accept the same shape:
 
 ## Languages
 
-Built-in: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag — `'fr-CH'` resolves to `'fr'`, `'pt-BR'` to `'pt'`, unknown locales to English.
+Built-in: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. Pass any BCP-47 tag — `'fr-CH'` resolves to `'fr'`, `'pt-BR'` to `'pt'`, `'uk-UA'` to `'uk'`, unknown locales to English.
 
 ```tsx
 <ConsentBannerDefault locale="de" />

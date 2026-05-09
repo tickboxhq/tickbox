@@ -38,4 +38,4 @@ import { ConsentBannerDefault } from '@tickboxhq/banner-default/react'
 <ConsentBannerDefault locale="auto" policyUrl="/privacy" />
 ```
 
-It ships with translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. BCP-47 tags work (`fr-CH` → `fr`); unknown locales fall back to English. See the [i18n recipe](https://docs.tickbox.dev/recipes/i18n/) for details on auto-detect, integrating with `next-intl` / `vue-i18n`, and shipping your own translations.
+It ships with translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. BCP-47 tags work (`fr-CH` → `fr`, `uk-UA` → `uk`); unknown locales fall back to English. See the [i18n recipe](https://docs.tickbox.dev/recipes/i18n/) for details on auto-detect, integrating with `next-intl` / `vue-i18n`, and shipping your own translations.

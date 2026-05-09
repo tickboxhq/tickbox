@@ -63,7 +63,7 @@ export function CookieBar() {
 }
 ```
 
-If you'd rather not design one, drop in the default styled banner — see [Default styled banner](/getting-started/banner-default/). It ships with built-in translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl` and a `'auto'` mode that reads `navigator.language`. Multi-language details in the [i18n recipe](/recipes/i18n/).
+If you'd rather not design one, drop in the default styled banner — see [Default styled banner](/getting-started/banner-default/). It ships with built-in translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk` and a `'auto'` mode that reads `navigator.language`. Multi-language details in the [i18n recipe](/recipes/i18n/).
 
 ## Reading consent in components
 

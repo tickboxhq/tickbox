@@ -4,6 +4,11 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.0.17] - 2026-05-09
+
+### Added
+- `@tickboxhq/banner-default`: Ukrainian (`uk`) translation. `<ConsentBannerDefault locale="uk" />` and `<ConsentNoticeDefault locale="uk" />` render the banner and notice in Ukrainian. `'uk-UA'` falls back to `'uk'` via the existing BCP-47 prefix logic. The locale list is now nine: en, de, fr, es, it, nl, pt, pl, uk.
+
 ## [0.0.16] - 2026-05-09
 
 ### Added

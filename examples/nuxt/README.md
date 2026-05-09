@@ -25,4 +25,4 @@ import config from '~/consent.config'
 </script>
 ```
 
-If you use `@nuxtjs/i18n`, forward `locale` directly: `<ConsentBannerDefault :locale="$i18n.locale" />`. Built-in translations: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).
+If you use `@nuxtjs/i18n`, forward `locale` directly: `<ConsentBannerDefault :locale="$i18n.locale" />`. Built-in translations: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).
