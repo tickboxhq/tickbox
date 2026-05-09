@@ -18,24 +18,7 @@ export type NoticeCopy = {
   policyLinkLabel: string
 }
 
-export const DEFAULT_BANNER_COPY: BannerCopy = {
-  title: 'Cookies and tracking',
-  description:
-    'We use cookies to make this site work and, with your consent, to measure usage. You can choose what to allow.',
-  acceptLabel: 'Accept all',
-  rejectLabel: 'Reject all',
-  customiseLabel: 'Customise',
-  saveLabel: 'Save preferences',
-  closeLabel: 'Close',
-  policyLinkLabel: 'Privacy policy',
-  requiredBadge: 'Required',
-}
-
-export const DEFAULT_NOTICE_COPY: NoticeCopy = {
-  title: 'A note about analytics',
-  description:
-    'We use privacy-friendly analytics to understand how this site is used. No personal data is collected and no advertising profiles are built.',
-  acknowledgeLabel: 'Got it',
-  optOutLabel: 'Opt out',
-  policyLinkLabel: 'Privacy policy',
-}
+// Defaults are re-exported from the English locale pack so the two stay in
+// sync. Pass `locale="..."` on the components to switch language; pass
+// `copy={{ ... }}` to override individual strings.
+export { banner as DEFAULT_BANNER_COPY, notice as DEFAULT_NOTICE_COPY } from './locales/en.js'

@@ -1,12 +1,21 @@
 import { type ConsentApi, ConsentBanner } from '@tickboxhq/react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { type BannerCopy, DEFAULT_BANNER_COPY } from '../shared/copy.js'
+import type { BannerCopy } from '../shared/copy.js'
+import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
 
 export type ConsentBannerDefaultProps = {
   /**
-   * Override individual labels and copy strings. Anything you don't pass
-   * falls back to the English defaults.
+   * BCP-47 language tag (`'en'`, `'de'`, `'fr-CH'`, ...) or `'auto'` to
+   * read from `navigator.language`. Falls back from the full tag to the
+   * language prefix, then to English. Built-in: en, de, fr, es, it, nl,
+   * pt, pl.
+   */
+  locale?: string
+  /**
+   * Override individual labels and copy strings. Layered on top of
+   * whichever locale is selected, so you can ship in one language and
+   * tweak a single label.
    */
   copy?: Partial<BannerCopy>
   /**
@@ -44,7 +53,7 @@ function BannerInner({
   api: ConsentApi
   props: ConsentBannerDefaultProps
 }) {
-  const copy: BannerCopy = { ...DEFAULT_BANNER_COPY, ...props.copy }
+  const copy: BannerCopy = { ...resolveLocalePack(props.locale).banner, ...props.copy }
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {

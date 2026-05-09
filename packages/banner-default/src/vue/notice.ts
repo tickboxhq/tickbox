@@ -1,10 +1,12 @@
 import type { ConsentSlotApi } from '@tickboxhq/vue'
 import { ConsentNotice } from '@tickboxhq/vue'
 import { type PropType, defineComponent, h, onMounted } from 'vue'
-import { DEFAULT_NOTICE_COPY, type NoticeCopy } from '../shared/copy.js'
+import type { NoticeCopy } from '../shared/copy.js'
+import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
 
 export type ConsentNoticeDefaultProps = {
+  locale?: string
   copy?: Partial<NoticeCopy>
   policyUrl?: string
   optOutCategoryId?: string
@@ -19,6 +21,7 @@ export type ConsentNoticeDefaultProps = {
 export const ConsentNoticeDefault = defineComponent({
   name: 'ConsentNoticeDefault',
   props: {
+    locale: { type: String as PropType<string | undefined>, default: undefined },
     copy: { type: Object as PropType<Partial<NoticeCopy>>, default: () => ({}) },
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     optOutCategoryId: { type: String, default: 'analytics' },
@@ -34,7 +37,10 @@ export const ConsentNoticeDefault = defineComponent({
 })
 
 function renderNotice(api: ConsentSlotApi, props: ConsentNoticeDefaultProps) {
-  const copy: NoticeCopy = { ...DEFAULT_NOTICE_COPY, ...(props.copy ?? {}) }
+  const copy: NoticeCopy = {
+    ...resolveLocalePack(props.locale).notice,
+    ...(props.copy ?? {}),
+  }
   const optOutId = props.optOutCategoryId ?? 'analytics'
 
   const themeAttrs = props.theme ? { 'data-tb-theme': props.theme } : {}

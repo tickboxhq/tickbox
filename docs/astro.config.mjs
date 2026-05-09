@@ -50,6 +50,7 @@ export default defineConfig({
             { label: 'Plausible / GoatCounter', slug: 'recipes/plausible-goatcounter' },
             { label: 'Multi-jurisdiction (UK + EU)', slug: 'recipes/multi-jurisdiction' },
             { label: 'Cloudflare bot blocking', slug: 'recipes/cloudflare-bots' },
+            { label: 'Internationalisation (i18n)', slug: 'recipes/i18n' },
           ],
         },
         {

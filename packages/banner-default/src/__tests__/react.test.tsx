@@ -82,6 +82,36 @@ describe('ConsentBannerDefault (React)', () => {
     expect(screen.getByText('Yes please')).toBeTruthy()
   })
 
+  it('renders German labels when locale="de"', () => {
+    render(
+      <ConsentProvider config={consentConfig} applyEffects={false}>
+        <ConsentBannerDefault locale="de" />
+      </ConsentProvider>,
+    )
+    expect(screen.getByText('Cookies und Tracking')).toBeTruthy()
+    expect(screen.getByText('Alle akzeptieren')).toBeTruthy()
+    expect(screen.getByText('Alle ablehnen')).toBeTruthy()
+  })
+
+  it('falls back from BCP-47 region tag to language prefix', () => {
+    render(
+      <ConsentProvider config={consentConfig} applyEffects={false}>
+        <ConsentBannerDefault locale="fr-CH" />
+      </ConsentProvider>,
+    )
+    expect(screen.getByText('Tout accepter')).toBeTruthy()
+  })
+
+  it('layers copy override on top of selected locale', () => {
+    render(
+      <ConsentProvider config={consentConfig} applyEffects={false}>
+        <ConsentBannerDefault locale="de" copy={{ acceptLabel: 'Klar!' }} />
+      </ConsentProvider>,
+    )
+    expect(screen.getByText('Klar!')).toBeTruthy()
+    expect(screen.getByText('Alle ablehnen')).toBeTruthy()
+  })
+
   it('does not render when there is no consent-mode category', () => {
     render(
       <ConsentProvider config={noticeConfig} applyEffects={false}>
@@ -102,6 +132,16 @@ describe('ConsentNoticeDefault (React)', () => {
     expect(screen.getByText('A note about analytics')).toBeTruthy()
     expect(screen.getByText('Got it')).toBeTruthy()
     expect(screen.getByText('Opt out')).toBeTruthy()
+  })
+
+  it('renders Italian copy when locale="it"', () => {
+    render(
+      <ConsentProvider config={noticeConfig} applyEffects={false}>
+        <ConsentNoticeDefault locale="it" />
+      </ConsentProvider>,
+    )
+    expect(screen.getByText('Ho capito')).toBeTruthy()
+    expect(screen.getByText('Rifiuta')).toBeTruthy()
   })
 
   it('closes after Got it is clicked', () => {

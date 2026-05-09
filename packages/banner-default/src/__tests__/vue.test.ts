@@ -82,6 +82,26 @@ describe('ConsentBannerDefault (Vue)', () => {
     await nextTick()
     expect(wrapper.text()).not.toContain('Cookies and tracking')
   })
+
+  it('renders Spanish copy when locale="es"', async () => {
+    const localised = defineComponent({
+      setup() {
+        return () =>
+          h(
+            ConsentProvider as never,
+            { config: consentConfig, applyEffects: false },
+            {
+              default: () => h(ConsentBannerDefault, { locale: 'es' }),
+            },
+          )
+      },
+    })
+    const wrapper = mount(localised)
+    await nextTick()
+    expect(wrapper.text()).toContain('Cookies y seguimiento')
+    expect(wrapper.text()).toContain('Aceptar todo')
+    expect(wrapper.text()).toContain('Rechazar todo')
+  })
 })
 
 describe('ConsentNoticeDefault (Vue)', () => {

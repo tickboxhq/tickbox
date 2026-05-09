@@ -54,7 +54,38 @@ import config from './consent.config'
 </template>
 ```
 
+## Languages
+
+Built-in translations: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag — `'fr-CH'` falls back to `'fr'`, `'pt-BR'` to `'pt'`, unknown locales to English.
+
+```tsx
+<ConsentBannerDefault locale="de" policyUrl="/privacy" />
+```
+
+Or read from the browser at render time:
+
+```tsx
+<ConsentBannerDefault locale="auto" />
+```
+
+`'auto'` reads `navigator.language`. On the server (or anywhere `navigator` is missing) it falls back to English, so you usually want this rendered client-side only — wrap in `<ClientOnly>` on Nuxt or behind a `useEffect` mount flag in Next.js if you SSR.
+
+For more control — i18n libraries, server-side detection, runtime tag switching — see the [i18n recipe](/recipes/i18n/).
+
 ## Customise the copy
+
+`copy` overrides individual strings on top of whichever `locale` you've chosen. They compose: pick a language, override one or two labels.
+
+```tsx
+<ConsentBannerDefault
+  locale="de"
+  copy={{
+    acceptLabel: 'Klar, akzeptieren',
+  }}
+/>
+```
+
+Or pass a fully custom set, ignoring the built-ins:
 
 ```tsx
 <ConsentBannerDefault
@@ -63,6 +94,11 @@ import config from './consent.config'
     description: 'We use Google Analytics to understand site usage. You can accept or reject this.',
     acceptLabel: 'Accept all',
     rejectLabel: 'Reject all',
+    customiseLabel: 'Customise',
+    saveLabel: 'Save preferences',
+    closeLabel: 'Close',
+    policyLinkLabel: 'Privacy policy',
+    requiredBadge: 'Required',
   }}
 />
 ```

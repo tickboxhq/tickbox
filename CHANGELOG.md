@@ -4,6 +4,12 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.0.15] - 2026-05-09
+
+### Added
+- `@tickboxhq/banner-default`: built-in translations for **8 locales** — `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass `locale="de"` (or any BCP-47 tag like `'fr-CH'`) on `<ConsentBannerDefault>` and `<ConsentNoticeDefault>`. Pass `locale="auto"` to read `navigator.language` at render time. Locale selection layers under the existing `copy` prop so single-string overrides still work on top of any language. New exports from both sub-entries: `locales`, `resolveLocalePack`, `LocalePack`. 14 new tests.
+- Locale resolution falls back from full BCP-47 tag (`pt-BR`) to language prefix (`pt`), then to English. Unknown locales return English without throwing — translation gaps degrade gracefully.
+
 ### Fixed
 - Banner stretched edge-to-edge on wide screens. Added `max-width: 1100px` plus `margin-inline: auto` so the banner stays centred and readable on ultrawide displays.
 - Privacy policy link sat on a different baseline from the action buttons. Added `align-items: center` to `.tb-banner-actions`.

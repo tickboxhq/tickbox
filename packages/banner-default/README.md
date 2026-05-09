@@ -78,9 +78,27 @@ Both components accept the same shape:
 |---|---|---|---|
 | `policyUrl` | `string` | — | Privacy policy URL. Hidden if omitted. |
 | `theme` | `'light' \| 'dark'` | follows `prefers-color-scheme` | Force a theme. |
-| `copy` | `Partial<BannerCopy>` / `Partial<NoticeCopy>` | English defaults | Override individual labels. |
+| `locale` | `string` | `'en'` | BCP-47 tag, or `'auto'`. See "Languages" below. |
+| `copy` | `Partial<BannerCopy>` / `Partial<NoticeCopy>` | resolved from `locale` | Override individual labels. |
 
 `<ConsentNoticeDefault>` also takes `optOutCategoryId` (default `'analytics'`) — the category to deny when the user clicks "Opt out".
+
+## Languages
+
+Built-in: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag — `'fr-CH'` resolves to `'fr'`, `'pt-BR'` to `'pt'`, unknown locales to English.
+
+```tsx
+<ConsentBannerDefault locale="de" />
+<ConsentBannerDefault locale="auto" /> {/* reads navigator.language */}
+```
+
+`copy` layers on top of the resolved locale, so you can pick a language and tweak one label:
+
+```tsx
+<ConsentBannerDefault locale="de" copy={{ acceptLabel: 'Klar, akzeptieren' }} />
+```
+
+If you need a language not in the built-in set, pass a full `copy` object. PRs adding more locales are welcome — files live in `src/shared/locales/`.
 
 ## Styling
 

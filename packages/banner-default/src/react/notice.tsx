@@ -1,12 +1,17 @@
 import { type ConsentApi, ConsentNotice } from '@tickboxhq/react'
 import { useEffect } from 'react'
-import { DEFAULT_NOTICE_COPY, type NoticeCopy } from '../shared/copy.js'
+import type { NoticeCopy } from '../shared/copy.js'
+import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
 
 export type ConsentNoticeDefaultProps = {
   /**
-   * Override individual labels and copy strings. Anything you don't pass
-   * falls back to the English defaults.
+   * BCP-47 language tag (`'en'`, `'de'`, ...) or `'auto'`. See
+   * `ConsentBannerDefault` for the built-in list.
+   */
+  locale?: string
+  /**
+   * Override individual labels. Layered on top of the resolved locale.
    */
   copy?: Partial<NoticeCopy>
   /** Privacy-policy URL. If omitted, the link is hidden. */
@@ -36,7 +41,7 @@ export function ConsentNoticeDefault(props: ConsentNoticeDefaultProps) {
 }
 
 function NoticeInner({ api, props }: { api: ConsentApi; props: ConsentNoticeDefaultProps }) {
-  const copy: NoticeCopy = { ...DEFAULT_NOTICE_COPY, ...props.copy }
+  const copy: NoticeCopy = { ...resolveLocalePack(props.locale).notice, ...props.copy }
   const optOutId = props.optOutCategoryId ?? 'analytics'
 
   useEffect(() => {

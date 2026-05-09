@@ -1,10 +1,17 @@
 import type { ConsentSlotApi } from '@tickboxhq/vue'
 import { ConsentBanner } from '@tickboxhq/vue'
 import { type PropType, defineComponent, h, onMounted, ref } from 'vue'
-import { type BannerCopy, DEFAULT_BANNER_COPY } from '../shared/copy.js'
+import type { BannerCopy } from '../shared/copy.js'
+import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
 
 export type ConsentBannerDefaultProps = {
+  /**
+   * BCP-47 language tag (`'en'`, `'de'`, `'fr-CH'`, ...) or `'auto'`.
+   * Built-in: en, de, fr, es, it, nl, pt, pl. Falls back from the full
+   * tag to the language prefix, then to English.
+   */
+  locale?: string
   copy?: Partial<BannerCopy>
   policyUrl?: string
   theme?: 'light' | 'dark'
@@ -34,6 +41,7 @@ export type ConsentBannerDefaultProps = {
 export const ConsentBannerDefault = defineComponent({
   name: 'ConsentBannerDefault',
   props: {
+    locale: { type: String as PropType<string | undefined>, default: undefined },
     copy: { type: Object as PropType<Partial<BannerCopy>>, default: () => ({}) },
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
@@ -45,6 +53,7 @@ export const ConsentBannerDefault = defineComponent({
         default: (api: unknown) =>
           h(BannerInner, {
             api: api as ConsentSlotApi,
+            locale: props.locale,
             userCopy: props.copy ?? {},
             policyUrl: props.policyUrl,
             theme: props.theme,
@@ -62,6 +71,7 @@ const BannerInner = defineComponent({
   name: 'ConsentBannerDefaultInner',
   props: {
     api: { type: Object as PropType<ConsentSlotApi>, required: true },
+    locale: { type: String as PropType<string | undefined>, default: undefined },
     userCopy: { type: Object as PropType<Partial<BannerCopy>>, required: true },
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
@@ -70,7 +80,10 @@ const BannerInner = defineComponent({
     const showModal = ref(false)
 
     return () => {
-      const copy: BannerCopy = { ...DEFAULT_BANNER_COPY, ...props.userCopy }
+      const copy: BannerCopy = {
+        ...resolveLocalePack(props.locale).banner,
+        ...props.userCopy,
+      }
       const themeAttrs = props.theme ? { 'data-tb-theme': props.theme } : {}
 
       return h('div', null, [
