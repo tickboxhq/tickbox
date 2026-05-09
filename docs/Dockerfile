@@ -28,24 +28,18 @@ COPY packages/vue/package.json ./packages/vue/
 # install cost only matters during build.
 RUN pnpm install --frozen-lockfile
 
-# Docs build needs package source: starlight-typedoc reads each package via
-# its tsconfig + index entry, and docs/scripts/gen-vendors.mjs reads
-# packages/core/src/jurisdictions/vendors.ts.
+# Docs build needs the SDK package sources: starlight-typedoc walks each
+# package's tsconfig + entry point, and docs/scripts/gen-vendors.mjs reads
+# packages/core/src/jurisdictions/vendors.ts. Bulk-copy the packages
+# directory (.dockerignore excludes node_modules and dist) to pick up
+# every package's src/, tsconfig.json, and tsup.config.ts in one shot.
 COPY tsconfig.base.json ./
-COPY packages/core/src ./packages/core/src
-COPY packages/core/tsconfig.json ./packages/core/
-COPY packages/react/src ./packages/react/src
-COPY packages/react/tsconfig.json ./packages/react/
-COPY packages/vue/src ./packages/vue/src
-COPY packages/vue/tsconfig.json ./packages/vue/
-COPY packages/banner-default/src ./packages/banner-default/src
-COPY packages/banner-default/tsconfig.json ./packages/banner-default/
+COPY packages/ ./packages/
 
 # Build the SDK packages first so their dist/*.d.ts files exist —
 # TypeDoc walks imports like `from '@tickboxhq/core'` via each package's
 # `types` field, which points into dist/. No dist, no types, broken
-# resolution. The packages' own build configs are tsup; `pnpm -r build`
-# runs them all.
+# resolution.
 RUN pnpm -r --filter='./packages/*' build
 
 # Now copy the docs source and build.

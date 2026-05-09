@@ -1,0 +1,16 @@
+node_modules
+dist
+.astro
+docs/dist
+docs/.astro
+coverage
+.turbo
+.cache
+.git
+.github
+.vscode
+.idea
+*.log
+.DS_Store
+.env
+.env.*
