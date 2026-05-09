@@ -41,6 +41,13 @@ COPY packages/vue/tsconfig.json ./packages/vue/
 COPY packages/banner-default/src ./packages/banner-default/src
 COPY packages/banner-default/tsconfig.json ./packages/banner-default/
 
+# Build the SDK packages first so their dist/*.d.ts files exist —
+# TypeDoc walks imports like `from '@tickboxhq/core'` via each package's
+# `types` field, which points into dist/. No dist, no types, broken
+# resolution. The packages' own build configs are tsup; `pnpm -r build`
+# runs them all.
+RUN pnpm -r --filter='./packages/*' build
+
 # Now copy the docs source and build.
 COPY docs/ ./docs/
 WORKDIR /workspace/docs
