@@ -14,7 +14,9 @@
       "*.log",
       "examples",
       ".astro",
-      "docs/.astro"
+      "docs/.astro",
+      "docs/src/content/docs/api",
+      "docs/src/content/docs/concepts/vendors.md"
     ]
   },
   "formatter": {

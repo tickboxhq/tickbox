@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "gen:vendors": "node scripts/gen-vendors.mjs",
+    "predev": "node scripts/gen-vendors.mjs",
+    "prebuild": "node scripts/gen-vendors.mjs",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
@@ -17,5 +20,10 @@
     "astro": "^5.0.0",
     "sharp": "^0.33.5",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "starlight-typedoc": "0.18.0",
+    "typedoc": "~0.27.9",
+    "typedoc-plugin-markdown": "~4.4.2"
   }
 }

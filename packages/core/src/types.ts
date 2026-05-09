@@ -25,7 +25,13 @@ export type CategoryDefinition = {
   mode?: ConsentMode
 }
 
-export type JurisdictionId = 'UK_DUAA' | 'EU_GDPR' | 'US_CA' | 'CCPA' | (string & {})
+/**
+ * Identifier of a jurisdiction preset shipped with `@tickboxhq/core`.
+ *
+ * Today: `'UK_DUAA'` and `'EU_GDPR'`. Custom jurisdictions get arbitrary IDs;
+ * `string & {}` keeps autocomplete on the built-ins while still accepting them.
+ */
+export type JurisdictionId = 'UK_DUAA' | 'EU_GDPR' | (string & {})
 
 export type Jurisdiction = {
   id: JurisdictionId

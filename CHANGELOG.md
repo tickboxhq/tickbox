@@ -4,6 +4,15 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.0.16] - 2026-05-09
+
+### Added
+- **API reference** at [docs.tickbox.dev/api/](https://docs.tickbox.dev/api/) — auto-generated from JSDoc/TSDoc with `starlight-typedoc`. Covers `@tickboxhq/core`, `@tickboxhq/react`, `@tickboxhq/vue`, and both sub-entries of `@tickboxhq/banner-default`. 64 pages: classes, functions, type aliases, props.
+- **Supported vendors page** at [docs.tickbox.dev/concepts/vendors/](https://docs.tickbox.dev/concepts/vendors/) — auto-generated from `packages/core/src/jurisdictions/vendors.ts` on every docs build. Lists all 73 known vendor identifiers grouped by category (privacy-friendly analytics, advertising, session replay, CDP/product analytics, marketing automation, chat widgets, AI training crawlers). Closes the long-standing "what strings can I put in `vendors: [...]`?" gap.
+
+### Changed
+- **`JurisdictionId`** dropped the unshipped `'US_CA'` and `'CCPA'` placeholders. Type now reflects what actually ships: `'UK_DUAA' | 'EU_GDPR' | (string & {})`. Add custom IDs as needed; we'll add `US_CA` back when we actually ship the preset.
+
 ## [0.0.15] - 2026-05-09
 
 ### Added

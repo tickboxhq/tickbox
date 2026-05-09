@@ -1,5 +1,25 @@
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
+import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
+
+const [coreTypeDoc, coreSidebarGroup] = createStarlightTypeDocPlugin()
+const [reactTypeDoc, reactSidebarGroup] = createStarlightTypeDocPlugin()
+const [vueTypeDoc, vueSidebarGroup] = createStarlightTypeDocPlugin()
+const [bannerTypeDoc, bannerSidebarGroup] = createStarlightTypeDocPlugin()
+
+// typedoc-plugin-markdown defaults to .html which Astro's content collection
+// doesn't pick up — force .md. The rest is presentation: render parameters,
+// properties and enum members as tables instead of long bullet lists.
+const sharedTypeDocOptions = {
+  fileExtension: '.md',
+  useCodeBlocks: true,
+  expandObjects: true,
+  parametersFormat: 'table',
+  propertiesFormat: 'table',
+  enumMembersFormat: 'table',
+  typeDeclarationFormat: 'table',
+  indexFormat: 'table',
+}
 
 export default defineConfig({
   site: 'https://docs.tickbox.dev',
@@ -21,6 +41,39 @@ export default defineConfig({
       },
       lastUpdated: true,
       pagination: true,
+      plugins: [
+        coreTypeDoc({
+          entryPoints: ['../packages/core/src/index.ts'],
+          tsconfig: '../packages/core/tsconfig.json',
+          output: 'api/core',
+          sidebar: { label: '@tickboxhq/core', collapsed: true },
+          typeDoc: sharedTypeDocOptions,
+        }),
+        reactTypeDoc({
+          entryPoints: ['../packages/react/src/index.ts'],
+          tsconfig: '../packages/react/tsconfig.json',
+          output: 'api/react',
+          sidebar: { label: '@tickboxhq/react', collapsed: true },
+          typeDoc: sharedTypeDocOptions,
+        }),
+        vueTypeDoc({
+          entryPoints: ['../packages/vue/src/index.ts'],
+          tsconfig: '../packages/vue/tsconfig.json',
+          output: 'api/vue',
+          sidebar: { label: '@tickboxhq/vue', collapsed: true },
+          typeDoc: sharedTypeDocOptions,
+        }),
+        bannerTypeDoc({
+          entryPoints: [
+            '../packages/banner-default/src/react/index.tsx',
+            '../packages/banner-default/src/vue/index.ts',
+          ],
+          tsconfig: '../packages/banner-default/tsconfig.json',
+          output: 'api/banner-default',
+          sidebar: { label: '@tickboxhq/banner-default', collapsed: true },
+          typeDoc: sharedTypeDocOptions,
+        }),
+      ],
       sidebar: [
         {
           label: 'Getting started',
@@ -41,6 +94,7 @@ export default defineConfig({
             { label: 'Script gating (PECR)', slug: 'concepts/gating' },
             { label: 'Google Consent Mode v2', slug: 'concepts/consent-mode-v2' },
             { label: 'AI training opt-out', slug: 'concepts/ai-opt-out' },
+            { label: 'Supported vendors', slug: 'concepts/vendors' },
           ],
         },
         {
@@ -59,6 +113,11 @@ export default defineConfig({
             { label: 'From OneTrust', slug: 'migrations/onetrust' },
             { label: 'From Cookiebot', slug: 'migrations/cookiebot' },
           ],
+        },
+        {
+          label: 'API reference',
+          collapsed: true,
+          items: [coreSidebarGroup, reactSidebarGroup, vueSidebarGroup, bannerSidebarGroup],
         },
       ],
       head: [

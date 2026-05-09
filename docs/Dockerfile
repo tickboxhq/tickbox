@@ -21,9 +21,25 @@ COPY packages/nuxt/package.json ./packages/nuxt/
 COPY packages/react/package.json ./packages/react/
 COPY packages/vue/package.json ./packages/vue/
 
-# We only need docs deps; --filter avoids installing the package
-# devDependencies of the SDK packages.
-RUN pnpm install --frozen-lockfile --filter '@tickboxhq/docs...'
+# Install the full workspace — docs needs SDK package source on disk for
+# starlight-typedoc to walk imports across packages (e.g.
+# banner-default → @tickboxhq/react), and pnpm needs the workspace links
+# to be present for that to resolve. The image is throwaway, so the extra
+# install cost only matters during build.
+RUN pnpm install --frozen-lockfile
+
+# Docs build needs package source: starlight-typedoc reads each package via
+# its tsconfig + index entry, and docs/scripts/gen-vendors.mjs reads
+# packages/core/src/jurisdictions/vendors.ts.
+COPY tsconfig.base.json ./
+COPY packages/core/src ./packages/core/src
+COPY packages/core/tsconfig.json ./packages/core/
+COPY packages/react/src ./packages/react/src
+COPY packages/react/tsconfig.json ./packages/react/
+COPY packages/vue/src ./packages/vue/src
+COPY packages/vue/tsconfig.json ./packages/vue/
+COPY packages/banner-default/src ./packages/banner-default/src
+COPY packages/banner-default/tsconfig.json ./packages/banner-default/
 
 # Now copy the docs source and build.
 COPY docs/ ./docs/
