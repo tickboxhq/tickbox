@@ -62,7 +62,7 @@ import { ConsentBanner } from '@tickboxhq/vue'
 </template>
 ```
 
-If you'd rather skip the design step, drop in `<ConsentBannerDefault>` — see [Default styled banner](/getting-started/banner-default/).
+If you'd rather skip the design step, drop in `<ConsentBannerDefault>` — see [Default styled banner](/getting-started/banner-default/). It ships with built-in translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl` and `locale="auto"` for browser detection. Multi-language details in the [i18n recipe](/recipes/i18n/).
 
 ## Reading consent in components
 

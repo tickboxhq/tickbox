@@ -6,3 +6,20 @@ Vue 3 + Vite. Each scenario is a runnable starter project.
 | --- | --- |
 | [`basic/`](./basic) | `<ConsentProvider>` in App.vue + `useConsent` composable + headless `<ConsentBanner>` |
 | [`uk-pecr-google-analytics/`](./uk-pecr-google-analytics) | PECR-correct GA setup: gated `<script>` tags in `index.html` + Consent Mode v2 default-denied |
+
+## Don't want to design a banner?
+
+Install `@tickboxhq/banner-default` and drop in `<ConsentBannerDefault>`:
+
+```vue
+<script setup lang="ts">
+import { ConsentBannerDefault } from '@tickboxhq/banner-default/vue'
+import config from './consent.config'
+</script>
+
+<template>
+  <ConsentBannerDefault locale="auto" :policy-url="config.policy?.url" />
+</template>
+```
+
+Translations included: `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`. Pass any BCP-47 tag or `'auto'`. If you already use `vue-i18n`, bind the active locale: `<ConsentBannerDefault :locale="locale" />`. Full guide: [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/).

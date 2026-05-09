@@ -13,7 +13,7 @@ Tickbox is a small monorepo of focused packages. Pick the framework adapter that
 | `@tickboxhq/react` | `<ConsentProvider>`, `useConsent()`, headless `<ConsentBanner>` and `<ConsentNotice>`. |
 | `@tickboxhq/vue` | Same as React but Vue 3. |
 | `@tickboxhq/nuxt` | Nuxt 3 / 4 module. Auto-imports `useConsent`, auto-registers banner + notice components, serves `/ai.txt` from a Nitro route, hydrates the cookie on the server via `useRequestHeaders`. |
-| `@tickboxhq/banner-default` | Drop-in styled banner and notice. Use this if you don't want to design your own. |
+| `@tickboxhq/banner-default` | Drop-in styled banner and notice. Use this if you don't want to design your own. Includes translations for en, de, fr, es, it, nl, pt, pl. |
 | `@tickboxhq/cli` | `tickbox scan <url>` and `tickbox validate` for your config. |
 
 ## How a typical setup looks

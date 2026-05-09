@@ -63,7 +63,7 @@ const { granted, deny, save } = useConsent('analytics')
 </template>
 ```
 
-For the drop-in styled banner, see [Default styled banner](/getting-started/banner-default/).
+For the drop-in styled banner, see [Default styled banner](/getting-started/banner-default/). The default banner ships with built-in translations for eight European languages and integrates cleanly with `vue-i18n` — see the [i18n recipe](/recipes/i18n/).
 
 ## `/ai.txt`
 

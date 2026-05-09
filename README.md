@@ -185,6 +185,7 @@ Each scenario installs Tickbox from npm, so you can copy any folder out of this 
 - A `tickbox:consent-changed` DOM event for custom integrations
 - SSR cookie reading in the Nuxt module so initial markup matches the visitor's choice
 - AI training opt-out: `generateAiTxt(config)` and `generateAiBotRobotsRules(config)` produce Spawning.ai-format `/ai.txt` content and `robots.txt` Disallow rules. The Nuxt module auto-registers a Nitro route at `/ai.txt`. Pairs with EU AI Act Article 53 (in force August 2026)
+- Multi-language UI on the default banner: built-in translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, with BCP-47 fallback and a `locale="auto"` mode that reads `navigator.language`. See [docs.tickbox.dev/recipes/i18n](https://docs.tickbox.dev/recipes/i18n/)
 
 ## Known limitations
 
@@ -198,7 +199,8 @@ Tag-gating activates blocked scripts on grant, but it can't unload a script that
 | `@tickboxhq/react` | early — provider, hook, headless banner |
 | `@tickboxhq/vue` | early — provider, composable, headless banner |
 | `@tickboxhq/nuxt` | early — Nuxt 3/4 module |
-| `@tickboxhq/cli` | not yet — `tickbox init`, `scan`, `validate` |
+| `@tickboxhq/banner-default` | early — drop-in styled banner + notice, 8-language i18n |
+| `@tickboxhq/cli` | early — `tickbox scan`, `tickbox validate` (`tickbox init` not yet) |
 
 ## Releasing
 
