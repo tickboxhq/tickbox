@@ -35,4 +35,4 @@ That's the whole loop.
 
 If you'd rather understand the model first, head to [Concepts → Jurisdictions](/concepts/jurisdictions/).
 
-For the full type signatures of every public function, hook and component, see the [API reference](/api/core/) — auto-generated from the TypeScript source. The list of vendor identifiers Tickbox knows about lives at [Concepts → Supported vendors](/concepts/vendors/).
+For the full type signatures of every public function, hook and component, see the [API reference](/api/core/readme/) — auto-generated from the TypeScript source. The list of vendor identifiers Tickbox knows about lives at [Concepts → Supported vendors](/concepts/vendors/).
