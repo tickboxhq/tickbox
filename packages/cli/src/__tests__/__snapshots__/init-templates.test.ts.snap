@@ -1,0 +1,153 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderConfig > matches snapshot — auto + ai opt-out only 1`] = `
+"import { defineConsent, jurisdictions, AI_TRAINING_CRAWLERS } from '@tickboxhq/core'
+
+// 'auto' resolves jurisdiction by visitor country at runtime. See the multi-jurisdiction recipe:
+// https://docs.tickbox.dev/recipes/multi-jurisdiction/
+export default defineConsent({
+  jurisdiction: 'auto',
+  policy: {
+    version: '2026-05-10',
+  },
+  categories: {
+    necessary: { required: true },
+    ai_training: {
+      vendors: [...AI_TRAINING_CRAWLERS],
+      default: false,
+      description: 'AI training crawlers and LLM data collection.',
+    },
+  },
+})
+"
+`;
+
+exports[`renderConfig > matches snapshot — custom jurisdiction with stub 1`] = `
+"import { defineConsent, type Jurisdiction, PRIVACY_FRIENDLY_ANALYTICS } from '@tickboxhq/core'
+
+// TODO: replace with your jurisdiction's classification rules.
+// See https://docs.tickbox.dev/concepts/jurisdictions/ for the full shape.
+const CUSTOM_JURISDICTION: Jurisdiction = {
+  id: 'CUSTOM',
+  name: 'Custom jurisdiction — fill me in',
+  vendorRules: {
+    // 'plausible': 'notice',
+    // 'google-ads': 'consent',
+  },
+  defaultMode: 'consent',
+  ui: {
+    rejectButtonOnFirstLayer: true,
+    equalProminence: true,
+    honorGPC: false,
+  },
+}
+
+export default defineConsent({
+  jurisdiction: CUSTOM_JURISDICTION,
+  policy: {
+    version: '2026-05-10',
+  },
+  categories: {
+    necessary: { required: true },
+    analytics: {
+      vendors: [...PRIVACY_FRIENDLY_ANALYTICS],
+      default: false,
+      description: 'Privacy-friendly site usage statistics.',
+    },
+  },
+})
+"
+`;
+
+exports[`renderConfig > matches snapshot — eu + ad pixels + privacy analytics 1`] = `
+"import { defineConsent, jurisdictions, ADVERTISING_VENDORS, PRIVACY_FRIENDLY_ANALYTICS } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.EU_GDPR,
+  policy: {
+    version: '2026-05-10',
+    url: '/privacy',
+  },
+  categories: {
+    necessary: { required: true },
+    analytics: {
+      vendors: [...PRIVACY_FRIENDLY_ANALYTICS],
+      default: false,
+      description: 'Privacy-friendly site usage statistics.',
+    },
+    marketing: {
+      vendors: [...ADVERTISING_VENDORS],
+      default: false,
+      description: 'Advertising, remarketing, session replay and product analytics.',
+    },
+  },
+})
+"
+`;
+
+exports[`renderConfig > matches snapshot — no vendors picked 1`] = `
+"import { defineConsent, jurisdictions } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: {
+    version: '2026-05-10',
+  },
+  categories: {
+    necessary: { required: true },
+  },
+})
+"
+`;
+
+exports[`renderConfig > matches snapshot — uk + kitchen sink 1`] = `
+"import { defineConsent, jurisdictions, ADVERTISING_VENDORS, AI_TRAINING_CRAWLERS, CDP_AND_PRODUCT_ANALYTICS, CHAT_WIDGETS, MARKETING_AUTOMATION, PRIVACY_FRIENDLY_ANALYTICS, SESSION_REPLAY_VENDORS } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: {
+    version: '2026-05-10',
+    url: '/privacy',
+  },
+  categories: {
+    necessary: { required: true },
+    analytics: {
+      vendors: [...PRIVACY_FRIENDLY_ANALYTICS],
+      default: true,
+      description: 'Privacy-friendly site usage statistics.',
+    },
+    marketing: {
+      vendors: [...ADVERTISING_VENDORS, ...SESSION_REPLAY_VENDORS, ...CDP_AND_PRODUCT_ANALYTICS, ...MARKETING_AUTOMATION, ...CHAT_WIDGETS],
+      default: false,
+      description: 'Advertising, remarketing, session replay and product analytics.',
+    },
+    ai_training: {
+      vendors: [...AI_TRAINING_CRAWLERS],
+      default: false,
+      description: 'AI training crawlers and LLM data collection.',
+    },
+  },
+})
+"
+`;
+
+exports[`renderConfig > matches snapshot — uk + privacy-friendly analytics only 1`] = `
+"import { defineConsent, jurisdictions, PRIVACY_FRIENDLY_ANALYTICS } from '@tickboxhq/core'
+
+export default defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: {
+    version: '2026-05-10',
+    url: '/privacy',
+  },
+  categories: {
+    necessary: { required: true },
+    analytics: {
+      vendors: [...PRIVACY_FRIENDLY_ANALYTICS],
+      default: true,
+      description: 'Privacy-friendly site usage statistics.',
+    },
+  },
+})
+"
+`;

@@ -16,6 +16,39 @@ npx @tickboxhq/cli scan https://example.com
 
 ## Commands
 
+### `tickbox init`
+
+Interactive scaffold for `consent.config.ts`. Walks you through:
+
+- Jurisdiction (UK_DUAA / EU_GDPR / `auto` / custom)
+- Which vendor groups your site uses (multi-select)
+- Privacy policy URL
+- Framework adapter (React / Vue / Nuxt / none)
+- Whether to install the drop-in styled banner
+
+Writes the config to `./consent.config.ts` and (if a lockfile is detected) installs the SDK packages with your project's package manager.
+
+```
+$ npx @tickboxhq/cli init
+
+  ┌  Tickbox config setup
+  │
+  ◇  Where will this site be served?
+  │  ● UK (UK_DUAA — DUAA statistical-purposes exemption)
+  │
+  ◇  Which vendors are you using?
+  │  ◼ Privacy-friendly analytics
+  │  ◼ AI training crawler opt-out
+  │
+  ◇  Which framework adapter would you like installed?
+  │  ● React (@tickboxhq/react)
+  │
+  └  ✓ wrote ./consent.config.ts
+     Installing with pnpm: @tickboxhq/core, @tickboxhq/react, @tickboxhq/banner-default
+```
+
+If `consent.config.ts` already exists, the command prompts before overwriting. Pass `--cwd path/to/project` to run from outside your project root.
+
 ### `tickbox scan <url>`
 
 Fetches the page HTML and lists tracking vendors it detects in `<script>` tags, inline content, and pixel URLs. Reports each vendor's category and how it would resolve under `UK_DUAA`.

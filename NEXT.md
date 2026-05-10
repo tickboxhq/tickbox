@@ -40,10 +40,6 @@ Static-HTML `tickbox scan` misses vendors injected by JavaScript (GTM, dynamic i
 
 Better split: CLI stays static and lightweight (fast feedback in dev workflows). Rendered scans live in the cloud — either expose `smesolutions.uk`'s scanner via an API and have `tickbox scan --render` POST to it, or fold it into the future Tickbox dashboard. Bonus: it's a natural wedge for the paid tier (local CLI = free, scheduled/CI scans = cloud). Most CMP competitors (OneTrust, Cookiebot, Termly) already run scanners as hosted services for the same reason.
 
-### `tickbox init` — interactive scaffold
-
-Walks the user through creating a `consent.config.ts`. Prompts for jurisdiction (UK_DUAA / EU_GDPR / auto), category names, vendors. Half a day with a prompts library like `@clack/prompts`.
-
 ### Bot blocking integration with Cloudflare
 
 Site-level signal (`/ai.txt`) is one half of AI opt-out. Active enforcement is the other half. We've decided **not** to be a reverse proxy, but a Cloudflare Workers API that *configures* the customer's existing Cloudflare bot rules from `consent.config.ts` is a real integration. Talks to Cloudflare's API; user gives us a token. Day or two.

@@ -5,6 +5,14 @@ description: How Tickbox is structured and which package you need.
 
 Tickbox is a small monorepo of focused packages. Pick the framework adapter that matches your stack — it pulls in `@tickboxhq/core` for you.
 
+## Fastest start: `tickbox init`
+
+```bash
+npx @tickboxhq/cli init
+```
+
+Walks you through jurisdiction, vendor groups, framework adapter, and the optional drop-in banner — then writes `consent.config.ts` and installs the SDK packages for you (~90 seconds end-to-end). If you'd rather wire things up by hand, the rest of this guide still applies.
+
 ## Packages
 
 | Package | What it gives you |

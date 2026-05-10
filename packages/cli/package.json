@@ -13,7 +13,10 @@
   "bin": {
     "tickbox": "./dist/cli.js"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
@@ -24,6 +27,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@clack/prompts": "^1.3.0",
     "@tickboxhq/core": "workspace:*",
     "picocolors": "^1.1.1"
   },

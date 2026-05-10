@@ -1,4 +1,5 @@
 import pc from 'picocolors'
+import { init } from './init.js'
 import { scan } from './scan.js'
 import { validate } from './validate.js'
 
@@ -8,6 +9,8 @@ async function main(): Promise<number> {
   const [cmd, ...args] = process.argv.slice(2)
 
   switch (cmd) {
+    case 'init':
+      return init(args)
     case 'scan':
       return scan(args)
     case 'validate':
@@ -34,12 +37,14 @@ function printHelp(): void {
   console.log(`${pc.bold('tickbox')} — consent management CLI
 
 ${pc.bold('Usage:')}
+  tickbox init                   Interactive scaffold for consent.config.ts
   tickbox scan <url>             Fetch a URL and list detected tracking vendors
   tickbox validate [config]      Check a consent.config.{js,mjs} for issues
   tickbox --version              Print the CLI version
   tickbox --help                 Print this message
 
 ${pc.bold('Examples:')}
+  tickbox init
   tickbox scan https://example.com
   tickbox validate ./consent.config.mjs
 

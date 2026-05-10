@@ -4,6 +4,10 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+### Added
+- **`tickbox init`** — interactive scaffold for `consent.config.ts`. Prompts for jurisdiction (UK_DUAA / EU_GDPR / `auto` / custom), vendor groups (multi-select sourced from the same `vendors.ts` registry as docs.tickbox.dev), privacy policy URL, framework adapter, and the optional drop-in styled banner. Writes a working config plus runs `pnpm/npm/yarn/bun add` for the chosen SDK packages when a lockfile is detected. Refuses to overwrite an existing `consent.config.ts` without confirmation, refuses to run outside a project root. Snapshot-tested across six representative input combinations; every generated config passes `tickbox validate`.
+- `@tickboxhq/core` now re-exports the vendor-group constants (`PRIVACY_FRIENDLY_ANALYTICS`, `ADVERTISING_VENDORS`, `SESSION_REPLAY_VENDORS`, `CDP_AND_PRODUCT_ANALYTICS`, `MARKETING_AUTOMATION`, `CHAT_WIDGETS`, `AI_TRAINING_CRAWLERS`, `ALL_TRACKING_VENDORS`) directly from the package root so generated configs can `import { PRIVACY_FRIENDLY_ANALYTICS } from '@tickboxhq/core'` without the `/jurisdictions` subpath.
+
 ## [0.0.17] - 2026-05-09
 
 ### Added

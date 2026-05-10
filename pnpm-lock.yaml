@@ -85,6 +85,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@clack/prompts':
+        specifier: ^1.3.0
+        version: 1.3.0
       '@tickboxhq/core':
         specifier: workspace:*
         version: link:../core
