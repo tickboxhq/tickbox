@@ -16,6 +16,7 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY docs/package.json ./docs/
 COPY packages/banner-default/package.json ./packages/banner-default/
 COPY packages/cli/package.json ./packages/cli/
+COPY packages/cloud/package.json ./packages/cloud/
 COPY packages/core/package.json ./packages/core/
 COPY packages/nuxt/package.json ./packages/nuxt/
 COPY packages/react/package.json ./packages/react/
