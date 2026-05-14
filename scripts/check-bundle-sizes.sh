@@ -17,6 +17,7 @@ packages/nuxt/dist/module.mjs:2500
 packages/nuxt/dist/runtime/plugin.js:2500
 packages/banner-default/dist/react/index.js:11000
 packages/banner-default/dist/vue/index.js:9000
+packages/cloud/dist/index.js:5500
 '
 
 failed=0

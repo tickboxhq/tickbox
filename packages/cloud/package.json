@@ -1,0 +1,41 @@
+{
+  "name": "@tickboxhq/cloud",
+  "version": "0.0.18",
+  "description": "Tickbox cloud beacon — POSTs consent-change events to the Tickbox audit log.",
+  "license": "MIT",
+  "homepage": "https://tickbox.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tickboxhq/tickbox.git",
+    "directory": "packages/cloud"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@tickboxhq/core": "workspace:*"
+  },
+  "devDependencies": {
+    "happy-dom": "^15.11.7",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
