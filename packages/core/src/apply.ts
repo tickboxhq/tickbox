@@ -123,8 +123,20 @@ function resolveValue(
 // stay idempotent and run on every applyConsent regardless.
 let lastDispatchedKey = ''
 
+// The very first applyConsent call in a page lifecycle is always hydration —
+// framework adapters wire `onApply: applyConsent`, and the store emits once
+// during applyHydration() to set up default state. That emit doesn't
+// represent a user decision, so we skip it and record the snapshot as the
+// baseline. Subsequent emits with different decisions dispatch normally.
+let initialised = false
+
 function dispatchEvent(state: ConsentState): void {
   const key = JSON.stringify(state.decisions)
+  if (!initialised) {
+    initialised = true
+    lastDispatchedKey = key
+    return
+  }
   if (key === lastDispatchedKey) return
   lastDispatchedKey = key
   document.dispatchEvent(

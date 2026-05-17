@@ -77,6 +77,12 @@ export function installBeacon(config: ConsentConfig): () => void {
   const handler = (event: Event): void => {
     const detail = (event as CustomEvent<ConsentChangeDetail>).detail
     if (!detail) return
+    // detail.ts === null means the SDK is broadcasting in-memory state that
+    // hasn't been persisted yet — typically the hydration emit on a fresh
+    // visitor with no stored cookie. That's not a user decision; wait for
+    // the explicit accept/reject save. Belt-and-braces guard for older SDK
+    // versions that still dispatched the hydration emit.
+    if (detail.ts === null) return
     const key = `${JSON.stringify(detail.decisions)}|${policyVersion}`
     if (key === lastSentKey) return
     lastSentKey = key
