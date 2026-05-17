@@ -6,7 +6,10 @@ interface Props {
   description?: string
 }
 
-const { title, description = 'Developer-first cookie consent SDK. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.' } = Astro.props
+const {
+  title,
+  description = 'Developer-first cookie consent SDK. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.',
+} = Astro.props
 const ogTitle = title === 'Tickbox' ? title : `${title} — Tickbox`
 ---
 
