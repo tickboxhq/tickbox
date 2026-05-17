@@ -25,9 +25,13 @@ function dispatch(decisions: Record<string, boolean>): void {
 }
 
 async function flushMicrotasks(): Promise<void> {
-  // beacon handlers are async; let pending promises settle.
-  await new Promise((r) => setTimeout(r, 0))
-  await new Promise((r) => setTimeout(r, 0))
+  // The beacon handler is sync (dedup + fire-and-forget) but buildAndSend
+  // awaits both visitorHash (crypto.subtle.digest) and fetch. Each await is
+  // one microtask hop; we iterate a generous number of times so slow CI
+  // runners don't leave a pending POST that fires during the next test.
+  for (let i = 0; i < 20; i++) {
+    await new Promise((r) => setTimeout(r, 0))
+  }
 }
 
 beforeEach(() => {
