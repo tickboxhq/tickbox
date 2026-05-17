@@ -1,78 +1,250 @@
 ---
 import Layout from '../layouts/Layout.astro'
+
+const props = [
+  {
+    n: '01',
+    tag: 'config',
+    title: 'Code-first config',
+    body: 'consent.config.ts lives in your repo. Version-controlled, code-reviewed, the same shape across React, Vue, Nuxt and vanilla JS.',
+  },
+  {
+    n: '02',
+    tag: 'gating',
+    title: 'PECR-correct script gating',
+    body: 'Tag scripts type="text/plain" and they stay inert until consent. No racy setTimeout hacks. Google Consent Mode v2 wired automatically.',
+  },
+  {
+    n: '03',
+    tag: 'audit',
+    title: 'Audit log when you need it',
+    body: 'Drop in @tickboxhq/cloud and every decision lands in a tamper-resistant log. Until then, nothing leaves the visitor browser.',
+  },
+]
+
+const usedBy = [
+  { name: 'tinysystems.io', sector: 'workflow platform' },
+  { name: 'pictag.io', sector: 'event photo matching' },
+  { name: 'smesolutions.uk', sector: 'AI compliance' },
+]
 ---
 
 <Layout title="Tickbox">
-  <!-- Hero -->
-  <section class="mx-auto max-w-6xl px-6 pt-20 pb-24 text-center">
-    <p class="text-sm font-medium text-slate-500 mb-4 tracking-wide uppercase">
-      UK DUAA · EU GDPR · AI training opt-out
-    </p>
-    <h1 class="text-5xl md:text-6xl font-semibold tracking-tight text-slate-900 max-w-3xl mx-auto">
-      Cookie consent that doesn't get in your way.
-    </h1>
-    <p class="text-lg text-slate-600 mt-6 max-w-2xl mx-auto">
-      A developer-first SDK with PECR-correct script gating, Consent Mode v2 out of the box,
-      and an auditable trail when you need one.
-    </p>
-    <div class="mt-10 flex items-center justify-center gap-3">
-      <a
-        href="/builder"
-        class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-3 text-white font-medium hover:bg-slate-800"
-      >
-        Try the builder
-      </a>
-      <a
-        href="https://docs.tickbox.dev/getting-started/overview"
-        class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-slate-900 font-medium hover:bg-slate-50"
-      >
-        Read the docs
-      </a>
+  <!-- HERO -->
+  <section class="border-b border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-24 lg:pb-28">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-10">
+        <p class="eyebrow">
+          <strong>Spec</strong> · v0.0.19
+        </p>
+        <span class="text-[color:var(--color-rule-soft)]" aria-hidden="true">|</span>
+        <p class="eyebrow">UK&nbsp;DUAA · EU&nbsp;GDPR · AI&nbsp;Opt-out</p>
+        <span class="text-[color:var(--color-rule-soft)]" aria-hidden="true">|</span>
+        <p class="eyebrow"><strong>MIT</strong> licensed</p>
+        <span class="text-[color:var(--color-rule-soft)]" aria-hidden="true">|</span>
+        <p class="eyebrow">In production on 3 sites</p>
+      </div>
+
+      <div class="grid lg:grid-cols-[1.15fr_1fr] gap-16 items-start">
+        <div>
+          <h1 class="display text-[clamp(3rem,8vw,6.75rem)] mb-8">
+            Cookie consent
+            <span class="block italic-display text-[color:var(--color-muted)]">
+              that doesn't get in
+              <span class="relative inline-block">
+                your way<span class="hero-underline" aria-hidden="true"></span>.
+              </span>
+            </span>
+          </h1>
+
+          <p class="text-lg lg:text-xl text-[color:var(--color-ink-soft)] max-w-xl leading-relaxed">
+            A developer-first SDK with PECR-correct script gating, Consent
+            Mode v2 out of the box, and an auditable trail when you need
+            one. No dark patterns, no compliance theatre.
+          </p>
+
+          <div class="mt-10 flex flex-wrap items-center gap-3">
+            <a href="/builder/" class="btn-ink">
+              Try the builder
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="https://docs.tickbox.dev" class="btn-ghost" rel="noopener">
+              Read the docs
+            </a>
+          </div>
+
+          <p class="mt-8 eyebrow flex flex-wrap items-center gap-2">
+            <span>or, in your terminal</span>
+            <span class="text-[color:var(--color-rule-soft)]">›</span>
+            <code class="code-chip">npx @tickboxhq/cli init</code>
+          </p>
+        </div>
+
+        <!-- Code snippet anchor — shows what a real consent.config.ts looks like. -->
+        <div class="lg:mt-2">
+          <div class="border border-[color:var(--color-ink)]">
+            <div class="flex items-center justify-between px-3 py-2 border-b border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+              <div class="flex items-center gap-2">
+                <span class="tick tick-filled" aria-hidden="true"></span>
+                <span class="eyebrow !text-[0.65rem]">consent.config.ts</span>
+              </div>
+              <span class="eyebrow !text-[0.65rem]">TS</span>
+            </div>
+            <pre class="code-block !text-[0.8125rem] !leading-[1.7]"><code><span class="c-com">// 12 lines. Type-checked. Lives in your repo.</span>
+<span class="c-key">import</span> {`{ `}defineConsent, jurisdictions{` }`} <span class="c-key">from</span> <span class="c-str">'@tickboxhq/core'</span>
+
+<span class="c-key">export default</span> <span class="c-fn">defineConsent</span>({`{`}
+  jurisdiction: jurisdictions.<span class="c-fn">UK_DUAA</span>,
+  policy: {`{`} version: <span class="c-str">'2026-05-17'</span>, url: <span class="c-str">'/privacy'</span> {`}`},
+  categories: {`{`}
+    necessary: {`{`} required: <span class="c-key">true</span> {`}`},
+    analytics: {`{`}
+      vendors: [<span class="c-str">'plausible'</span>, <span class="c-str">'fathom'</span>],
+      <span class="c-key">default</span>: <span class="c-key">false</span>,
+    {`}`},
+  {`}`},
+{`}`})</code></pre>
+          </div>
+          <div class="mt-3 flex items-center justify-between eyebrow">
+            <span>What npx&nbsp;init generates</span>
+            <a href="https://docs.tickbox.dev/getting-started/overview" class="hover:text-[color:var(--color-ink)]" rel="noopener">
+              Full setup ↗
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="mt-6 text-sm text-slate-500">
-      <code class="font-mono bg-slate-100 px-2 py-1 rounded">npx @tickboxhq/cli init</code>
-      &nbsp;·&nbsp; Free OSS forever
-    </p>
   </section>
 
-  <!-- Three quick props -->
-  <section class="mx-auto max-w-6xl px-6 pb-24">
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="rounded-lg border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-900 mb-2">Code-first config</h3>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          <code class="font-mono">consent.config.ts</code> lives in your repo. Version-controlled,
-          code-reviewed, the same shape across React, Vue, Nuxt and vanilla JS.
-        </p>
+  <!-- THREE PROPS — editorial strip, not cards -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+      <div class="flex flex-wrap items-baseline justify-between gap-4 mb-12">
+        <h2 class="display text-[clamp(2rem,4.5vw,3.5rem)]">
+          Three things <span class="italic-display text-[color:var(--color-muted)]">we got right.</span>
+        </h2>
+        <a href="/features/" class="eyebrow hover:text-[color:var(--color-ink)] flex items-center gap-1">
+          All features ↗
+        </a>
       </div>
-      <div class="rounded-lg border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-900 mb-2">PECR-correct gating</h3>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          Scripts tagged <code class="font-mono">type="text/plain"</code> stay inert until consent.
-          No racy <code class="font-mono">setTimeout</code> hacks. Google Consent Mode v2 wired automatically.
-        </p>
-      </div>
-      <div class="rounded-lg border border-slate-200 p-6">
-        <h3 class="font-semibold text-slate-900 mb-2">Audit log when you need it</h3>
-        <p class="text-sm text-slate-600 leading-relaxed">
-          Add <code class="font-mono">@tickboxhq/cloud</code> and every decision lands in a tamper-resistant
-          log at <code class="font-mono">app.tickbox.dev</code>. Until then, nothing leaves the browser.
-        </p>
+
+      <div class="grid md:grid-cols-3 border-t border-[color:var(--color-ink)]">
+        {props.map((p, i) => (
+          <article
+            class:list={[
+              'prop-cell',
+              i > 0 && 'md:border-l',
+            ]}
+          >
+            <div class="flex items-baseline gap-3 mb-5">
+              <span class="font-mono text-[2.25rem] leading-none text-[color:var(--color-ink)]">{p.n}</span>
+              <span class="eyebrow">/ {p.tag}</span>
+            </div>
+            <h3 class="display text-[1.75rem] leading-tight mb-3">{p.title}</h3>
+            <p class="text-[0.95rem] leading-relaxed text-[color:var(--color-ink-soft)]">{p.body}</p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- Used by -->
-  <section class="mx-auto max-w-6xl px-6 pb-24 border-t border-slate-100 pt-16">
-    <p class="text-center text-sm text-slate-500 mb-6">
-      Already in production on
-    </p>
-    <div class="flex items-center justify-center gap-10 text-slate-700 font-medium">
-      <span>tinysystems.io</span>
-      <span class="text-slate-300">·</span>
-      <span>pictag.io</span>
-      <span class="text-slate-300">·</span>
-      <span>smesolutions.uk</span>
+  <!-- WHAT IT REPLACES — punchy editorial comparison -->
+  <section class="border-y border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-[color:var(--color-paper)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20 lg:py-24">
+      <p class="eyebrow !text-[color:var(--color-accent)] mb-6">Why not just use…</p>
+      <h2 class="display text-[clamp(2.5rem,5.5vw,4.5rem)] mb-10 max-w-3xl">
+        Most consent SDKs are
+        <span class="italic-display">written for the wrong person.</span>
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
+        <div>
+          <p class="eyebrow !text-[color:var(--color-paper)] mb-3">Cookiebot, OneTrust</p>
+          <p class="text-[0.95rem] leading-relaxed text-[color:rgba(250,250,245,0.7)]">
+            Built for legal teams. Config lives in a portal you don't
+            control. The banner is a 200kB iframe that breaks Lighthouse.
+          </p>
+        </div>
+        <div>
+          <p class="eyebrow !text-[color:var(--color-paper)] mb-3">Usercentrics</p>
+          <p class="text-[0.95rem] leading-relaxed text-[color:rgba(250,250,245,0.7)]">
+            Pretty defaults. SDK still loads from their CDN, decisions go
+            through their cloud whether you want them to or not.
+          </p>
+        </div>
+        <div>
+          <p class="eyebrow !text-[color:var(--color-accent)] mb-3">Tickbox</p>
+          <p class="text-[0.95rem] leading-relaxed text-[color:var(--color-paper)]">
+            The whole SDK is npm-installable, MIT-licensed, and runs locally.
+            Cloud is opt-in. Your config is a TypeScript file. Reviewable in
+            a PR. Versioned with git.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- USED BY -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+      <p class="eyebrow text-center mb-10">In production on</p>
+      <ul class="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+        {usedBy.map((site) => (
+          <li class="flex flex-col items-center">
+            <span class="font-display text-2xl lg:text-3xl tracking-tight">
+              {site.name}
+            </span>
+            <span class="eyebrow !text-[0.6rem] mt-1">{site.sector}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="border-t border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20 lg:py-24 text-center">
+      <h2 class="display text-[clamp(2.5rem,6vw,5rem)] mb-6 max-w-3xl mx-auto">
+        Ninety seconds from <span class="italic-display text-[color:var(--color-muted)]">install</span>
+        to <span class="italic-display text-[color:var(--color-muted)]">live</span>.
+      </h2>
+      <p class="text-lg text-[color:var(--color-ink-soft)] max-w-xl mx-auto mb-8">
+        The builder generates your config, the CLI installs the SDK, the
+        banner ships with sensible defaults.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="/builder/" class="btn-ink">
+          Open the builder
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="https://github.com/tickboxhq/tickbox" class="btn-ghost" rel="noopener">
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .prop-cell {
+      padding: 2.5rem 2rem;
+      border-bottom: 1px solid var(--color-ink);
+    }
+    @media (min-width: 768px) {
+      .prop-cell {
+        border-bottom: 0;
+        border-left-color: var(--color-ink);
+      }
+    }
+
+    /* Hand-drawn underline under the hero italic. */
+    .hero-underline {
+      position: absolute;
+      left: -2%;
+      right: -2%;
+      bottom: 0.03em;
+      height: 0.45em;
+      background: var(--color-accent);
+      z-index: -1;
+      transform: skewY(-1.5deg);
+    }
+  </style>
 </Layout>

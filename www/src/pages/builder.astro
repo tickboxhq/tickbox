@@ -1,25 +1,170 @@
 ---
 import Layout from '../layouts/Layout.astro'
+
+const steps = [
+  {
+    n: '01',
+    label: 'Pick a jurisdiction',
+    body: 'UK_DUAA, EU_GDPR, both (auto-detect), or roll your own.',
+  },
+  {
+    n: '02',
+    label: 'Tick the vendor groups',
+    body: 'Privacy analytics, ad pixels, session replay, AI training opt-out, more.',
+  },
+  {
+    n: '03',
+    label: 'See it live',
+    body: 'The real @tickboxhq/banner-default renders in an iframe as you toggle.',
+  },
+  {
+    n: '04',
+    label: 'Copy or save',
+    body: 'Copy the generated consent.config.ts — or sign in to keep it.',
+  },
+]
 ---
 
 <Layout
   title="Builder"
   description="Generate a Tickbox consent.config.ts in 60 seconds. Pick jurisdiction, toggle vendors, copy the config."
 >
-  <section class="mx-auto max-w-6xl px-6 py-16">
-    <div class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
-        Build your <code class="font-mono">consent.config.ts</code>
-      </h1>
-      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
-        Pick a jurisdiction, tick the vendor groups your site uses, and copy the generated config.
-        No sign-up needed — everything happens in your browser.
+  <!-- HEADER -->
+  <section class="border-b border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-20 lg:pb-24">
+      <p class="eyebrow mb-6">
+        <strong>Lab</strong> · §3 — Builder &nbsp;
+        <span class="font-mono normal-case tracking-normal text-[color:var(--color-muted)]">
+          // shipping in days
+        </span>
       </p>
+      <div class="grid lg:grid-cols-[1.5fr_1fr] gap-12 items-end">
+        <h1 class="display text-[clamp(2.75rem,7vw,5.5rem)]">
+          Build your
+          <span class="block italic-display text-[color:var(--color-muted)]">
+            consent.config.ts.
+          </span>
+        </h1>
+        <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed">
+          Pick a jurisdiction, tick the vendor groups your site uses, and copy
+          the generated config. No sign-up needed — everything happens in your
+          browser.
+        </p>
+      </div>
     </div>
+  </section>
 
-    <div class="rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center">
-      <p class="text-slate-600 font-medium mb-2">Interactive builder lands here.</p>
-      <p class="text-sm text-slate-500">Shipping next — until then, run <code class="font-mono bg-white border border-slate-200 px-2 py-1 rounded">npx @tickboxhq/cli init</code> for the same flow in your terminal.</p>
+  <!-- COMING-NEXT PLACEHOLDER -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-16 lg:py-20">
+      <div class="border border-[color:var(--color-ink)] bg-[color:var(--color-paper)]">
+        <!-- header strip -->
+        <div class="flex items-center justify-between px-5 py-3 border-b border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+          <div class="flex items-center gap-2">
+            <span class="tick tick-filled" aria-hidden="true"></span>
+            <span class="eyebrow !text-[0.65rem]">tickbox.dev/builder</span>
+          </div>
+          <span class="eyebrow !text-[0.65rem]">v0 · scaffolded</span>
+        </div>
+
+        <!-- two-column preview -->
+        <div class="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-[color:var(--color-ink)]">
+          <div class="p-8 lg:p-12">
+            <p class="eyebrow mb-6">Interactive panel</p>
+            <ol class="space-y-7">
+              {steps.map((s) => (
+                <li class="flex items-baseline gap-4">
+                  <span class="font-mono text-2xl text-[color:var(--color-ink)] tabular-nums shrink-0 w-12">
+                    {s.n}
+                  </span>
+                  <div>
+                    <p class="font-display text-[1.35rem] leading-tight mb-1">{s.label}</p>
+                    <p class="text-[0.925rem] text-[color:var(--color-ink-soft)] leading-relaxed">
+                      {s.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div class="p-8 lg:p-12 bg-[color:var(--color-ink)] text-[color:var(--color-paper)]">
+            <p class="eyebrow !text-[color:var(--color-accent)] mb-6">Live preview</p>
+            <div class="border border-[color:var(--color-paper)]/30 p-6 mb-6">
+              <div class="flex items-start gap-3 mb-4">
+                <span class="tick mt-1 !border-[color:var(--color-paper)]" aria-hidden="true"></span>
+                <div>
+                  <p class="font-display text-xl leading-tight">Cookie preferences</p>
+                  <p class="text-[0.85rem] mt-1 text-[color:rgba(250,250,245,0.6)]">
+                    We use a few cookies to make this site work. Necessary
+                    ones stay on. Analytics — your call.
+                  </p>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2 mt-5">
+                <span class="px-3 py-1 text-[0.75rem] border border-[color:var(--color-paper)]">Customise</span>
+                <span class="px-3 py-1 text-[0.75rem] bg-[color:var(--color-paper)] text-[color:var(--color-ink)]">Reject all</span>
+                <span class="px-3 py-1 text-[0.75rem] bg-[color:var(--color-accent)] text-[color:var(--color-accent-ink)]">Accept all</span>
+              </div>
+            </div>
+            <p class="eyebrow !text-[color:var(--color-paper)]/70">
+              ↑ that's the real @tickboxhq/banner-default. The live builder
+              will render it inline as you toggle options.
+            </p>
+          </div>
+        </div>
+
+        <!-- footer strip -->
+        <div class="px-5 py-4 border-t border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)] flex flex-wrap items-center justify-between gap-3">
+          <p class="eyebrow !text-[0.65rem]">
+            Until then ›
+            <code class="code-chip !text-[0.75rem]">npx @tickboxhq/cli init</code>
+            runs the same flow in your terminal
+          </p>
+          <a href="https://docs.tickbox.dev/getting-started/overview" class="eyebrow hover:text-[color:var(--color-ink)]" rel="noopener">
+            Setup guide ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section class="border-t border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+      <div class="grid lg:grid-cols-[1fr_1.5fr] gap-10 lg:gap-16">
+        <div>
+          <p class="eyebrow mb-6">Output</p>
+          <h2 class="display text-[clamp(2rem,4.5vw,3.5rem)] leading-[0.95]">
+            A real TypeScript file you can <span class="italic-display text-[color:var(--color-muted)]">read.</span>
+          </h2>
+          <p class="mt-6 text-[1.05rem] leading-relaxed text-[color:var(--color-ink-soft)]">
+            No JSON blob. No remote config dependency. Same shape as the
+            CLI's <code class="code-chip">init</code> output — paste it into
+            your repo, commit, review in a PR.
+          </p>
+        </div>
+        <div class="border border-[color:var(--color-ink)]">
+          <div class="flex items-center justify-between px-3 py-2 border-b border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+            <span class="eyebrow !text-[0.65rem]">consent.config.ts · generated</span>
+            <span class="eyebrow !text-[0.65rem]">12 lines</span>
+          </div>
+          <pre class="code-block !text-[0.8125rem] !leading-[1.7]"><code><span class="c-key">import</span> {`{ `}defineConsent, jurisdictions,
+         PRIVACY_FRIENDLY_ANALYTICS{` }`} <span class="c-key">from</span> <span class="c-str">'@tickboxhq/core'</span>
+
+<span class="c-key">export default</span> <span class="c-fn">defineConsent</span>({`{`}
+  jurisdiction: jurisdictions.<span class="c-fn">UK_DUAA</span>,
+  policy: {`{`} version: <span class="c-str">'2026-05-17'</span> {`}`},
+  categories: {`{`}
+    necessary: {`{`} required: <span class="c-key">true</span> {`}`},
+    analytics: {`{`}
+      vendors: [...PRIVACY_FRIENDLY_ANALYTICS],
+      <span class="c-key">default</span>: <span class="c-key">true</span>,
+    {`}`},
+  {`}`},
+{`}`})</code></pre>
+        </div>
+      </div>
     </div>
   </section>
 </Layout>

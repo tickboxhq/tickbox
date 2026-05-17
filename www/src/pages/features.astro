@@ -3,68 +3,127 @@ import Layout from '../layouts/Layout.astro'
 
 const features = [
   {
+    tag: 'config',
     title: 'Type-safe consent config',
     body: 'A single `defineConsent({...})` call in TypeScript. Autocomplete on categories, vendors, jurisdiction. Compile-time errors when you mis-spell a category name.',
   },
   {
+    tag: 'gating',
     title: 'PECR-correct script gating',
     body: 'Tag any script `type="text/plain" data-tb-category="analytics"` and it stays inert until consent. No race conditions, no fragile timing, no `setTimeout` workarounds.',
   },
   {
+    tag: 'gtag',
     title: 'Google Consent Mode v2',
     body: "`gtag('consent','default',...)` defaults to denied; flipping a category in the SDK calls `gtag('consent','update',...)` automatically. Works with GA4, Ads, GTM.",
   },
   {
+    tag: 'jurisdiction',
     title: 'UK DUAA + EU GDPR presets',
     body: 'Built-in jurisdictions classify every known vendor into consent / notice / always-allowed. Auto-detect by visitor country if you serve both regions.',
   },
   {
+    tag: 'ai',
     title: 'AI training opt-out',
     body: 'One toggle generates `/ai.txt` and the matching robots.txt rules for GPTBot, ClaudeBot, PerplexityBot, Google-Extended and 6 others. EU AI Act ready.',
   },
   {
+    tag: 'framework',
     title: 'Framework adapters that feel native',
     body: 'React (<ConsentProvider>, useConsent), Vue 3 plugin, Nuxt module with auto-imports and SSR hydration. Headless or drop-in styled banner — your call.',
   },
   {
+    tag: 'audit',
     title: 'Audit log (opt-in)',
     body: 'Add @tickboxhq/cloud and every decision POSTs to api.tickbox.dev. Searchable dashboard, CSV export, retention policy. Without it, nothing leaves the visitor browser.',
   },
   {
+    tag: 'privacy',
     title: 'No tracking, no fingerprinting',
     body: "We don't set our own cookies, don't load remote scripts, don't talk to ad networks. The SDK is fully local unless you install the cloud package.",
   },
 ]
+
+/**
+ * Render body copy with `code` formatting — backticks become code chips,
+ * `<Tag>` becomes a code chip too. Inline-friendly.
+ */
+function format(body: string): string {
+  return body
+    .replace(/`([^`]+)`/g, '<code class="code-chip">$1</code>')
+    .replace(/&lt;([A-Z][\w]*)&gt;/g, '<code class="code-chip">&lt;$1&gt;</code>')
+}
 ---
 
-<Layout title="Features" description="Type-safe consent, PECR-correct script gating, Consent Mode v2, AI training opt-out — built for engineers, not compliance theatre.">
-  <section class="mx-auto max-w-6xl px-6 py-20">
-    <div class="text-center mb-16">
-      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
-        Built for engineers, not compliance theatre.
-      </h1>
-      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
-        Everything Tickbox does, summarised. If something's missing, open an issue —
-        the roadmap is public.
-      </p>
+<Layout
+  title="Features"
+  description="Type-safe consent, PECR-correct script gating, Consent Mode v2, AI training opt-out — built for engineers, not compliance theatre."
+>
+  <!-- HEADER -->
+  <section class="border-b border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-20 lg:pb-24">
+      <p class="eyebrow mb-6">Spec · §1 — Capabilities</p>
+      <div class="grid lg:grid-cols-[1.5fr_1fr] gap-12 items-end">
+        <h1 class="display text-[clamp(2.75rem,7vw,5.5rem)]">
+          Built for engineers,
+          <span class="block italic-display text-[color:var(--color-muted)]">
+            not compliance theatre.
+          </span>
+        </h1>
+        <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed">
+          Everything Tickbox does, summarised. If something's missing, open an
+          issue — the roadmap is public.
+        </p>
+      </div>
     </div>
+  </section>
 
-    <div class="grid md:grid-cols-2 gap-6">
-      {features.map((f) => (
-        <article class="rounded-lg border border-slate-200 p-6 hover:border-slate-300 transition">
-          <h3 class="font-semibold text-slate-900 mb-2">{f.title}</h3>
-          <p class="text-sm text-slate-600 leading-relaxed">{f.body}</p>
-        </article>
-      ))}
+  <!-- FEATURE LIST -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10">
+      <ol class="divide-y divide-[color:var(--color-ink)]">
+        {features.map((f, i) => {
+          const n = String(i + 1).padStart(2, '0')
+          return (
+            <li class="feature-row grid lg:grid-cols-[6rem_8rem_1fr_auto] gap-x-8 gap-y-2 py-10 lg:py-12 items-start group">
+              <span class="font-mono text-[2.5rem] leading-[0.85] text-[color:var(--color-ink)] lg:pt-1">
+                {n}
+              </span>
+              <span class="eyebrow lg:pt-4">/ {f.tag}</span>
+              <div>
+                <h3 class="display text-[1.875rem] lg:text-[2.25rem] leading-[1.05] mb-3 group-hover:underline decoration-2 underline-offset-[6px] decoration-[color:var(--color-accent)]">
+                  {f.title}
+                </h3>
+                <p class="text-[1rem] leading-relaxed text-[color:var(--color-ink-soft)] max-w-2xl" set:html={format(f.body)} />
+              </div>
+              <span
+                class="hidden lg:inline-flex items-center justify-center w-10 h-10 border border-[color:var(--color-ink)] text-[color:var(--color-ink)] mt-2 transition-colors group-hover:bg-[color:var(--color-accent)]"
+                aria-hidden="true"
+              >
+                <span class="tick" aria-hidden="true"></span>
+              </span>
+            </li>
+          )
+        })}
+      </ol>
     </div>
+  </section>
 
-    <div class="mt-16 text-center">
-      <a
-        href="/builder"
-        class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-3 text-white font-medium hover:bg-slate-800"
-      >
-        Generate your config in 60 seconds
-      </a>
+  <!-- CTA -->
+  <section class="border-t border-[color:var(--color-ink)] mt-10 bg-[color:var(--color-paper-2)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20 text-center">
+      <h2 class="display text-[clamp(2rem,5vw,4rem)] mb-6">
+        Generate your config in <span class="italic-display text-[color:var(--color-muted)]">60 seconds.</span>
+      </h2>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="/builder/" class="btn-ink">
+          Try the builder
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="https://docs.tickbox.dev" class="btn-ghost" rel="noopener">
+          Read the docs
+        </a>
+      </div>
     </div>
   </section>
 </Layout>

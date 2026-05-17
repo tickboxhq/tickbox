@@ -1,8 +1,211 @@
 @import "tailwindcss";
 
+/* Font stack — characterful display serif, technical body sans, code-fluent
+   mono. All three are on Google Fonts, no extra subscription needed. */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  /* Palette: cream paper, ink black, chartreuse signature. The chartreuse
+     subverts the green-checkmark cliché while staying acid + energetic. */
+  --color-paper: #fafaf5;
+  --color-paper-2: #f3f1e8;
+  --color-ink: #0b0b0b;
+  --color-ink-soft: #2a2a26;
+  --color-muted: #6b6961;
+  --color-rule: #1a1a1a;
+  --color-rule-soft: #d8d4c5;
+  --color-accent: #d5ff3f;
+  --color-accent-ink: #1f2400;
+
+  --font-display: "Instrument Serif", "Times New Roman", serif;
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "JetBrains Mono", monospace;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    /* Subtle paper-with-grid background. Pinpoint dots on a 24px grid that
+       reads as "ledger paper" up close but fades to a warm field at glance. */
+    background-image: radial-gradient(circle at 1px 1px, rgba(11, 11, 11, 0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  body {
+    background: transparent;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Monospaced metadata strips — small caps tag rows that recur across the
+     site as a structural element ("SPEC", "TIER", "USED BY", etc). */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .eyebrow strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* Display serif treatment. Italic comes alive at large sizes. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.96;
+  }
+
+  /* Inline serif italic phrase inside otherwise sans/serif copy. */
+  .italic-display {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* Solid black CTA — sits on cream paper, sharp edges, no rounded
+     suburban-button look. Hover swaps to chartreuse for a punch. */
+  .btn-ink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.005em;
+    border: 1px solid var(--color-ink);
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+  .btn-ink:hover {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    border-color: var(--color-accent);
+  }
+  .btn-ink .arrow {
+    transition: transform 0.15s ease;
+  }
+  .btn-ink:hover .arrow {
+    transform: translateX(2px);
+  }
+
+  /* Ghost / outlined alternative, same shape. */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    border: 1px solid var(--color-ink);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .btn-ghost:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  /* Hairline rule — the page's primary divider. Not Tailwind's slate-200
+     mush; a real 1px ink line. */
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-ink);
+  }
+  .rule-soft {
+    border: 0;
+    border-top: 1px solid var(--color-rule-soft);
+  }
+
+  /* Small inline tickbox glyph — used as bullet, as logo mark, as decoration. */
+  .tick {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    vertical-align: -0.05em;
+    border: 1.5px solid currentColor;
+    position: relative;
+  }
+  .tick::after {
+    content: "";
+    position: absolute;
+    left: 22%;
+    top: 8%;
+    width: 32%;
+    height: 60%;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .tick.tick-filled {
+    background: var(--color-accent);
+    border-color: var(--color-ink);
+  }
+  .tick.tick-filled::after {
+    border-color: var(--color-accent-ink);
+  }
+
+  /* Code chip — inline code with paper-2 background. */
+  .code-chip {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-rule-soft);
+    padding: 0.1em 0.45em;
+  }
+
+  /* Standalone code block. */
+  .code-block {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+  }
+  .code-block .c-key {
+    color: var(--color-accent);
+  }
+  .code-block .c-str {
+    color: #f5e6a8;
+  }
+  .code-block .c-com {
+    color: #6b6961;
+    font-style: italic;
+  }
+  .code-block .c-fn {
+    color: #c5e6ff;
+  }
+}
+
+/* Reduced motion — kill transitions for accessibility. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }

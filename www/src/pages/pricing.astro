@@ -4,7 +4,8 @@ import Layout from '../layouts/Layout.astro'
 const tiers = [
   {
     name: 'OSS',
-    price: 'Free forever',
+    priceLine: 'Free',
+    priceSub: 'forever',
     blurb: 'Self-hosted. No telemetry. Everything you need to be compliant.',
     features: [
       'All SDK packages (core, react, vue, nuxt, banner-default)',
@@ -19,7 +20,8 @@ const tiers = [
   },
   {
     name: 'Cloud',
-    price: 'Coming soon',
+    priceLine: 'Coming',
+    priceSub: 'soon',
     blurb: 'Add an audit log, a banner editor, and per-site analytics on top of the OSS SDK.',
     features: [
       'Everything in OSS',
@@ -34,7 +36,8 @@ const tiers = [
   },
   {
     name: 'Enterprise',
-    price: "Let's talk",
+    priceLine: "Let's",
+    priceSub: 'talk',
     blurb: 'Multi-site, SSO via your existing IdP, custom retention, contractual support SLA.',
     features: [
       'Everything in Cloud',
@@ -51,61 +54,128 @@ const tiers = [
 ---
 
 <Layout title="Pricing" description="OSS forever, Cloud tier coming soon. Pay only for the audit log + dashboard, not the SDK.">
-  <section class="mx-auto max-w-6xl px-6 py-20">
-    <div class="text-center mb-16">
-      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
-        Pay for the dashboard, not the SDK.
-      </h1>
-      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
-        The whole SDK is OSS forever. Tickbox Cloud is opt-in — add an audit log and a banner editor
-        when you outgrow code-only config.
-      </p>
+  <!-- HEADER -->
+  <section class="border-b border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-20 lg:pb-24">
+      <p class="eyebrow mb-6">Spec · §2 — Tiers</p>
+      <div class="grid lg:grid-cols-[1.5fr_1fr] gap-12 items-end">
+        <h1 class="display text-[clamp(2.75rem,7vw,5.5rem)]">
+          Pay for the dashboard,
+          <span class="block italic-display text-[color:var(--color-muted)]">
+            not the SDK.
+          </span>
+        </h1>
+        <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed">
+          The whole SDK is OSS forever. Tickbox Cloud is opt-in — add an audit
+          log and a banner editor when you outgrow code-only config.
+        </p>
+      </div>
     </div>
+  </section>
 
-    <div class="grid md:grid-cols-3 gap-6">
-      {tiers.map((t) => (
-        <article
-          class:list={[
-            'rounded-lg p-8 flex flex-col',
-            t.highlight
-              ? 'bg-slate-900 text-white border-2 border-slate-900'
-              : 'border border-slate-200 bg-white text-slate-900',
-          ]}
-        >
-          <div class="mb-6">
-            <h3 class="text-lg font-semibold">{t.name}</h3>
-            <p class:list={['mt-1 text-2xl font-semibold', t.highlight ? 'text-white' : 'text-slate-900']}>
-              {t.price}
-            </p>
-            <p class:list={['mt-3 text-sm leading-relaxed', t.highlight ? 'text-slate-300' : 'text-slate-600']}>
-              {t.blurb}
-            </p>
-          </div>
-          <ul class:list={['flex-1 space-y-2 text-sm', t.highlight ? 'text-slate-200' : 'text-slate-600']}>
-            {t.features.map((f) => (
-              <li class="flex gap-2">
-                <span class:list={[t.highlight ? 'text-slate-400' : 'text-slate-400']}>✓</span>
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
-          <a
-            href={t.cta.href}
+  <!-- TIERS -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-16 lg:py-20">
+      <div class="grid lg:grid-cols-3 border border-[color:var(--color-ink)]">
+        {tiers.map((t, i) => (
+          <article
             class:list={[
-              'mt-8 inline-flex items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium',
-              t.highlight
-                ? 'bg-white text-slate-900 hover:bg-slate-100'
-                : 'bg-slate-900 text-white hover:bg-slate-800',
+              'tier-cell',
+              t.highlight && 'tier-cell--featured',
+              i > 0 && 'lg:border-l border-[color:var(--color-ink)]',
+              i > 0 && 'border-t lg:border-t-0',
             ]}
           >
-            {t.cta.label}
-          </a>
-        </article>
-      ))}
-    </div>
+            <header class="mb-8">
+              <div class="flex items-center justify-between mb-6">
+                <span class="eyebrow">
+                  Tier · {String(i + 1).padStart(2, '0')}
+                </span>
+                {t.highlight && (
+                  <span class="px-2 py-0.5 text-[0.65rem] font-mono uppercase tracking-[0.12em] bg-[color:var(--color-accent)] text-[color:var(--color-accent-ink)]">
+                    Featured
+                  </span>
+                )}
+              </div>
+              <h2 class="display text-[3.25rem] lg:text-[4rem] leading-[0.9] mb-1">
+                {t.name}
+              </h2>
+              <p class="font-display text-[1.5rem] leading-tight">
+                {t.priceLine}
+                <span class="italic-display text-[1.25rem] text-[color:var(--color-muted)]">
+                  &nbsp;{t.priceSub}
+                </span>
+              </p>
+              <p class="mt-4 text-[0.95rem] leading-relaxed opacity-80">
+                {t.blurb}
+              </p>
+            </header>
 
-    <p class="mt-12 text-center text-sm text-slate-500">
-      Cloud pricing will start under $20/month for the first site. We'll publish exact tiers when the dashboard ships publicly.
-    </p>
+            <ul class="space-y-3 text-[0.925rem] leading-relaxed mb-10">
+              {t.features.map((f) => (
+                <li class="flex items-start gap-3">
+                  <span class:list={['tick mt-1.5 shrink-0', t.highlight && 'tick-filled']} aria-hidden="true"></span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={t.cta.href}
+              class:list={[t.highlight ? 'btn-ink !bg-[color:var(--color-accent)] !text-[color:var(--color-accent-ink)] !border-[color:var(--color-accent)] hover:!bg-[color:var(--color-paper)]' : 'btn-ink', 'w-full justify-center']}
+              rel="noopener"
+            >
+              {t.cta.label}
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <p class="mt-10 text-center eyebrow">
+        Cloud pricing starts under $20/month for the first site. Exact tiers
+        published when the dashboard ships publicly.
+      </p>
+    </div>
   </section>
+
+  <!-- COMPARISON CALLOUT -->
+  <section class="border-t border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+      <div class="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16 items-start">
+        <h2 class="display text-[clamp(2rem,4.5vw,3.5rem)] leading-[0.95]">
+          Where everyone else <span class="italic-display text-[color:var(--color-muted)]">charges per visitor.</span>
+        </h2>
+        <div class="space-y-6 text-[1.05rem] leading-relaxed text-[color:var(--color-ink-soft)]">
+          <p>
+            OneTrust and Cookiebot charge per session or per pageview because
+            that's how legacy CMPs were architected — every consent banner is
+            an iframe served from their CDN, so they bill for what they serve.
+          </p>
+          <p class="text-[color:var(--color-ink)]">
+            Tickbox's SDK runs on your site. Our cloud only sees consent
+            decisions you actively send via the opt-in beacon — so we charge
+            for that, not for visits we never touched.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .tier-cell {
+      padding: 2.5rem 2rem;
+      background: var(--color-paper);
+      color: var(--color-ink);
+      display: flex;
+      flex-direction: column;
+    }
+    .tier-cell--featured {
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+    .tier-cell--featured .opacity-80 {
+      opacity: 0.75;
+    }
+  </style>
 </Layout>

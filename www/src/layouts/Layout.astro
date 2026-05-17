@@ -11,10 +11,18 @@ const {
   description = 'Developer-first cookie consent SDK. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.',
 } = Astro.props
 const ogTitle = title === 'Tickbox' ? title : `${title} — Tickbox`
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+
+const nav = [
+  { href: '/features', label: 'Features' },
+  { href: '/builder', label: 'Builder' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: 'https://docs.tickbox.dev', label: 'Docs', external: true },
+]
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="h-full bg-white text-slate-900 antialiased">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,40 +32,152 @@ const ogTitle = title === 'Tickbox' ? title : `${title} — Tickbox`
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url.href} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#fafaf5" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={Astro.url.href} />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>{ogTitle}</title>
   </head>
-  <body class="min-h-full flex flex-col">
-    <header class="border-b border-slate-200">
-      <div class="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-        <a href="/" class="font-semibold tracking-tight text-slate-900 text-lg">Tickbox</a>
-        <nav class="flex items-center gap-6 text-sm">
-          <a href="/features" class="text-slate-600 hover:text-slate-900">Features</a>
-          <a href="/builder" class="text-slate-600 hover:text-slate-900">Builder</a>
-          <a href="/pricing" class="text-slate-600 hover:text-slate-900">Pricing</a>
-          <a href="https://docs.tickbox.dev" class="text-slate-600 hover:text-slate-900">Docs</a>
-          <a
-            href="https://app.tickbox.dev"
-            class="rounded-md bg-slate-900 px-3 py-1.5 text-white font-medium hover:bg-slate-800"
-          >
+  <body class="min-h-screen flex flex-col antialiased">
+    <header class="border-b border-[color:var(--color-ink)]">
+      <div class="mx-auto max-w-[78rem] px-6 lg:px-10 h-[68px] flex items-center justify-between gap-8">
+        <a href="/" class="flex items-center gap-2.5 group" aria-label="Tickbox home">
+          <span class="tick tick-filled" aria-hidden="true"></span>
+          <span class="font-display text-[1.65rem] leading-none tracking-tight">
+            Tickbox<span class="italic-display text-[color:var(--color-muted)] text-[1.4rem]">.dev</span>
+          </span>
+        </a>
+        <nav class="hidden md:flex items-center gap-1" aria-label="Primary">
+          {nav.map((item) => {
+            const active = !item.external && currentPath === item.href
+            return (
+              <a
+                href={item.href}
+                class:list={[
+                  'nav-link',
+                  active && 'is-active',
+                ]}
+                {...(item.external ? { rel: 'noopener' } : {})}
+              >
+                {item.label}
+                {item.external && <span class="ext" aria-hidden="true">↗</span>}
+              </a>
+            )
+          })}
+          <span class="mx-2 h-4 w-px bg-[color:var(--color-rule-soft)]" aria-hidden="true"></span>
+          <a href="https://app.tickbox.dev" class="btn-ink !py-1.5 !px-3 text-[0.8125rem]" rel="noopener">
             Sign in
+            <span class="arrow" aria-hidden="true">→</span>
           </a>
         </nav>
+        <a
+          href="https://app.tickbox.dev"
+          class="md:hidden btn-ink !py-1.5 !px-3 text-[0.8125rem]"
+          rel="noopener"
+        >
+          Sign in →
+        </a>
       </div>
     </header>
+
     <main class="flex-1">
       <slot />
     </main>
-    <footer class="border-t border-slate-200 mt-16">
-      <div class="mx-auto max-w-6xl px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-500">
-        <span>© Tickbox · MIT-licensed OSS · UK + EU compliance</span>
-        <div class="flex items-center gap-4">
-          <a href="https://docs.tickbox.dev" class="hover:text-slate-800">Docs</a>
-          <a href="https://github.com/tickboxhq/tickbox" class="hover:text-slate-800">GitHub</a>
-          <a href="/privacy" class="hover:text-slate-800">Privacy</a>
+
+    <footer class="mt-24 border-t border-[color:var(--color-ink)]">
+      <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-10">
+        <div class="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
+          <div>
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="tick tick-filled" aria-hidden="true"></span>
+              <span class="font-display text-2xl leading-none">Tickbox</span>
+            </div>
+            <p class="text-sm text-[color:var(--color-muted)] max-w-xs leading-relaxed">
+              Cookie consent for engineers. MIT-licensed OSS SDK,
+              optional cloud audit log.
+            </p>
+          </div>
+          <div>
+            <p class="eyebrow mb-3">Product</p>
+            <ul class="space-y-2 text-sm">
+              <li><a href="/features" class="footer-link">Features</a></li>
+              <li><a href="/builder" class="footer-link">Builder</a></li>
+              <li><a href="/pricing" class="footer-link">Pricing</a></li>
+              <li><a href="https://app.tickbox.dev" class="footer-link" rel="noopener">Dashboard ↗</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow mb-3">Developers</p>
+            <ul class="space-y-2 text-sm">
+              <li><a href="https://docs.tickbox.dev" class="footer-link" rel="noopener">Docs ↗</a></li>
+              <li><a href="https://docs.tickbox.dev/api/core/readme/" class="footer-link" rel="noopener">API reference ↗</a></li>
+              <li><a href="https://github.com/tickboxhq/tickbox" class="footer-link" rel="noopener">GitHub ↗</a></li>
+              <li><a href="https://www.npmjs.com/org/tickboxhq" class="footer-link" rel="noopener">npm ↗</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow mb-3">Compliance</p>
+            <ul class="space-y-2 text-sm">
+              <li><a href="https://docs.tickbox.dev/concepts/jurisdictions/" class="footer-link" rel="noopener">UK DUAA</a></li>
+              <li><a href="https://docs.tickbox.dev/concepts/jurisdictions/" class="footer-link" rel="noopener">EU GDPR</a></li>
+              <li><a href="https://docs.tickbox.dev/concepts/vendors/" class="footer-link" rel="noopener">Supported vendors</a></li>
+              <li><a href="/privacy" class="footer-link">Privacy</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr class="rule-soft my-8" />
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <p class="eyebrow">
+            <strong>© Tickbox.dev</strong> · MIT · made for the open web
+          </p>
+          <p class="eyebrow font-mono">
+            v0.0.19 · uk_duaa · eu_gdpr · ai_optout
+          </p>
         </div>
       </div>
     </footer>
+
+    <style>
+      .nav-link {
+        font-size: 0.875rem;
+        padding: 0.4rem 0.65rem;
+        color: var(--color-ink-soft);
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: color 0.15s ease;
+      }
+      .nav-link:hover {
+        color: var(--color-ink);
+      }
+      .nav-link.is-active {
+        color: var(--color-ink);
+      }
+      .nav-link.is-active::after {
+        content: '';
+        position: absolute;
+        left: 0.65rem;
+        right: 0.65rem;
+        bottom: -1px;
+        height: 2px;
+        background: var(--color-accent);
+      }
+      .nav-link .ext {
+        font-size: 0.7em;
+        opacity: 0.5;
+      }
+
+      .footer-link {
+        color: var(--color-ink-soft);
+        transition: color 0.15s ease;
+      }
+      .footer-link:hover {
+        color: var(--color-ink);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+    </style>
   </body>
 </html>
