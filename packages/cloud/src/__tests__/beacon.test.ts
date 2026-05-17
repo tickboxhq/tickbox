@@ -145,6 +145,41 @@ describe('installBeacon', () => {
     expect(loadQueue()).toHaveLength(0)
   })
 
+  it('dedupes identical consecutive consent-changed events', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const cleanup = installBeacon(fakeConfig)
+
+    // The store can emit on hydrate / open / close / dismissNotice without
+    // decisions actually changing. The beacon should treat each as a no-op
+    // after the first POST.
+    dispatch({ analytics: true })
+    await flushMicrotasks()
+    dispatch({ analytics: true })
+    await flushMicrotasks()
+    dispatch({ analytics: true })
+    await flushMicrotasks()
+
+    expect(fetchMock).toHaveBeenCalledOnce()
+    cleanup()
+  })
+
+  it('does NOT dedupe when decisions change between events', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const cleanup = installBeacon(fakeConfig)
+
+    dispatch({ analytics: true })
+    await flushMicrotasks()
+    dispatch({ analytics: false })
+    await flushMicrotasks()
+    dispatch({ analytics: true })
+    await flushMicrotasks()
+
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    cleanup()
+  })
+
   it('cleanup removes the listener', async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }))
     vi.stubGlobal('fetch', fetchMock)

@@ -375,7 +375,9 @@ describe('applyConsent — DOM event', () => {
     const listener = vi.fn()
     document.addEventListener('tickbox:consent-changed', listener)
 
-    const decisions = { analytics: true, marketing: false }
+    // Use a decision shape unique to this test — applyConsent dedupes
+    // identical decisions across calls (module-level cache).
+    const decisions = { domEventTest: true, marketing: false }
     const state = makeState(decisions)
     applyConsent(state)
 
@@ -385,6 +387,34 @@ describe('applyConsent — DOM event', () => {
     expect(event.detail.decisions).toEqual(decisions)
     expect(event.detail.ts).toBe(state.storedAt)
 
+    document.removeEventListener('tickbox:consent-changed', listener)
+  })
+
+  it('does NOT dispatch a duplicate event for unchanged decisions', () => {
+    // Hydrate-then-open-then-close pattern — the store emits multiple
+    // times but the user's decisions never changed, so we shouldn't
+    // flood listeners (or downstream audit logs).
+    const listener = vi.fn()
+    document.addEventListener('tickbox:consent-changed', listener)
+
+    const decisions = { dedupTest: true }
+    applyConsent(makeState(decisions))
+    applyConsent(makeState(decisions))
+    applyConsent(makeState(decisions))
+
+    expect(listener).toHaveBeenCalledOnce()
+    document.removeEventListener('tickbox:consent-changed', listener)
+  })
+
+  it('dispatches again when decisions actually change', () => {
+    const listener = vi.fn()
+    document.addEventListener('tickbox:consent-changed', listener)
+
+    applyConsent(makeState({ dedupChange: true }))
+    applyConsent(makeState({ dedupChange: false }))
+    applyConsent(makeState({ dedupChange: true }))
+
+    expect(listener).toHaveBeenCalledTimes(3)
     document.removeEventListener('tickbox:consent-changed', listener)
   })
 })

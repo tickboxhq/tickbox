@@ -115,7 +115,18 @@ function resolveValue(
   return value ? 'granted' : 'denied'
 }
 
+// Cache of the last dispatched decisions snapshot, so we don't broadcast
+// `tickbox:consent-changed` for state mutations that don't change the user's
+// answers (opening the banner, hydrating from cookie, closing the notice).
+// Consumers like @tickboxhq/cloud's beacon want to react only to real
+// decision changes; the side-effects above (activateScripts, gtag update)
+// stay idempotent and run on every applyConsent regardless.
+let lastDispatchedKey = ''
+
 function dispatchEvent(state: ConsentState): void {
+  const key = JSON.stringify(state.decisions)
+  if (key === lastDispatchedKey) return
+  lastDispatchedKey = key
   document.dispatchEvent(
     new CustomEvent('tickbox:consent-changed', {
       detail: { decisions: state.decisions, ts: state.storedAt },

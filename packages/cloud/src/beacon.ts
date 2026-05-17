@@ -67,9 +67,19 @@ export function installBeacon(config: ConsentConfig): () => void {
     }
   }
 
+  // Per-isolate cache of the last payload we POSTed (decisions +
+  // policyVersion). Skip identical follow-ups so a noisy emitter doesn't
+  // flood the audit log. The SDK >=0.0.18 already gates the DOM event on
+  // decision changes; this is a belt-and-braces guard for older SDK
+  // versions or third-party emitters.
+  let lastSentKey = ''
+
   const handler = (event: Event): void => {
     const detail = (event as CustomEvent<ConsentChangeDetail>).detail
     if (!detail) return
+    const key = `${JSON.stringify(detail.decisions)}|${policyVersion}`
+    if (key === lastSentKey) return
+    lastSentKey = key
     // Fire-and-forget so we don't block the SDK's render loop.
     void buildAndSend(detail, send, { jurisdiction, policyVersion })
   }
