@@ -1,0 +1,24 @@
+{
+  "name": "@tickboxhq/www",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/vue": "^5.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@tickboxhq/banner-default": "workspace:*",
+    "@tickboxhq/core": "workspace:*",
+    "astro": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vue": "^3.5.0"
+  }
+}

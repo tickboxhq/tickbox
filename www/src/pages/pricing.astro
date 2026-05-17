@@ -1,0 +1,111 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const tiers = [
+  {
+    name: 'OSS',
+    price: 'Free forever',
+    blurb: 'Self-hosted. No telemetry. Everything you need to be compliant.',
+    features: [
+      'All SDK packages (core, react, vue, nuxt, banner-default)',
+      'UK DUAA + EU GDPR jurisdictions',
+      'PECR-correct gating, Consent Mode v2',
+      'AI training opt-out generators',
+      'tickbox init scaffold + tickbox scan',
+      'MIT licence',
+    ],
+    cta: { label: 'Read the docs', href: 'https://docs.tickbox.dev' },
+    highlight: false,
+  },
+  {
+    name: 'Cloud',
+    price: 'Coming soon',
+    blurb: 'Add an audit log, a banner editor, and per-site analytics on top of the OSS SDK.',
+    features: [
+      'Everything in OSS',
+      'Audit log of every consent decision',
+      'CSV / JSON export of the audit log',
+      'Per-site jurisdiction + decision stats',
+      'Remote banner config (button order, colors, copy) — no redeploy',
+      'Email support',
+    ],
+    cta: { label: 'Get notified', href: 'mailto:hi@tickbox.dev?subject=Tickbox%20Cloud%20launch' },
+    highlight: true,
+  },
+  {
+    name: 'Enterprise',
+    price: "Let's talk",
+    blurb: 'Multi-site, SSO via your existing IdP, custom retention, contractual support SLA.',
+    features: [
+      'Everything in Cloud',
+      'SSO via SAML / OIDC',
+      'Custom retention policies',
+      'Bring-your-own-DB (Postgres) for self-hosting',
+      'SOC 2 evidence collection',
+      'Named support contact',
+    ],
+    cta: { label: 'Contact us', href: 'mailto:hi@tickbox.dev?subject=Tickbox%20Enterprise' },
+    highlight: false,
+  },
+]
+---
+
+<Layout title="Pricing" description="OSS forever, Cloud tier coming soon. Pay only for the audit log + dashboard, not the SDK.">
+  <section class="mx-auto max-w-6xl px-6 py-20">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
+        Pay for the dashboard, not the SDK.
+      </h1>
+      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
+        The whole SDK is OSS forever. Tickbox Cloud is opt-in — add an audit log and a banner editor
+        when you outgrow code-only config.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      {tiers.map((t) => (
+        <article
+          class:list={[
+            'rounded-lg p-8 flex flex-col',
+            t.highlight
+              ? 'bg-slate-900 text-white border-2 border-slate-900'
+              : 'border border-slate-200 bg-white text-slate-900',
+          ]}
+        >
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold">{t.name}</h3>
+            <p class:list={['mt-1 text-2xl font-semibold', t.highlight ? 'text-white' : 'text-slate-900']}>
+              {t.price}
+            </p>
+            <p class:list={['mt-3 text-sm leading-relaxed', t.highlight ? 'text-slate-300' : 'text-slate-600']}>
+              {t.blurb}
+            </p>
+          </div>
+          <ul class:list={['flex-1 space-y-2 text-sm', t.highlight ? 'text-slate-200' : 'text-slate-600']}>
+            {t.features.map((f) => (
+              <li class="flex gap-2">
+                <span class:list={[t.highlight ? 'text-slate-400' : 'text-slate-400']}>✓</span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={t.cta.href}
+            class:list={[
+              'mt-8 inline-flex items-center justify-center rounded-md px-4 py-2.5 text-sm font-medium',
+              t.highlight
+                ? 'bg-white text-slate-900 hover:bg-slate-100'
+                : 'bg-slate-900 text-white hover:bg-slate-800',
+            ]}
+          >
+            {t.cta.label}
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <p class="mt-12 text-center text-sm text-slate-500">
+      Cloud pricing will start under $20/month for the first site. We'll publish exact tiers when the dashboard ships publicly.
+    </p>
+  </section>
+</Layout>

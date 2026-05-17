@@ -1,0 +1,78 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="Tickbox">
+  <!-- Hero -->
+  <section class="mx-auto max-w-6xl px-6 pt-20 pb-24 text-center">
+    <p class="text-sm font-medium text-slate-500 mb-4 tracking-wide uppercase">
+      UK DUAA · EU GDPR · AI training opt-out
+    </p>
+    <h1 class="text-5xl md:text-6xl font-semibold tracking-tight text-slate-900 max-w-3xl mx-auto">
+      Cookie consent that doesn't get in your way.
+    </h1>
+    <p class="text-lg text-slate-600 mt-6 max-w-2xl mx-auto">
+      A developer-first SDK with PECR-correct script gating, Consent Mode v2 out of the box,
+      and an auditable trail when you need one.
+    </p>
+    <div class="mt-10 flex items-center justify-center gap-3">
+      <a
+        href="/builder"
+        class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-3 text-white font-medium hover:bg-slate-800"
+      >
+        Try the builder
+      </a>
+      <a
+        href="https://docs.tickbox.dev/getting-started/overview"
+        class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-slate-900 font-medium hover:bg-slate-50"
+      >
+        Read the docs
+      </a>
+    </div>
+    <p class="mt-6 text-sm text-slate-500">
+      <code class="font-mono bg-slate-100 px-2 py-1 rounded">npx @tickboxhq/cli init</code>
+      &nbsp;·&nbsp; Free OSS forever
+    </p>
+  </section>
+
+  <!-- Three quick props -->
+  <section class="mx-auto max-w-6xl px-6 pb-24">
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="rounded-lg border border-slate-200 p-6">
+        <h3 class="font-semibold text-slate-900 mb-2">Code-first config</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          <code class="font-mono">consent.config.ts</code> lives in your repo. Version-controlled,
+          code-reviewed, the same shape across React, Vue, Nuxt and vanilla JS.
+        </p>
+      </div>
+      <div class="rounded-lg border border-slate-200 p-6">
+        <h3 class="font-semibold text-slate-900 mb-2">PECR-correct gating</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Scripts tagged <code class="font-mono">type="text/plain"</code> stay inert until consent.
+          No racy <code class="font-mono">setTimeout</code> hacks. Google Consent Mode v2 wired automatically.
+        </p>
+      </div>
+      <div class="rounded-lg border border-slate-200 p-6">
+        <h3 class="font-semibold text-slate-900 mb-2">Audit log when you need it</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Add <code class="font-mono">@tickboxhq/cloud</code> and every decision lands in a tamper-resistant
+          log at <code class="font-mono">app.tickbox.dev</code>. Until then, nothing leaves the browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Used by -->
+  <section class="mx-auto max-w-6xl px-6 pb-24 border-t border-slate-100 pt-16">
+    <p class="text-center text-sm text-slate-500 mb-6">
+      Already in production on
+    </p>
+    <div class="flex items-center justify-center gap-10 text-slate-700 font-medium">
+      <span>tinysystems.io</span>
+      <span class="text-slate-300">·</span>
+      <span>pictag.io</span>
+      <span class="text-slate-300">·</span>
+      <span>smesolutions.uk</span>
+    </div>
+  </section>
+</Layout>

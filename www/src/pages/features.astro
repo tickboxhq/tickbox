@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const features = [
+  {
+    title: 'Type-safe consent config',
+    body: 'A single `defineConsent({...})` call in TypeScript. Autocomplete on categories, vendors, jurisdiction. Compile-time errors when you mis-spell a category name.',
+  },
+  {
+    title: 'PECR-correct script gating',
+    body: 'Tag any script `type="text/plain" data-tb-category="analytics"` and it stays inert until consent. No race conditions, no fragile timing, no `setTimeout` workarounds.',
+  },
+  {
+    title: 'Google Consent Mode v2',
+    body: '`gtag(\'consent\',\'default\',...)` defaults to denied; flipping a category in the SDK calls `gtag(\'consent\',\'update\',...)` automatically. Works with GA4, Ads, GTM.',
+  },
+  {
+    title: 'UK DUAA + EU GDPR presets',
+    body: 'Built-in jurisdictions classify every known vendor into consent / notice / always-allowed. Auto-detect by visitor country if you serve both regions.',
+  },
+  {
+    title: 'AI training opt-out',
+    body: 'One toggle generates `/ai.txt` and the matching robots.txt rules for GPTBot, ClaudeBot, PerplexityBot, Google-Extended and 6 others. EU AI Act ready.',
+  },
+  {
+    title: 'Framework adapters that feel native',
+    body: 'React (<ConsentProvider>, useConsent), Vue 3 plugin, Nuxt module with auto-imports and SSR hydration. Headless or drop-in styled banner — your call.',
+  },
+  {
+    title: 'Audit log (opt-in)',
+    body: 'Add @tickboxhq/cloud and every decision POSTs to api.tickbox.dev. Searchable dashboard, CSV export, retention policy. Without it, nothing leaves the visitor browser.',
+  },
+  {
+    title: 'No tracking, no fingerprinting',
+    body: 'We don\'t set our own cookies, don\'t load remote scripts, don\'t talk to ad networks. The SDK is fully local unless you install the cloud package.',
+  },
+]
+---
+
+<Layout title="Features" description="Type-safe consent, PECR-correct script gating, Consent Mode v2, AI training opt-out — built for engineers, not compliance theatre.">
+  <section class="mx-auto max-w-6xl px-6 py-20">
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
+        Built for engineers, not compliance theatre.
+      </h1>
+      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
+        Everything Tickbox does, summarised. If something's missing, open an issue —
+        the roadmap is public.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      {features.map((f) => (
+        <article class="rounded-lg border border-slate-200 p-6 hover:border-slate-300 transition">
+          <h3 class="font-semibold text-slate-900 mb-2">{f.title}</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">{f.body}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-16 text-center">
+      <a
+        href="/builder"
+        class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-5 py-3 text-white font-medium hover:bg-slate-800"
+      >
+        Generate your config in 60 seconds
+      </a>
+    </div>
+  </section>
+</Layout>

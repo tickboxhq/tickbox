@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout
+  title="Builder"
+  description="Generate a Tickbox consent.config.ts in 60 seconds. Pick jurisdiction, toggle vendors, copy the config."
+>
+  <section class="mx-auto max-w-6xl px-6 py-16">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900">
+        Build your <code class="font-mono">consent.config.ts</code>
+      </h1>
+      <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
+        Pick a jurisdiction, tick the vendor groups your site uses, and copy the generated config.
+        No sign-up needed — everything happens in your browser.
+      </p>
+    </div>
+
+    <div class="rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-12 text-center">
+      <p class="text-slate-600 font-medium mb-2">Interactive builder lands here.</p>
+      <p class="text-sm text-slate-500">Shipping next — until then, run <code class="font-mono bg-white border border-slate-200 px-2 py-1 rounded">npx @tickboxhq/cli init</code> for the same flow in your terminal.</p>
+    </div>
+  </section>
+</Layout>
