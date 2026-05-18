@@ -27,9 +27,42 @@ const usedBy = [
   { name: 'pictag.io', sector: 'event photo matching' },
   { name: 'smesolutions.uk', sector: 'AI compliance' },
 ]
+
+// SoftwareApplication schema — gives Google's rich-results path the data
+// it needs to render the SDK as a software card in SERPs (rating block
+// optional; pricing handled via offers on the matching products at
+// /pricing).
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Tickbox',
+  url: 'https://tickbox.dev',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web (Browser)',
+  description:
+    "Developer-first cookie consent SDK with PECR-correct script gating, Google Consent Mode v2, and AI training opt-out. MIT-licensed.",
+  publisher: { '@id': 'https://tickbox.dev/#organization' },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'GBP',
+    description: 'OSS SDK is free forever; cloud audit-log dashboard is paid.',
+  },
+  softwareVersion: '0.0.20',
+  license: 'https://opensource.org/licenses/MIT',
+  programmingLanguage: ['TypeScript', 'JavaScript'],
+  sameAs: [
+    'https://github.com/tickboxhq/tickbox',
+    'https://www.npmjs.com/org/tickboxhq',
+  ],
+}
 ---
 
-<Layout title="Tickbox">
+<Layout
+  title="Tickbox"
+  description="Cookie consent that doesn't get in your way. PECR-correct script gating, Google Consent Mode v2, and AI training opt-out — built for engineers, not compliance theatre."
+  jsonLd={softwareSchema}
+>
   <!-- HERO -->
   <section class="border-b border-[color:var(--color-ink)]">
     <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-24 lg:pb-28">

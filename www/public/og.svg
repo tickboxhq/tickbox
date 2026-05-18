@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- Brand-system colors: cream paper, ink, chartreuse accent. Matches
+       tickbox.dev so the share card is recognisably the same brand. -->
+  <defs>
+    <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#0b0b0b" fill-opacity="0.06"/>
+    </pattern>
+    <style>
+      .display { font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif; font-weight: 400; }
+      .mono    { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+    </style>
+  </defs>
+
+  <!-- Paper background -->
+  <rect width="1200" height="630" fill="#fafaf5"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Top meta strip -->
+  <g transform="translate(72, 72)">
+    <text x="0" y="0" class="mono" font-size="14" fill="#6b6961" dominant-baseline="hanging">
+      Spec · v0.0.20 · UK DUAA · EU GDPR · AI opt-out · MIT
+    </text>
+  </g>
+
+  <!-- Tick mark (chartreuse-filled checkbox), left of headline -->
+  <g transform="translate(72, 200)">
+    <rect x="0" y="0" width="64" height="64" fill="#d5ff3f" stroke="#0b0b0b" stroke-width="3"/>
+    <path d="M 16 34 L 28 46 L 50 18" fill="none" stroke="#1f2400" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+
+  <!-- Headline + italic phrase -->
+  <g transform="translate(72, 360)">
+    <text x="0" y="0" class="display" font-size="124" fill="#0b0b0b" letter-spacing="-3">
+      Cookie consent
+    </text>
+    <text x="0" y="120" class="display" font-style="italic" font-size="108" fill="#6b6961" letter-spacing="-2">
+      that doesn't get in your way.
+    </text>
+  </g>
+
+  <!-- Bottom strip: URL + small wordmark -->
+  <g transform="translate(72, 562)">
+    <text x="0" y="0" class="mono" font-size="14" fill="#0b0b0b" dominant-baseline="alphabetic">
+      tickbox.dev
+    </text>
+    <text x="1056" y="0" class="mono" font-size="14" fill="#6b6961" dominant-baseline="alphabetic">
+      developer-first cookie SDK
+    </text>
+  </g>
+</svg>

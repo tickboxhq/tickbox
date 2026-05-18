@@ -51,9 +51,70 @@ const tiers = [
     highlight: false,
   },
 ]
+
+// Product schema with three Offers — lets Google show pricing under the
+// pricing-page result in SERPs and feeds price-comparison crawlers. Uses
+// the actual GBP numbers from packages/cli/src/plans equivalents.
+const pricingSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Tickbox Cloud',
+  description:
+    'Cloud audit-log dashboard + remote banner editor on top of the MIT-licensed Tickbox OSS SDK.',
+  brand: { '@id': 'https://tickbox.dev/#organization' },
+  url: 'https://tickbox.dev/pricing/',
+  offers: [
+    {
+      '@type': 'Offer',
+      name: 'Entry',
+      price: '19.00',
+      priceCurrency: 'GBP',
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: '19.00',
+        priceCurrency: 'GBP',
+        unitText: 'MONTH',
+      },
+      availability: 'https://schema.org/InStock',
+      url: 'https://tickbox.dev/pricing/',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Pro',
+      price: '49.00',
+      priceCurrency: 'GBP',
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: '49.00',
+        priceCurrency: 'GBP',
+        unitText: 'MONTH',
+      },
+      availability: 'https://schema.org/InStock',
+      url: 'https://tickbox.dev/pricing/',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Unlimited',
+      price: '199.00',
+      priceCurrency: 'GBP',
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: '199.00',
+        priceCurrency: 'GBP',
+        unitText: 'MONTH',
+      },
+      availability: 'https://schema.org/InStock',
+      url: 'https://tickbox.dev/pricing/',
+    },
+  ],
+}
 ---
 
-<Layout title="Pricing" description="OSS forever, Cloud tier coming soon. Pay only for the audit log + dashboard, not the SDK.">
+<Layout
+  title="Pricing"
+  description="Tickbox OSS SDK is free forever (MIT). Cloud tier from £19/month — audit log, remote banner editor, CSV export. Pay for the dashboard, not the SDK."
+  jsonLd={pricingSchema}
+>
   <!-- HEADER -->
   <section class="border-b border-[color:var(--color-ink)]">
     <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-20 lg:pb-24">

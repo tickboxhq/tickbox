@@ -4,14 +4,26 @@ import '../styles/global.css'
 interface Props {
   title: string
   description?: string
+  /**
+   * Page-specific Schema.org JSON-LD. Pages like /pricing pass a Product /
+   * Offer block here; the site-wide Organization + WebSite schemas always
+   * render below.
+   */
+  jsonLd?: unknown
 }
 
 const {
   title,
   description = 'Developer-first cookie consent SDK. PECR-correct script gating, Google Consent Mode v2, AI training opt-out.',
+  jsonLd,
 } = Astro.props
 const ogTitle = title === 'Tickbox' ? title : `${title} — Tickbox`
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+
+// Canonical absolute URLs — needed for og:url / canonical / JSON-LD ids.
+const SITE = 'https://tickbox.dev'
+const canonical = new URL(Astro.url.pathname, SITE).href
+const ogImage = new URL('/og.png', SITE).href
 
 const nav = [
   { href: '/features', label: 'Features' },
@@ -19,24 +31,79 @@ const nav = [
   { href: '/pricing', label: 'Pricing' },
   { href: 'https://docs.tickbox.dev', label: 'Docs', external: true },
 ]
+
+// Site-wide JSON-LD: Organization + WebSite. Both get @id-pinned URLs so
+// other entities (Article, Product) can reference them by id.
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE}/#organization`,
+  name: 'Tickbox',
+  url: SITE,
+  logo: ogImage,
+  sameAs: [
+    'https://github.com/tickboxhq',
+    'https://www.npmjs.com/org/tickboxhq',
+  ],
+  description:
+    'Developer-first cookie consent SDK for the UK and EU. PECR-correct, Consent Mode v2, AI training opt-out.',
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE}/#website`,
+  url: SITE,
+  name: 'Tickbox',
+  publisher: { '@id': `${SITE}/#organization` },
+  inLanguage: 'en-GB',
+}
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Basic SEO -->
+    <title>{ogTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content="Astro" />
+    <meta name="theme-color" content="#fafaf5" />
+
+    <!-- Open Graph (Facebook, LinkedIn, Slack, Discord, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tickbox" />
     <meta property="og:title" content={ogTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Tickbox — cookie consent that doesn't get in your way" />
+
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#fafaf5" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Tickbox — cookie consent that doesn't get in your way" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- Fonts (parallel load with the stylesheet — see global.css comment) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <title>{ogTitle}</title>
+
+    <!-- Structured data: site-wide Organization + WebSite, plus any page-level schema -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body class="min-h-screen flex flex-col antialiased">
     <header class="border-b border-[color:var(--color-ink)]">
