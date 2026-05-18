@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/vue": "^5.0.0",
     "@tailwindcss/vite": "^4.0.0",
     "@tickboxhq/banner-default": "workspace:*",
