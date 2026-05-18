@@ -3,6 +3,13 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { BannerCopy } from '../shared/copy.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
+import {
+  type RemoteTheme,
+  applyThemeColors,
+  mergeCopy,
+  readCachedTheme,
+  refreshTheme,
+} from '../shared/theme.js'
 
 export type ConsentBannerDefaultProps = {
   /**
@@ -29,6 +36,16 @@ export type ConsentBannerDefaultProps = {
    * `prefers-color-scheme`.
    */
   theme?: 'light' | 'dark'
+  /**
+   * Site identifier from app.tickbox.dev. When set, the banner fetches its
+   * remote presentation theme (copy + colours) on mount from
+   * cloudEndpoint/v1/theme/{siteId} and applies it on top of `copy`. Last
+   * fetched theme is cached in localStorage so the next page load renders
+   * synchronously with no flicker.
+   */
+  siteId?: string
+  /** Defaults to https://api.tickbox.dev. Override only for self-hosting. */
+  cloudEndpoint?: string
 }
 
 /**
@@ -53,18 +70,47 @@ function BannerInner({
   api: ConsentApi
   props: ConsentBannerDefaultProps
 }) {
-  const copy: BannerCopy = { ...resolveLocalePack(props.locale).banner, ...props.copy }
-  const [showModal, setShowModal] = useState(false)
+  // Synchronous read of any cached theme so first paint already shows brand
+  // colours / copy.
+  const [remoteTheme, setRemoteTheme] = useState<RemoteTheme | null>(() =>
+    props.siteId ? readCachedTheme(props.siteId) : null,
+  )
 
   useEffect(() => {
     injectStyles()
-  }, [])
+    if (!props.siteId) return
+    let cancelled = false
+    void (async () => {
+      const fresh = await refreshTheme(props.siteId!, props.cloudEndpoint)
+      if (!cancelled && fresh) setRemoteTheme(fresh)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [props.siteId, props.cloudEndpoint])
+
+  const mergedCopyOverrides = mergeCopy(props.copy ?? {}, remoteTheme?.copy)
+  const locale = remoteTheme?.locale ?? props.locale
+  const copy: BannerCopy = { ...resolveLocalePack(locale).banner, ...mergedCopyOverrides }
+
+  const [showModal, setShowModal] = useState(false)
+  const rootRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (rootRef.current) applyThemeColors(rootRef.current, remoteTheme)
+  }, [remoteTheme])
 
   const themeAttrs = props.theme ? { 'data-tb-theme': props.theme } : {}
 
   return (
     <>
-      <div className="tb-root tb-banner" role="region" aria-label={copy.title} {...themeAttrs}>
+      <div
+        ref={rootRef}
+        className="tb-root tb-banner"
+        role="region"
+        aria-label={copy.title}
+        {...themeAttrs}
+      >
         <div className="tb-banner-text">
           <p className="tb-banner-title">{copy.title}</p>
           <p className="tb-banner-desc">{copy.description}</p>
@@ -91,6 +137,7 @@ function BannerInner({
           api={api}
           copy={copy}
           theme={props.theme}
+          remoteTheme={remoteTheme}
           onClose={() => setShowModal(false)}
         />
       )}
@@ -102,11 +149,13 @@ function CustomiseModal({
   api,
   copy,
   theme,
+  remoteTheme,
   onClose,
 }: {
   api: ConsentApi
   copy: BannerCopy
   theme?: 'light' | 'dark'
+  remoteTheme?: RemoteTheme | null
   onClose: () => void
 }) {
   const titleId = useId()
@@ -131,9 +180,25 @@ function CustomiseModal({
 
   const themeAttrs = theme ? { 'data-tb-theme': theme } : {}
 
+  // Apply remote-theme colour overrides inline so the modal picks them up
+  // immediately on every mount (no race with a ref+effect cycle). React
+  // doesn't type CSS custom properties on CSSProperties, so build as a
+  // plain record and cast at the assignment site.
+  const modalStyle: Record<string, string> = {}
+  if (remoteTheme?.colors?.accent) {
+    modalStyle['--tb-primary-bg'] = sanitiseColor(remoteTheme.colors.accent)
+  }
+  if (remoteTheme?.colors?.background) {
+    modalStyle['--tb-bg'] = sanitiseColor(remoteTheme.colors.background)
+  }
+  if (remoteTheme?.colors?.text) {
+    modalStyle['--tb-fg'] = sanitiseColor(remoteTheme.colors.text)
+  }
+
   return (
     <div
       className="tb-root tb-modal-backdrop"
+      style={modalStyle as React.CSSProperties}
       onClick={onClose}
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose()
@@ -225,4 +290,8 @@ function trapFocus(e: KeyboardEvent, container: HTMLDivElement | null) {
     e.preventDefault()
     first.focus()
   }
+}
+
+function sanitiseColor(v: string): string {
+  return v.replace(/[<>&"'\n\r\\]/g, '').slice(0, 64)
 }

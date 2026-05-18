@@ -1,9 +1,16 @@
 import type { ConsentSlotApi } from '@tickboxhq/vue'
 import { ConsentBanner } from '@tickboxhq/vue'
-import { type PropType, defineComponent, h, onMounted, ref } from 'vue'
+import { type PropType, defineComponent, h, onMounted, ref, watch } from 'vue'
 import type { BannerCopy } from '../shared/copy.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
+import {
+  type RemoteTheme,
+  applyThemeColors,
+  mergeCopy,
+  readCachedTheme,
+  refreshTheme,
+} from '../shared/theme.js'
 
 export type ConsentBannerDefaultProps = {
   /**
@@ -15,6 +22,16 @@ export type ConsentBannerDefaultProps = {
   copy?: Partial<BannerCopy>
   policyUrl?: string
   theme?: 'light' | 'dark'
+  /**
+   * Site identifier from app.tickbox.dev. When set, the banner fetches its
+   * remote presentation theme (copy + colours) on mount from
+   * cloudEndpoint/v1/theme/{siteId} and applies it on top of `copy`. Last
+   * fetched theme is cached in localStorage so the next page load renders
+   * synchronously with no flicker.
+   */
+  siteId?: string
+  /** Defaults to https://api.tickbox.dev. Override only for self-hosting. */
+  cloudEndpoint?: string
 }
 
 /**
@@ -34,7 +51,10 @@ export type ConsentBannerDefaultProps = {
  * import config from './consent.config'
  * </script>
  * <template>
- *   <ConsentBannerDefault :policy-url="config.policy?.url" />
+ *   <ConsentBannerDefault
+ *     :site-id="config.cloud?.siteId"
+ *     :policy-url="config.policy?.url"
+ *   />
  * </template>
  * ```
  */
@@ -45,18 +65,32 @@ export const ConsentBannerDefault = defineComponent({
     copy: { type: Object as PropType<Partial<BannerCopy>>, default: () => ({}) },
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
+    siteId: { type: String as PropType<string | undefined>, default: undefined },
+    cloudEndpoint: { type: String as PropType<string | undefined>, default: undefined },
   },
   setup(props) {
-    onMounted(() => injectStyles())
+    // Synchronous read of any cached theme so we render with brand
+    // colours / copy on first paint — no flicker between code defaults and
+    // the remote theme.
+    const remoteTheme = ref<RemoteTheme | null>(props.siteId ? readCachedTheme(props.siteId) : null)
+
+    onMounted(async () => {
+      injectStyles()
+      if (!props.siteId) return
+      const fresh = await refreshTheme(props.siteId, props.cloudEndpoint)
+      if (fresh) remoteTheme.value = fresh
+    })
+
     return () =>
       h(ConsentBanner, null, {
         default: (api: unknown) =>
           h(BannerInner, {
             api: api as ConsentSlotApi,
-            locale: props.locale,
-            userCopy: props.copy ?? {},
+            locale: remoteTheme.value?.locale ?? props.locale,
+            userCopy: mergeCopy(props.copy ?? {}, remoteTheme.value?.copy),
             policyUrl: props.policyUrl,
             theme: props.theme,
+            remoteTheme: remoteTheme.value,
           }),
       })
   },
@@ -75,9 +109,19 @@ const BannerInner = defineComponent({
     userCopy: { type: Object as PropType<Partial<BannerCopy>>, required: true },
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
+    remoteTheme: { type: Object as PropType<RemoteTheme | null>, default: null },
   },
   setup(props) {
     const showModal = ref(false)
+    const rootRef = ref<HTMLElement | null>(null)
+
+    // Apply colour overrides after every render so the values follow theme
+    // changes (e.g. after a fresh fetch finishes post-mount).
+    const applyColors = () => {
+      if (rootRef.value) applyThemeColors(rootRef.value, props.remoteTheme)
+    }
+    onMounted(applyColors)
+    watch(() => props.remoteTheme, applyColors, { deep: true })
 
     return () => {
       const copy: BannerCopy = {
@@ -90,6 +134,7 @@ const BannerInner = defineComponent({
         h(
           'div',
           {
+            ref: rootRef,
             class: 'tb-root tb-banner',
             role: 'region',
             'aria-label': copy.title,
@@ -137,7 +182,7 @@ const BannerInner = defineComponent({
           ],
         ),
         showModal.value
-          ? renderModal(props.api, copy, props.theme, () => {
+          ? renderModal(props.api, copy, props.theme, props.remoteTheme, () => {
               showModal.value = false
             })
           : null,
@@ -150,15 +195,31 @@ function renderModal(
   api: ConsentSlotApi,
   copy: BannerCopy,
   theme: 'light' | 'dark' | undefined,
+  remoteTheme: RemoteTheme | null,
   onClose: () => void,
 ) {
   const themeAttrs = theme ? { 'data-tb-theme': theme } : {}
+
+  // Apply theme colours to the modal root too. Set as inline style so it
+  // doesn't depend on a post-render ref+effect cycle (the modal mounts and
+  // unmounts frequently).
+  const inlineStyle: Record<string, string> = {}
+  if (remoteTheme?.colors?.accent) {
+    inlineStyle['--tb-primary-bg'] = sanitiseColor(remoteTheme.colors.accent)
+  }
+  if (remoteTheme?.colors?.background) {
+    inlineStyle['--tb-bg'] = sanitiseColor(remoteTheme.colors.background)
+  }
+  if (remoteTheme?.colors?.text) {
+    inlineStyle['--tb-fg'] = sanitiseColor(remoteTheme.colors.text)
+  }
 
   return h(
     'div',
     {
       class: 'tb-root tb-modal-backdrop',
       role: 'presentation',
+      style: inlineStyle,
       onClick: onClose,
       onKeydown: (e: KeyboardEvent) => {
         if (e.key === 'Escape') onClose()
@@ -247,4 +308,8 @@ function renderModal(
       ),
     ],
   )
+}
+
+function sanitiseColor(v: string): string {
+  return v.replace(/[<>&"'\n\r\\]/g, '').slice(0, 64)
 }

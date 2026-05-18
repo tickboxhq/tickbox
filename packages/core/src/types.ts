@@ -127,6 +127,13 @@ export type ConsentConfig = {
   /** Cloud configuration. If omitted, the SDK runs entirely client-side with no telemetry. */
   cloud?: {
     apiKey?: string
+    /**
+     * Public site identifier — visible in app.tickbox.dev. Required if you
+     * want `@tickboxhq/banner-default` to fetch its remote theme (copy +
+     * colours) at runtime; safe to commit alongside `apiKey` (neither is a
+     * secret in the cryptographic sense, both ship in the browser bundle).
+     */
+    siteId?: string
     /** Override the default ingest endpoint. Useful for self-hosting. */
     endpoint?: string
   }
