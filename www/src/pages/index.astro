@@ -1,4 +1,5 @@
 ---
+import BannerGallery from '../components/BannerGallery.astro'
 import Layout from '../layouts/Layout.astro'
 
 const props = [
@@ -48,7 +49,7 @@ const softwareSchema = {
     priceCurrency: 'GBP',
     description: 'OSS SDK is free forever; cloud audit-log dashboard is paid.',
   },
-  softwareVersion: '0.0.20',
+  softwareVersion: '0.1.0',
   license: 'https://opensource.org/licenses/MIT',
   programmingLanguage: ['TypeScript', 'JavaScript'],
   sameAs: ['https://github.com/tickboxhq/tickbox', 'https://www.npmjs.com/org/tickboxhq'],
@@ -65,7 +66,7 @@ const softwareSchema = {
     <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-20 lg:pt-24 lg:pb-28">
       <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-10">
         <p class="eyebrow">
-          <strong>Spec</strong> · v0.0.19
+          <strong>Spec</strong> · v0.1.0
         </p>
         <span class="text-[color:var(--color-rule-soft)]" aria-hidden="true">|</span>
         <p class="eyebrow">UK&nbsp;DUAA · EU&nbsp;GDPR · AI&nbsp;Opt-out</p>
@@ -177,6 +178,8 @@ const softwareSchema = {
       </div>
     </div>
   </section>
+
+  <BannerGallery />
 
   <!-- WHAT IT REPLACES — punchy editorial comparison -->
   <section class="border-y border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-[color:var(--color-paper)]">

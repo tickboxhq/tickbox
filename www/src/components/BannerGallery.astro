@@ -1,0 +1,229 @@
+---
+// Static showcase of the styled banner across themes. No JS — each card is
+// the same markup with different --g-* custom properties, which is exactly
+// how real theming works (--tb-* on :root). Visual proof + a live demo of
+// the remote-theming concept in one section.
+type Variant = {
+  label: string
+  note: string
+  mode: 'consent' | 'notice'
+  vars: Record<string, string>
+}
+
+const variants: Variant[] = [
+  {
+    label: 'Default',
+    note: 'light · out of the box',
+    mode: 'consent',
+    vars: {
+      '--g-bg': '#ffffff',
+      '--g-fg': '#1f2328',
+      '--g-accent': '#1f2328',
+      '--g-accent-ink': '#ffffff',
+    },
+  },
+  {
+    label: 'Dark',
+    note: 'follows prefers-color-scheme',
+    mode: 'consent',
+    vars: {
+      '--g-bg': '#0d1117',
+      '--g-fg': '#f0f6fc',
+      '--g-accent': '#f0f6fc',
+      '--g-accent-ink': '#0d1117',
+    },
+  },
+  {
+    label: 'Branded',
+    note: 'three CSS custom properties',
+    mode: 'consent',
+    vars: {
+      '--g-bg': '#ffffff',
+      '--g-fg': '#1f2328',
+      '--g-accent': '#6d28d9',
+      '--g-accent-ink': '#ffffff',
+    },
+  },
+  {
+    label: 'Notice mode',
+    note: 'UK DUAA · no opt-in needed',
+    mode: 'notice',
+    vars: {
+      '--g-bg': '#ffffff',
+      '--g-fg': '#1f2328',
+      '--g-accent': '#1f2328',
+      '--g-accent-ink': '#ffffff',
+    },
+  },
+]
+
+function styleFor(v: Variant) {
+  return Object.entries(v.vars)
+    .map(([k, val]) => `${k}:${val}`)
+    .join(';')
+}
+---
+
+<section class="border-t border-[color:var(--color-ink)]">
+  <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+    <div class="flex flex-wrap items-baseline justify-between gap-4 mb-12">
+      <h2 class="display text-[clamp(2rem,4.5vw,3.5rem)]">
+        See it <span class="italic-display text-[color:var(--color-muted)]">on the page.</span>
+      </h2>
+      <a
+        href="/builder/"
+        class="eyebrow hover:text-[color:var(--color-ink)] flex items-center gap-1"
+      >
+        Build your own ↗
+      </a>
+    </div>
+
+    <div class="gallery-grid">
+      {
+        variants.map((v) => (
+          <figure class="gallery-card">
+            <div class="gallery-stage" style={styleFor(v)}>
+              {v.mode === 'notice' ? (
+                <div class="g-bnr">
+                  <p class="g-title">Just so you know</p>
+                  <p class="g-body">
+                    We use privacy-friendly analytics. No personal data, no
+                    advertising. <a href="#">Privacy policy</a>
+                  </p>
+                  <div class="g-actions">
+                    <button type="button" class="g-btn ghost" disabled>Manage</button>
+                    <button type="button" class="g-btn primary" disabled>Got it</button>
+                  </div>
+                </div>
+              ) : (
+                <div class="g-bnr">
+                  <p class="g-title">Cookie preferences</p>
+                  <p class="g-body">
+                    Necessary cookies stay on; the rest are your call.
+                    <a href="#">Privacy policy</a>
+                  </p>
+                  <div class="g-actions">
+                    <button type="button" class="g-btn ghost" disabled>Customise</button>
+                    <button type="button" class="g-btn" disabled>Reject all</button>
+                    <button type="button" class="g-btn primary" disabled>Accept all</button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <figcaption class="gallery-cap">
+              <strong>{v.label}</strong> · {v.note}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="mt-8 text-sm text-[color:var(--color-ink-soft)] max-w-2xl leading-relaxed">
+      One component, <code class="code-chip">&lt;ConsentBannerDefault /&gt;</code>.
+      Equal-prominence Accept / Reject by default (ICO &amp; EDPB compliant),
+      light/dark automatically, themeable with three CSS variables — or edited
+      per-site from the dashboard with no redeploy.
+    </p>
+  </div>
+</section>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .gallery-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .gallery-card {
+    margin: 0;
+    border: 1px solid var(--color-ink);
+  }
+  .gallery-stage {
+    position: relative;
+    min-height: 12.5rem;
+    padding: 1rem;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        var(--color-paper-2),
+        var(--color-paper-2) 8px,
+        var(--color-paper) 8px,
+        var(--color-paper) 16px
+      );
+    border-bottom: 1px solid var(--color-ink);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .g-bnr {
+    width: 100%;
+    background: var(--g-bg);
+    color: var(--g-fg);
+    border: 1px solid color-mix(in srgb, var(--g-fg) 22%, transparent);
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--g-fg) 16%, transparent);
+    padding: 0.85rem 0.95rem;
+  }
+  .g-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.1;
+    margin: 0 0 0.35rem;
+  }
+  .g-body {
+    font-size: 0.74rem;
+    line-height: 1.45;
+    color: color-mix(in srgb, var(--g-fg) 72%, transparent);
+    margin: 0;
+  }
+  .g-body a {
+    color: var(--g-fg);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .g-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+  }
+  .g-btn {
+    padding: 0.35rem 0.65rem;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 500;
+    border: 1px solid var(--g-fg);
+    background: var(--g-bg);
+    color: var(--g-fg);
+    cursor: default;
+  }
+  .g-btn.ghost {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--g-fg) 35%, transparent);
+    color: color-mix(in srgb, var(--g-fg) 72%, transparent);
+  }
+  .g-btn.primary {
+    background: var(--g-accent);
+    border-color: var(--g-accent);
+    color: var(--g-accent-ink);
+  }
+
+  .gallery-cap {
+    padding: 0.7rem 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    background: var(--color-paper-2);
+  }
+</style>
