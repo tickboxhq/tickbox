@@ -38,6 +38,78 @@ const jurisdiction = ref<JurisdictionChoice>('UK_DUAA')
 const picked = ref<Set<VendorGroup>>(new Set(['privacy_analytics']))
 const policyUrl = ref('/privacy')
 
+// Banner colours. Defaults are @tickboxhq/banner-default's real baked
+// values (packages/banner-default/src/shared/styles.ts) so an untouched
+// builder shows exactly what a user gets out of the box.
+const DEFAULT_COLORS = { accent: '#1f2328', background: '#ffffff', text: '#1f2328' } as const
+const accent = ref<string>(DEFAULT_COLORS.accent)
+const background = ref<string>(DEFAULT_COLORS.background)
+const textColor = ref<string>(DEFAULT_COLORS.text)
+
+const colorsAreDefault = computed(
+  () =>
+    accent.value.toLowerCase() === DEFAULT_COLORS.accent &&
+    background.value.toLowerCase() === DEFAULT_COLORS.background &&
+    textColor.value.toLowerCase() === DEFAULT_COLORS.text,
+)
+
+function resetColors() {
+  accent.value = DEFAULT_COLORS.accent
+  background.value = DEFAULT_COLORS.background
+  textColor.value = DEFAULT_COLORS.text
+}
+
+// Pick black or white for text sitting on the accent (the primary button),
+// by perceived luminance — same call the eye makes.
+function readableInk(hex: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim())
+  if (!m) return '#ffffff'
+  const n = Number.parseInt(m[1], 16)
+  const r = (n >> 16) & 255
+  const g = (n >> 8) & 255
+  const b = n & 255
+  // YIQ; >= 150 reads as "light", so use dark ink on it.
+  return (r * 299 + g * 587 + b * 114) / 1000 >= 150 ? '#1f2328' : '#ffffff'
+}
+
+// CSS custom properties the live preview consumes. Banner colours live
+// outside consent.config.ts by design (presentation, not the compliance
+// contract), so the builder themes the preview and emits a snippet rather
+// than baking colour into the generated config.
+const bannerVars = computed(() => ({
+  '--bnr-bg': background.value,
+  '--bnr-fg': textColor.value,
+  '--bnr-accent': accent.value,
+  '--bnr-accent-ink': readableInk(accent.value),
+}))
+
+const cssVarSnippet = computed(
+  () => `/* Tickbox banner colours — set on :root, or on a wrapper
+   element around <ConsentBannerDefault>. */
+:root {
+  --tb-primary-bg: ${accent.value};
+  --tb-bg: ${background.value};
+  --tb-fg: ${textColor.value};
+}`,
+)
+
+const colorCopyState = ref<'idle' | 'copied' | 'error'>('idle')
+
+async function copyColors() {
+  try {
+    await navigator.clipboard.writeText(cssVarSnippet.value)
+    colorCopyState.value = 'copied'
+    setTimeout(() => {
+      colorCopyState.value = 'idle'
+    }, 1600)
+  } catch {
+    colorCopyState.value = 'error'
+    setTimeout(() => {
+      colorCopyState.value = 'idle'
+    }, 2400)
+  }
+}
+
 const today = new Date().toISOString().slice(0, 10)
 
 function toggle(group: VendorGroup) {
@@ -216,6 +288,80 @@ function download() {
             autocomplete="off"
           />
         </div>
+
+        <!-- 04 banner colours -->
+        <div class="step">
+          <div class="step-head">
+            <span class="step-n">04</span>
+            <h3 class="step-title">Banner colours</h3>
+            <button
+              v-if="!colorsAreDefault"
+              type="button"
+              class="step-reset"
+              @click="resetColors"
+            >
+              reset to default
+            </button>
+            <span v-else class="step-meta">defaults</span>
+          </div>
+          <div class="color-grid">
+            <label class="color-field">
+              <span class="color-label">Accent</span>
+              <span class="color-control">
+                <input v-model="accent" type="color" class="color-swatch" aria-label="Accent colour" />
+                <input
+                  v-model="accent"
+                  type="text"
+                  class="color-hex"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label class="color-field">
+              <span class="color-label">Background</span>
+              <span class="color-control">
+                <input
+                  v-model="background"
+                  type="color"
+                  class="color-swatch"
+                  aria-label="Background colour"
+                />
+                <input
+                  v-model="background"
+                  type="text"
+                  class="color-hex"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+            <label class="color-field">
+              <span class="color-label">Text</span>
+              <span class="color-control">
+                <input v-model="textColor" type="color" class="color-swatch" aria-label="Text colour" />
+                <input
+                  v-model="textColor"
+                  type="text"
+                  class="color-hex"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+              </span>
+            </label>
+          </div>
+          <p class="color-note">
+            Colours are presentation, not compliance — they stay out of
+            <code>consent.config.ts</code>. Drop this in your CSS (or edit it
+            per-site from the dashboard):
+          </p>
+          <pre class="color-snippet"><code>{{ cssVarSnippet }}</code></pre>
+          <button type="button" class="action-btn small" @click="copyColors">
+            <span v-if="colorCopyState === 'copied'">Copied ✓</span>
+            <span v-else-if="colorCopyState === 'error'">Copy failed</span>
+            <span v-else>Copy CSS →</span>
+          </button>
+        </div>
       </section>
 
       <!-- RIGHT: code output -->
@@ -266,7 +412,7 @@ function download() {
             </span>
             <span class="url-bar">your-site.example</span>
           </div>
-          <div class="browser-body">
+          <div class="browser-body" :style="bannerVars">
             <div class="page-fade"></div>
 
             <!-- the banner -->
@@ -754,7 +900,8 @@ function download() {
   left: 1.25rem;
   right: 1.25rem;
   bottom: 1.25rem;
-  background: var(--color-paper);
+  background: var(--bnr-bg, var(--color-paper));
+  color: var(--bnr-fg, var(--color-ink));
   border: 1px solid var(--color-ink);
   box-shadow: 4px 4px 0 var(--color-ink);
   padding: 1.1rem 1.25rem;
@@ -773,11 +920,11 @@ function download() {
 .bnr-body {
   font-size: 0.85rem;
   line-height: 1.5;
-  color: var(--color-ink-soft);
+  color: color-mix(in srgb, var(--bnr-fg, var(--color-ink-soft)) 72%, transparent);
   max-width: 38rem;
 }
 .bnr-body a {
-  color: var(--color-ink);
+  color: var(--bnr-fg, var(--color-ink));
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
@@ -809,9 +956,9 @@ function download() {
   border-color: var(--color-ink);
 }
 .bnr-pill.is-on {
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  border-color: var(--color-accent);
+  background: var(--bnr-accent, var(--color-accent));
+  color: var(--bnr-accent-ink, var(--color-accent-ink));
+  border-color: var(--bnr-accent, var(--color-accent));
 }
 .bnr-pill-tag {
   font-size: 0.62rem;
@@ -829,20 +976,113 @@ function download() {
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 500;
-  border: 1px solid var(--color-ink);
-  background: var(--color-paper);
-  color: var(--color-ink);
+  border: 1px solid var(--bnr-fg, var(--color-ink));
+  background: var(--bnr-bg, var(--color-paper));
+  color: var(--bnr-fg, var(--color-ink));
   cursor: pointer;
 }
 .bnr-btn.ghost {
   background: transparent;
-  border-color: var(--color-rule-soft);
-  color: var(--color-ink-soft);
+  border-color: color-mix(in srgb, var(--bnr-fg, var(--color-ink-soft)) 35%, transparent);
+  color: color-mix(in srgb, var(--bnr-fg, var(--color-ink-soft)) 72%, transparent);
 }
 .bnr-btn.primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-accent-ink);
+  background: var(--bnr-accent, var(--color-accent));
+  border-color: var(--bnr-accent, var(--color-accent));
+  color: var(--bnr-accent-ink, var(--color-accent-ink));
+}
+
+.step-reset {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.step-reset:hover {
+  color: var(--color-ink);
+}
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem;
+}
+.color-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.color-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+.color-control {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-rule-soft);
+  background: var(--color-paper);
+}
+.color-swatch {
+  width: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--color-rule-soft);
+  background: none;
+  cursor: pointer;
+}
+.color-swatch::-webkit-color-swatch-wrapper {
+  padding: 3px;
+}
+.color-swatch::-webkit-color-swatch {
+  border: 0;
+}
+.color-hex {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-ink);
+  background: none;
+  border: 0;
+}
+.color-hex:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: -2px;
+}
+.color-note {
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+.color-note code {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+}
+.color-snippet {
+  margin: 0.6rem 0;
+  padding: 0.7rem 0.85rem;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-rule-soft);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+.action-btn.small {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.78rem;
 }
 
 .sr-only {

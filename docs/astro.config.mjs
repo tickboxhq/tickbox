@@ -94,6 +94,7 @@ export default defineConfig({
             { label: 'Script gating (PECR)', slug: 'concepts/gating' },
             { label: 'Google Consent Mode v2', slug: 'concepts/consent-mode-v2' },
             { label: 'AI training opt-out', slug: 'concepts/ai-opt-out' },
+            { label: 'Remote theming', slug: 'concepts/remote-theming' },
             { label: 'Supported vendors', slug: 'concepts/vendors' },
           ],
         },
