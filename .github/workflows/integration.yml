@@ -1,0 +1,48 @@
+name: Integration
+
+# Push-to-main only for now (plus manual dispatch). The plan calls for keeping
+# this off the PR path until we've learned what's flaky; branch protection can
+# require it later.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Playwright script-tag gating smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The fixture imports @tickboxhq/core; the test serves the local build.
+      - name: Build core
+        run: pnpm -r --filter='@tickboxhq/core' build
+
+      - name: Install Playwright Chromium
+        run: pnpm -F @tickboxhq/integration-tests exec playwright install --with-deps chromium
+
+      - name: Run smoke test
+        run: pnpm -F @tickboxhq/integration-tests test
