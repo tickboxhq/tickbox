@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/cli",
-  "version": "0.0.17",
+  "version": "0.1.0",
   "description": "Tickbox CLI — scan a URL for tracking vendors, validate a consent config",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
