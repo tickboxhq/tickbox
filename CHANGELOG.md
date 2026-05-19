@@ -4,10 +4,15 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-05-19
+
+The cloud tier lands. The OSS SDK still runs entirely locally; this release adds the opt-in beacon the hosted audit log depends on, the `tickbox init` scaffold, and a real-browser smoke test guarding the script-gating path. Minor bump because `@tickboxhq/cloud` is a new public surface the platform now builds on.
+
 ### Added
 - **`@tickboxhq/cloud`** — opt-in npm package that POSTs every consent decision to `api.tickbox.dev/v1/events`. One call at app startup (`installBeacon(config)`) subscribes to the SDK's `tickbox:consent-changed` DOM event, sends a minimal payload (`visitorHash`, `jurisdiction`, `policyVersion`, `decisions`), and falls back to a 24-hour localStorage retry queue on transient failures. SSR-safe, ~3.6 KB ESM, depends only on `@tickboxhq/core`. The OSS SDK still runs entirely locally without this package installed — cloud is strictly opt-in. 8 vitest cases covering happy-path send, retry-queue, 4xx vs 5xx behaviour, missing-key no-op, queue-flush-on-install and listener cleanup. Plugs into the existing `cloud: { apiKey, endpoint }` shape on `ConsentConfig`.
 - **`tickbox init`** — interactive scaffold for `consent.config.ts`. Prompts for jurisdiction (UK_DUAA / EU_GDPR / `auto` / custom), vendor groups (multi-select sourced from the same `vendors.ts` registry as docs.tickbox.dev), privacy policy URL, framework adapter, and the optional drop-in styled banner. Writes a working config plus runs `pnpm/npm/yarn/bun add` for the chosen SDK packages when a lockfile is detected. Refuses to overwrite an existing `consent.config.ts` without confirmation, refuses to run outside a project root. Snapshot-tested across six representative input combinations; every generated config passes `tickbox validate`.
 - `@tickboxhq/core` now re-exports the vendor-group constants (`PRIVACY_FRIENDLY_ANALYTICS`, `ADVERTISING_VENDORS`, `SESSION_REPLAY_VENDORS`, `CDP_AND_PRODUCT_ANALYTICS`, `MARKETING_AUTOMATION`, `CHAT_WIDGETS`, `AI_TRAINING_CRAWLERS`, `ALL_TRACKING_VENDORS`) directly from the package root so generated configs can `import { PRIVACY_FRIENDLY_ANALYTICS } from '@tickboxhq/core'` without the `/jurisdictions` subpath.
+- **Tier-1 integration test** — a private `@tickboxhq/integration-tests` package runs one Playwright smoke test against `examples/vanilla/uk-pecr-google-analytics` in a real browser: the deny path makes zero requests to Google's tag servers and the gated `<script>` tags stay inert; the accept path loads `gtag/js` and flips Consent Mode v2 `analytics_storage` to `granted`. Catches the regression class unit tests can't (a tag firing pre-consent). Runs in its own push-to-main workflow, kept out of the main `pnpm test`.
 
 ## [0.0.17] - 2026-05-09
 
