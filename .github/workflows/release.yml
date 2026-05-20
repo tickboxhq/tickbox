@@ -31,15 +31,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Node 24 because Trusted Publishing needs npm 11.5+ and Node 22
+          # LTS ships with npm 10. Doing an in-line `npm i -g npm@11` runs
+          # into a known mid-upgrade MODULE_NOT_FOUND; bumping the Node
+          # version is the clean fix.
+          node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
-
-      # Trusted Publishing landed in npm 11.5.1; Node 22 LTS ships npm 10.x,
-      # which can't exchange the GitHub OIDC token for an npm publish
-      # credential and silently 404s the PUT.
-      - name: Upgrade npm for Trusted Publishing
-        run: npm install -g npm@11
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
