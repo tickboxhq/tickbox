@@ -4,6 +4,11 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-20
+
+### Fixed
+- The `branding` line on `<ConsentBannerDefault>` had too much breathing room: the parent flex container contributes a 16 px gap above the credit, and the banner card adds another 16 px bottom padding under it. Negative margins (-12 top, -10 bottom) collapse those back to a tight ~4 px / 6 px ring so "Powered by Tickbox" sits as a discreet footer line rather than a floating banner of its own.
+
 ## [0.1.2] - 2026-05-20
 
 ### Fixed

@@ -145,13 +145,13 @@ export const TICKBOX_STYLES = `
 .tb-link:hover { text-decoration: underline; }
 
 .tb-branding {
-  /* flex-basis 100% breaks .tb-branding onto its own row inside the
-     wrapping flex banner so it doesn't sit next to the action buttons.
-     On .tb-notice (block layout) flex-basis is inert; the explicit
-     margin-top below handles the spacing there. */
+  /* Own row in the wrapping flex banner; negative margins claw back the
+     parent's 16px gap + the banner's 16px bottom padding so the credit
+     line sits tight to the bottom edge instead of floating in dead space.
+     On .tb-notice (block flow) the negative margins are reset below. */
   flex-basis: 100%;
-  margin: 0;
-  padding-top: 4px;
+  margin: -12px 0 -10px;
+  padding: 0;
   font-size: 11px;
   color: var(--tb-fg-muted);
   text-align: center;
@@ -159,8 +159,7 @@ export const TICKBOX_STYLES = `
   letter-spacing: 0.01em;
 }
 .tb-notice .tb-branding {
-  margin-top: 10px;
-  padding-top: 0;
+  margin: 4px 0 -4px;
   text-align: right;
 }
 .tb-branding a {
