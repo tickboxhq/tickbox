@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/cloud",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tickbox cloud beacon — POSTs consent-change events to the Tickbox audit log.",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
