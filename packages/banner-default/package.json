@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/banner-default",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Drop-in styled consent banner and notice components for Tickbox",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
