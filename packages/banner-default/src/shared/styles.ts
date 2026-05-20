@@ -144,6 +144,19 @@ export const TICKBOX_STYLES = `
 }
 .tb-link:hover { text-decoration: underline; }
 
+.tb-branding {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--tb-fg-muted);
+  text-align: right;
+}
+.tb-branding a {
+  color: inherit;
+  text-decoration: none;
+}
+.tb-branding a:hover { text-decoration: underline; }
+
 .tb-btn {
   appearance: none;
   border: 1px solid transparent;

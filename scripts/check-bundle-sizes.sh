@@ -15,8 +15,8 @@ packages/react/dist/index.js:5500
 packages/vue/dist/index.js:6500
 packages/nuxt/dist/module.mjs:2500
 packages/nuxt/dist/runtime/plugin.js:2500
-packages/banner-default/dist/react/index.js:11500
-packages/banner-default/dist/vue/index.js:10500
+packages/banner-default/dist/react/index.js:12500
+packages/banner-default/dist/vue/index.js:13000
 packages/cloud/dist/index.js:5500
 '
 

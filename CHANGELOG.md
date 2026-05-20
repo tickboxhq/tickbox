@@ -4,6 +4,15 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-20
+
+### Added
+- **`branding` prop** on `<ConsentBannerDefault>` and `<ConsentNoticeDefault>` (React + Vue). Off by default. When `branding` is set, the component renders a small "Powered by Tickbox" link to tickbox.dev under the actions. Local-only — deliberately not part of the remote-theme payload, since whether to credit the SDK is a code-level call, not a marketing-team one.
+- **Remote-theme support on `<ConsentNoticeDefault>`** (React + Vue). The notice now accepts `siteId` and `cloudEndpoint` props the same way the banner does: synchronous cache prime on first paint, background refetch, colours applied via CSS custom properties, copy merged on top of the locale pack. Sites that show only a `notice`-mode consent surface can now have their copy + colours edited from the dashboard without a redeploy.
+
+### Changed
+- Bundle-size budgets bumped to absorb the new notice theme-fetcher logic: react banner-default 11.5 → 12.5 KB, vue banner-default 10.5 → 13 KB. Still well under typical app-JS budgets.
+
 ## [0.1.0] - 2026-05-19
 
 The cloud tier lands. The OSS SDK still runs entirely locally; this release adds the opt-in beacon the hosted audit log depends on, the `tickbox init` scaffold, and a real-browser smoke test guarding the script-gating path. Minor bump because `@tickboxhq/cloud` is a new public surface the platform now builds on.

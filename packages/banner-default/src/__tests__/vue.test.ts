@@ -54,6 +54,35 @@ describe('ConsentBannerDefault (Vue)', () => {
     expect(wrapper.text()).toContain('Customise')
   })
 
+  it('renders "Powered by Tickbox" only when branding is opted into', async () => {
+    const Off = defineComponent({
+      setup: () => () =>
+        h(
+          ConsentProvider as never,
+          { config: consentConfig, applyEffects: false },
+          { default: () => h(ConsentBannerDefault as never) },
+        ),
+    })
+    const offWrapper = mount(Off)
+    await nextTick()
+    expect(offWrapper.text()).not.toContain('Powered by')
+
+    const On = defineComponent({
+      setup: () => () =>
+        h(
+          ConsentProvider as never,
+          { config: consentConfig, applyEffects: false },
+          { default: () => h(ConsentBannerDefault as never, { branding: true }) },
+        ),
+    })
+    const onWrapper = mount(On)
+    await nextTick()
+    expect(onWrapper.text()).toContain('Powered by')
+    const link = onWrapper.find('.tb-branding a')
+    expect(link.attributes('href')).toBe('https://tickbox.dev')
+    expect(link.attributes('rel')).toContain('noopener')
+  })
+
   it('hides itself after Accept all is clicked', async () => {
     const wrapper = mount(wrap(consentConfig, ConsentBannerDefault as never))
     await nextTick()

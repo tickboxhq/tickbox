@@ -43,6 +43,26 @@ describe('ConsentBannerDefault (React)', () => {
     expect(screen.getByText('Privacy policy').getAttribute('href')).toBe('/privacy')
   })
 
+  it('renders "Powered by Tickbox" only when branding is opted into', () => {
+    const { unmount } = render(
+      <ConsentProvider config={consentConfig} applyEffects={false}>
+        <ConsentBannerDefault />
+      </ConsentProvider>,
+    )
+    // Default — no branding link.
+    expect(screen.queryByText('Tickbox')).toBeNull()
+    unmount()
+
+    render(
+      <ConsentProvider config={consentConfig} applyEffects={false}>
+        <ConsentBannerDefault branding />
+      </ConsentProvider>,
+    )
+    const link = screen.getByText('Tickbox') as HTMLAnchorElement
+    expect(link.getAttribute('href')).toBe('https://tickbox.dev')
+    expect(link.getAttribute('rel')).toContain('noopener')
+  })
+
   it('hides itself after the user clicks Accept all', () => {
     render(
       <ConsentProvider config={consentConfig} applyEffects={false}>

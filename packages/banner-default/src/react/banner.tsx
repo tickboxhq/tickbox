@@ -46,6 +46,14 @@ export type ConsentBannerDefaultProps = {
   siteId?: string
   /** Defaults to https://api.tickbox.dev. Override only for self-hosting. */
   cloudEndpoint?: string
+  /**
+   * When true, adds a small "Powered by Tickbox" link to tickbox.dev under
+   * the banner. Off by default — most sites won't want third-party
+   * branding on a compliance widget. Local-only setting; not part of the
+   * remote-theme payload, since whether to credit the SDK is a code-level
+   * decision, not a marketing-team one.
+   */
+  branding?: boolean
 }
 
 /**
@@ -131,6 +139,14 @@ function BannerInner({
             {copy.acceptLabel}
           </button>
         </div>
+        {props.branding && (
+          <p className="tb-branding">
+            Powered by{' '}
+            <a href="https://tickbox.dev" target="_blank" rel="noopener noreferrer">
+              Tickbox
+            </a>
+          </p>
+        )}
       </div>
       {showModal && (
         <CustomiseModal

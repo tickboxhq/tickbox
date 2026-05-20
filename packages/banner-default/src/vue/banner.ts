@@ -32,6 +32,11 @@ export type ConsentBannerDefaultProps = {
   siteId?: string
   /** Defaults to https://api.tickbox.dev. Override only for self-hosting. */
   cloudEndpoint?: string
+  /**
+   * When true, adds a small "Powered by Tickbox" link to tickbox.dev under
+   * the banner. Off by default; local-only setting.
+   */
+  branding?: boolean
 }
 
 /**
@@ -67,6 +72,7 @@ export const ConsentBannerDefault = defineComponent({
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
     siteId: { type: String as PropType<string | undefined>, default: undefined },
     cloudEndpoint: { type: String as PropType<string | undefined>, default: undefined },
+    branding: { type: Boolean, default: false },
   },
   setup(props) {
     // Synchronous read of any cached theme so we render with brand
@@ -91,6 +97,7 @@ export const ConsentBannerDefault = defineComponent({
             policyUrl: props.policyUrl,
             theme: props.theme,
             remoteTheme: remoteTheme.value,
+            branding: props.branding,
           }),
       })
   },
@@ -110,6 +117,7 @@ const BannerInner = defineComponent({
     policyUrl: { type: String as PropType<string | undefined>, default: undefined },
     theme: { type: String as PropType<'light' | 'dark' | undefined>, default: undefined },
     remoteTheme: { type: Object as PropType<RemoteTheme | null>, default: null },
+    branding: { type: Boolean, default: false },
   },
   setup(props) {
     const showModal = ref(false)
@@ -179,6 +187,20 @@ const BannerInner = defineComponent({
                 copy.acceptLabel,
               ),
             ]),
+            props.branding
+              ? h('p', { class: 'tb-branding' }, [
+                  'Powered by ',
+                  h(
+                    'a',
+                    {
+                      href: 'https://tickbox.dev',
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    },
+                    'Tickbox',
+                  ),
+                ])
+              : null,
           ],
         ),
         showModal.value
