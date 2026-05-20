@@ -4,6 +4,11 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-20
+
+### Fixed
+- `branding` (introduced in 0.1.1) was rendering inline with the action buttons on the wide banner — `.tb-banner` is a wrapping flex row, so `.tb-branding` became a third flex item next to "Accept all" rather than a footer line. Now it forces its own row via `flex-basis: 100%` (no-op on the block-flow notice, where the existing top margin handles the spacing) and drops to centred, low-opacity, padded so it sits as an unobtrusive credit line below the controls instead of crashing the layout.
+
 ## [0.1.1] - 2026-05-20
 
 ### Added

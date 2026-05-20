@@ -145,17 +145,29 @@ export const TICKBOX_STYLES = `
 .tb-link:hover { text-decoration: underline; }
 
 .tb-branding {
-  display: block;
-  margin-top: 10px;
+  /* flex-basis 100% breaks .tb-branding onto its own row inside the
+     wrapping flex banner so it doesn't sit next to the action buttons.
+     On .tb-notice (block layout) flex-basis is inert; the explicit
+     margin-top below handles the spacing there. */
+  flex-basis: 100%;
+  margin: 0;
+  padding-top: 4px;
   font-size: 11px;
   color: var(--tb-fg-muted);
+  text-align: center;
+  opacity: 0.55;
+  letter-spacing: 0.01em;
+}
+.tb-notice .tb-branding {
+  margin-top: 10px;
+  padding-top: 0;
   text-align: right;
 }
 .tb-branding a {
   color: inherit;
   text-decoration: none;
 }
-.tb-branding a:hover { text-decoration: underline; }
+.tb-branding a:hover { text-decoration: underline; opacity: 1; }
 
 .tb-btn {
   appearance: none;
