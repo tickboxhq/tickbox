@@ -75,6 +75,17 @@ export default defineConfig({
         }),
       ],
       sidebar: [
+        // Brand-anchored exits at the top of the sidebar. Docs users
+        // routinely need to jump back to the marketing site or open the
+        // dashboard; without these the only egress was the GitHub icon in
+        // the header.
+        {
+          label: 'Tickbox',
+          items: [
+            { label: '↗ tickbox.dev', link: 'https://tickbox.dev' },
+            { label: '↗ Dashboard', link: 'https://app.tickbox.dev' },
+          ],
+        },
         {
           label: 'Getting started',
           items: [
