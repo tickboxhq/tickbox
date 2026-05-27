@@ -1,0 +1,148 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const updated = '2026-05-27'
+---
+
+<Layout
+  title="Privacy — Tickbox"
+  description="What tickbox.dev and the Tickbox dashboard at app.tickbox.dev do (and don't do) with visitor data. We build consent software; we have to walk the talk."
+>
+  <section>
+    <div class="mx-auto max-w-[48rem] px-6 lg:px-10 py-20 lg:py-28">
+      <p class="eyebrow mb-4">
+        <strong>Legal</strong> · privacy · last updated { updated }
+      </p>
+      <h1 class="display text-[clamp(2.5rem,5.5vw,4rem)] leading-[0.95] mb-6">
+        Privacy. <span class="italic-display text-[color:var(--color-muted)]">The short version.</span>
+      </h1>
+
+      <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed mb-12 max-w-2xl">
+        We make consent management software. It would be embarrassing to bury
+        what we do with your data behind a 4,000-word policy. Below is
+        everything, in plain English.
+      </p>
+
+      <h2 class="display text-2xl mb-3">tickbox.dev (this site)</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        This marketing site sets <strong>no cookies</strong>, runs <strong>no
+        analytics</strong>, and embeds <strong>no third-party trackers</strong>.
+        Our own server access logs hold standard fields (IP, user agent, URL,
+        timestamp) for a few days for debugging, then they roll off.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        We load fonts from <code class="code-chip">fonts.googleapis.com</code>
+        and <code class="code-chip">fonts.gstatic.com</code> so the page
+        renders in our typeface; Google sees your IP for that request. If
+        that's a problem we'd self-host the fonts — open an issue.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">docs.tickbox.dev</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Same as above. No cookies, no trackers. Code samples and a search
+        index served as plain static files.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">app.tickbox.dev (the dashboard)</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        Paid surface. If you sign in here, we store the minimum needed to
+        run the service:
+      </p>
+      <ul class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3 list-disc pl-6 space-y-1">
+        <li>Your account email and the OIDC <code class="code-chip">sub</code> claim from our identity provider (Keycloak).</li>
+        <li>The sites you create, their public API keys, and the per-site banner theme you edit.</li>
+        <li>A signed session cookie (<code class="code-chip">tb_session</code>) so you stay logged in — HttpOnly, no third-party.</li>
+        <li>If you subscribe to a paid plan: a Stripe customer ID. Card details live with Stripe, never us.</li>
+      </ul>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Delete a site and its data is removed. Close your account and we
+        purge everything tied to your <code class="code-chip">sub</code> on
+        request — email <a href="mailto:hello@tickbox.dev" class="link-ink">hello@tickbox.dev</a>.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">The audit log (your visitors' data)</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        When one of your sites uses <code class="code-chip">@tickboxhq/cloud</code>,
+        the SDK POSTs each consent decision to
+        <code class="code-chip">api.tickbox.dev/v1/events</code>. The payload
+        is small on purpose:
+      </p>
+      <ul class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3 list-disc pl-6 space-y-1">
+        <li><strong>SHA-256 of a cookie value</strong> (hashed in the visitor's browser before it ever leaves) — not the cookie itself, not the IP, not a fingerprint.</li>
+        <li>The jurisdiction, policy version, and per-category accept/reject map.</li>
+        <li>The country code derived from the Cloudflare edge headers — no IP stored.</li>
+        <li>User agent string (so you can spot bots).</li>
+        <li>A timestamp.</li>
+      </ul>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        These rows live in Cloudflare D1 (UK / EU). Free and paid plans have
+        automatic retention windows (30 days, 90 days, 1 year). Unlimited
+        customers can set their own. Stop deploying
+        <code class="code-chip">@tickboxhq/cloud</code> and no new events
+        are logged — the OSS SDK is fully usable without it.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">What we don't do</h2>
+      <ul class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8 list-disc pl-6 space-y-1">
+        <li>Sell, rent, or share data with marketing partners. There are no marketing partners.</li>
+        <li>Profile individuals across sites — the <code class="code-chip">visitorHash</code> is per-site and we can't join it to anything else.</li>
+        <li>Touch GA / Meta / TikTok pixels. We're a consent SDK; we'd be the joke of the year.</li>
+        <li>Bake third-party JavaScript into anything customer-facing.</li>
+      </ul>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">Your rights</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        Under UK GDPR / EU GDPR you can access, correct, export, restrict
+        processing of, or erase your data. Email
+        <a href="mailto:hello@tickbox.dev" class="link-ink">hello@tickbox.dev</a>
+        and we'll respond within the statutory month — usually within a day.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        UK supervisory authority: the
+        <a href="https://ico.org.uk" rel="noopener" class="link-ink">ICO</a>.
+        You can complain to them about us if you ever need to.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">Contact</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        Tickbox is operated by Tiny Systems Ltd, a company registered in
+        England &amp; Wales. For anything privacy-related —
+        <a href="mailto:hello@tickbox.dev" class="link-ink">hello@tickbox.dev</a>.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Changes to this policy are recorded in the
+        <code class="code-chip">CHANGELOG.md</code> of the source repo.
+        Material changes get a note in our release announcement.
+      </p>
+
+      <p class="eyebrow mt-12">
+        <a href="/" class="hover:text-[color:var(--color-ink)]">← Back to tickbox.dev</a>
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .link-ink {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+  .link-ink:hover {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+</style>
