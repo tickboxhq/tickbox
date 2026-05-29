@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/react",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "React bindings for Tickbox consent management",
   "license": "MIT",
   "homepage": "https://tickbox.dev",
