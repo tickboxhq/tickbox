@@ -28,6 +28,12 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
+    /* Defence-in-depth against horizontal scroll on mobile: if any single
+       element ever exceeds the viewport, clip rather than let the whole
+       page drag sideways. The real fixes (min-w-0 on grid columns, a
+       lower hero clamp floor) live with the offending elements; this is
+       the safety net. */
+    overflow-x: hidden;
     /* Subtle paper-with-grid background. Pinpoint dots on a 24px grid that
        reads as "ledger paper" up close but fades to a warm field at glance. */
     background-image: radial-gradient(circle at 1px 1px, rgba(11, 11, 11, 0.06) 1px, transparent 0);

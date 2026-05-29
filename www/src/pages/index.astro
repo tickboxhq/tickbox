@@ -77,8 +77,8 @@ const softwareSchema = {
       </div>
 
       <div class="grid lg:grid-cols-[1.15fr_1fr] gap-16 items-start">
-        <div>
-          <h1 class="display text-[clamp(3rem,8vw,6.75rem)] mb-8">
+        <div class="min-w-0">
+          <h1 class="display text-[clamp(2.25rem,8vw,6.75rem)] break-words mb-8">
             Cookie consent
             <span class="block italic-display text-[color:var(--color-muted)]">
               that doesn't get in
@@ -111,8 +111,11 @@ const softwareSchema = {
           </p>
         </div>
 
-        <!-- Code snippet anchor — shows what a real consent.config.ts looks like. -->
-        <div class="lg:mt-2">
+        <!-- Code snippet anchor — shows what a real consent.config.ts looks like.
+             min-w-0 lets the overflow-x:auto code block shrink below its
+             content's intrinsic width instead of forcing the grid column
+             (and the whole page) wider than the viewport on mobile. -->
+        <div class="lg:mt-2 min-w-0">
           <div class="border border-[color:var(--color-ink)]">
             <div class="flex items-center justify-between px-3 py-2 border-b border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
               <div class="flex items-center gap-2">
