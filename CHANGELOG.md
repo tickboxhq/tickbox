@@ -4,6 +4,13 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-29
+
+First stable release. The public API across `@tickboxhq/{core,react,vue,nuxt,banner-default,cli,cloud}` is now considered stable and follows semver — breaking changes mean a 2.0. No code changes from 0.1.3; this is a confidence/commitment bump alongside the cloud tier going commercially live (paid plans, dashboard, audit log). The OSS SDK remains MIT and fully usable without the cloud.
+
+### Notes
+- Everything shipped across the 0.0.x → 0.1.x line is included: UK_DUAA + EU_GDPR jurisdictions, PECR-correct script gating, Google Consent Mode v2, AI-training opt-out generators, the headless React/Vue/Nuxt adapters, the drop-in `banner-default` (banner + notice, 9 locales, remote theming, optional `branding`), the `cli` (`init` / `scan` / `validate`), and the opt-in `cloud` beacon.
+
 ## [0.1.3] - 2026-05-20
 
 ### Fixed
