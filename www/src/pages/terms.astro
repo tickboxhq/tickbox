@@ -1,0 +1,148 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const updated = '2026-05-29'
+---
+
+<Layout
+  title="Terms of Service — Tickbox"
+  description="The terms for using Tickbox: the MIT-licensed OSS SDK and the paid cloud dashboard at app.tickbox.dev. Plain English, England & Wales."
+>
+  <section>
+    <div class="mx-auto max-w-[48rem] px-6 lg:px-10 py-20 lg:py-28">
+      <p class="eyebrow mb-4">
+        <strong>Legal</strong> · terms of service · last updated { updated }
+      </p>
+      <h1 class="display text-[clamp(2.5rem,5.5vw,4rem)] leading-[0.95] mb-6">
+        Terms. <span class="italic-display text-[color:var(--color-muted)]">Also the short version.</span>
+      </h1>
+
+      <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed mb-12 max-w-2xl">
+        These terms cover using Tickbox — both the open-source SDK and the
+        paid cloud dashboard. By installing the packages or signing in at
+        app.tickbox.dev you agree to them.
+      </p>
+
+      <h2 class="display text-2xl mb-3">1. Who we are</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Tickbox is operated by Tiny Systems Ltd, a company registered in
+        England &amp; Wales ("we", "us"). Contact:
+        <a href="mailto:hello@tinysystems.io" class="link-ink">hello@tinysystems.io</a>.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">2. The OSS SDK</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        The <code class="code-chip">@tickboxhq/*</code> packages are released
+        under the MIT licence. You can use, modify and ship them in
+        commercial products at no cost. The licence text in each package
+        governs — including the "as is, no warranty" part. Nothing on this
+        page restricts your rights under that licence.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">3. The cloud service</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        The dashboard at <code class="code-chip">app.tickbox.dev</code> and the
+        ingest API at <code class="code-chip">api.tickbox.dev</code> are the
+        paid (and free-tier) hosted service. To use them you create an
+        account and keep your API keys confidential. You're responsible for
+        activity under your account and for having a lawful basis to collect
+        the consent records you send us.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        We aim for high availability but the service is provided without an
+        uptime guarantee unless you have a separate written Enterprise
+        agreement.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">4. Plans, billing &amp; cancellation</h2>
+      <ul class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3 list-disc pl-6 space-y-1">
+        <li>Every account starts on the <strong>Free</strong> tier — no card required.</li>
+        <li>Paid plans (Entry £9, Pro £29, Unlimited £99 per month, in GBP) are billed monthly in advance through Stripe. Card data is handled by Stripe; we never see it.</li>
+        <li>You can upgrade, downgrade or cancel anytime from the dashboard's billing page. Cancellation stops the next renewal; we don't refund the current period unless the law requires it.</li>
+        <li>Plans carry usage limits (sites, monthly events, retention window). Exceed the event limit and ingest returns 429 until the next billing period or an upgrade.</li>
+        <li>We may change prices with at least 30 days' notice to the account email; changes never apply to a period you've already paid for.</li>
+      </ul>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Prices shown exclude VAT where applicable; VAT is added at checkout
+        based on your billing location.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">5. Acceptable use</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        Don't use the service to break the law, send data you have no right
+        to send, attempt to deanonymise visitors, probe or overload our
+        infrastructure, or resell the hosted service as your own. We can
+        suspend an account that does — we'll tell you why.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        The audit log is designed to hold a salted/hashed visitor identifier,
+        not raw personal data. Don't deliberately push direct identifiers
+        (names, emails, raw IPs) into the event payload.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">6. Your data</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        How we handle data is in the
+        <a href="/privacy" class="link-ink">Privacy Policy</a>. In short: the
+        consent records you send remain yours; you can export them (CSV) or
+        delete them (delete a site, or close the account) at any time. For
+        the cloud service we act as your processor for those records; you're
+        the controller.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">7. Liability</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        Tickbox is a tool that helps you implement consent; it is not legal
+        advice and using it doesn't by itself make you compliant. To the
+        extent the law allows, our total liability for the service is capped
+        at the fees you paid us in the 12 months before the claim, and we're
+        not liable for indirect or consequential loss. Nothing here limits
+        liability that can't be limited by law.
+      </p>
+
+      <hr class="rule-soft my-10" />
+
+      <h2 class="display text-2xl mb-3">8. Changes &amp; governing law</h2>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-3">
+        We may update these terms; material changes get a note in our release
+        announcement and a new date at the top. Continuing to use the service
+        after a change means you accept it.
+      </p>
+      <p class="text-[color:var(--color-ink-soft)] leading-relaxed mb-8">
+        These terms are governed by the laws of England &amp; Wales, and the
+        courts of England &amp; Wales have exclusive jurisdiction.
+      </p>
+
+      <p class="eyebrow mt-12">
+        <a href="/" class="hover:text-[color:var(--color-ink)]">← Back to tickbox.dev</a>
+        <span class="mx-2 text-[color:var(--color-rule-soft)]">·</span>
+        <a href="/privacy" class="hover:text-[color:var(--color-ink)]">Privacy</a>
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .link-ink {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+  .link-ink:hover {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+</style>

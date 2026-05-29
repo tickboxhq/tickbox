@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout
+  title="404 — Tickbox"
+  description="That page isn't here. Head back to tickbox.dev or jump into the docs."
+>
+  <section>
+    <div class="mx-auto max-w-[48rem] px-6 lg:px-10 py-24 lg:py-32 text-center">
+      <p class="eyebrow mb-6">Error · 404</p>
+      <h1 class="display text-[clamp(3rem,9vw,6rem)] leading-[0.9] mb-6">
+        Nothing's <span class="italic-display text-[color:var(--color-muted)]">gated here.</span>
+      </h1>
+      <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed max-w-md mx-auto mb-10">
+        That page doesn't exist — or moved. No cookies were set looking for it.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="/" class="btn-ink">
+          Back home
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="https://docs.tickbox.dev" class="btn-ghost" rel="noopener">Read the docs</a>
+        <a href="/pricing" class="btn-ghost">Pricing</a>
+      </div>
+    </div>
+  </section>
+</Layout>
