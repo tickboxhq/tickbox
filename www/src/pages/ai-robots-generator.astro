@@ -1,0 +1,202 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const SITE = 'https://tickbox.dev'
+
+const faqs = [
+  {
+    q: 'Does robots.txt actually stop AI crawlers?',
+    a: 'The named ones, yes. GPTBot, ClaudeBot, PerplexityBot, CCBot and the other bots listed here publish their user agents and honour robots.txt rules. Scrapers that fake a browser user agent ignore robots.txt, but they ignored it before AI existed too — no robots rule addresses them.',
+  },
+  {
+    q: 'Should I block the AI search bots as well as the training bots?',
+    a: 'Usually not, and the generator defaults reflect that. Training bots (GPTBot, ClaudeBot, Google-Extended) collect data for future models — blocking them is a licensing stance with little visible effect. Search and fetch bots (OAI-SearchBot, PerplexityBot, ChatGPT-User) are how AI assistants read and cite your site right now — blocking them removes you from AI search answers.',
+  },
+  {
+    q: 'What is the difference between GPTBot and ChatGPT-User?',
+    a: 'GPTBot crawls the web to gather training data for future OpenAI models. ChatGPT-User fetches a specific page on demand when a ChatGPT user asks a question that needs it. Same company, different jobs — which is why they read different robots.txt rules and deserve different decisions.',
+  },
+  {
+    q: 'Does blocking Google-Extended affect my Google rankings or AI Overviews?',
+    a: 'Neither. Google-Extended is a robots token controlling whether your content trains Gemini models. Search rankings and AI Overviews both run on the ordinary Googlebot crawl, which this generator never touches.',
+  },
+]
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Tickbox AI Crawler robots.txt Generator',
+  url: `${SITE}/ai-robots-generator`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web browser',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
+  description:
+    'Free generator for AI-crawler robots.txt rules. Pick which AI bots to block or allow — grouped by what each bot does (model training, AI search indexing, on-demand fetching) — and copy the rules into robots.txt.',
+  publisher: { '@id': `${SITE}/#organization` },
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}
+---
+
+<Layout
+  title="AI Crawler robots.txt Generator"
+  description="Free AI crawler robots.txt generator. Choose which AI bots to block — GPTBot, ClaudeBot, PerplexityBot, Google-Extended and friends — grouped by what each bot actually does. Copy the rules, paste into robots.txt. No sign-up."
+  jsonLd={[webAppSchema, faqSchema]}
+>
+  <!-- HEADER -->
+  <section class="border-b border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 pt-16 pb-16 lg:pt-20 lg:pb-20">
+      <p class="eyebrow mb-6">
+        <strong>Lab</strong> · §4 — Robots Generator
+      </p>
+      <div class="grid lg:grid-cols-[1.5fr_1fr] gap-12 items-end">
+        <h1 class="display text-[clamp(2.75rem,7vw,5.5rem)]">
+          Block the bots
+          <span class="block italic-display text-[color:var(--color-muted)]">
+            you actually mean to.
+          </span>
+        </h1>
+        <p class="text-lg text-[color:var(--color-ink-soft)] leading-relaxed">
+          "AI crawler" covers three different jobs — model training, AI search
+          indexing, and fetching pages on demand. Decide per job, copy the
+          rules, paste into robots.txt. Runs in your browser, no sign-up.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENERATOR -->
+  <section>
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-12 lg:py-16">
+      <div class="grid lg:grid-cols-2 gap-10 lg:gap-14" id="robots-gen">
+        <!-- Left: bot groups -->
+        <div>
+          <div class="mb-10" data-group="training">
+            <p class="eyebrow mb-2"><strong>01</strong> · Model training crawlers</p>
+            <p class="text-sm text-[color:var(--color-ink-soft)] leading-relaxed mb-4">
+              Collect pages to train future models. Blocking is a licensing
+              stance — it costs you little visibility either way.
+            </p>
+          </div>
+          <div class="mb-10" data-group="search">
+            <p class="eyebrow mb-2"><strong>02</strong> · AI search indexers</p>
+            <p class="text-sm text-[color:var(--color-ink-soft)] leading-relaxed mb-4">
+              Build the index AI answers cite from. Block these and AI search
+              stops citing your site.
+            </p>
+          </div>
+          <div class="mb-4" data-group="fetch">
+            <p class="eyebrow mb-2"><strong>03</strong> · On-demand fetchers</p>
+            <p class="text-sm text-[color:var(--color-ink-soft)] leading-relaxed mb-4">
+              Fetch a page live when a user's question needs it. Blocking hides
+              your pages from AI assistants at answer time.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: output -->
+        <div>
+          <div class="flex items-baseline justify-between mb-3">
+            <p class="eyebrow"><strong>Output</strong> · append to robots.txt</p>
+            <button
+              id="copy-rules"
+              class="text-sm underline underline-offset-2 decoration-1 cursor-pointer"
+              type="button">Copy</button>
+          </div>
+          <pre class="code-block !text-[0.8125rem] whitespace-pre overflow-x-auto min-h-[16rem]" id="rules-output"><code></code></pre>
+          <p class="text-sm text-[color:var(--color-ink-soft)] leading-relaxed mt-4">
+            Rules go at the end of your existing robots.txt. One
+            <code>User-agent</code> block per bot keeps intent auditable —
+            and honest bots read exactly this.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-[color:var(--color-ink)]">
+    <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-16">
+      <p class="eyebrow mb-10"><strong>FAQ</strong> · asked a lot</p>
+      <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+        {faqs.map((f) => (
+          <div>
+            <h2 class="text-lg font-semibold mb-3">{f.q}</h2>
+            <p class="text-sm text-[color:var(--color-ink-soft)] leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Keep in sync with VENDOR_TO_USER_AGENT in @tickboxhq/core (ai-txt.ts).
+    const BOTS = [
+      { ua: 'GPTBot', vendor: 'OpenAI', group: 'training', blocked: true },
+      { ua: 'ClaudeBot', vendor: 'Anthropic', group: 'training', blocked: true },
+      { ua: 'anthropic-ai', vendor: 'Anthropic (legacy)', group: 'training', blocked: true },
+      { ua: 'Google-Extended', vendor: 'Google Gemini', group: 'training', blocked: true },
+      { ua: 'Applebot-Extended', vendor: 'Apple AI', group: 'training', blocked: true },
+      { ua: 'meta-externalagent', vendor: 'Meta AI', group: 'training', blocked: true },
+      { ua: 'CCBot', vendor: 'Common Crawl', group: 'training', blocked: true },
+      { ua: 'Bytespider', vendor: 'ByteDance', group: 'training', blocked: true },
+      { ua: 'OAI-SearchBot', vendor: 'ChatGPT search', group: 'search', blocked: false },
+      { ua: 'PerplexityBot', vendor: 'Perplexity index', group: 'search', blocked: false },
+      { ua: 'ChatGPT-User', vendor: 'ChatGPT live fetch', group: 'fetch', blocked: false },
+      { ua: 'Perplexity-User', vendor: 'Perplexity live fetch', group: 'fetch', blocked: false },
+      { ua: 'Claude-User', vendor: 'Claude live fetch', group: 'fetch', blocked: false },
+    ]
+
+    const root = document.getElementById('robots-gen')!
+    const output = document.querySelector('#rules-output code')!
+
+    function render() {
+      const blocked = BOTS.filter((b) => b.blocked)
+      const lines = ['# AI crawler rules — generated at tickbox.dev/ai-robots-generator']
+      if (!blocked.length) {
+        lines.push('# All listed AI crawlers allowed — no rules needed.')
+      }
+      for (const b of blocked) {
+        lines.push('', `User-agent: ${b.ua}`, 'Disallow: /')
+      }
+      output.textContent = lines.join('\n') + '\n'
+    }
+
+    for (const bot of BOTS) {
+      const groupEl = root.querySelector(`[data-group="${bot.group}"]`)!
+      const label = document.createElement('label')
+      label.className =
+        'flex items-center justify-between gap-4 border-t border-[color:var(--color-ink)]/20 py-2.5 cursor-pointer select-none'
+      label.innerHTML = `
+        <span class="text-sm"><code class="font-semibold">${bot.ua}</code>
+          <span class="text-[color:var(--color-ink-soft)]"> · ${bot.vendor}</span></span>
+        <span class="flex items-center gap-2 text-sm">
+          <input type="checkbox" ${bot.blocked ? 'checked' : ''} class="accent-current" />
+          <span>block</span>
+        </span>`
+      label.querySelector('input')!.addEventListener('change', (e) => {
+        bot.blocked = (e.target as HTMLInputElement).checked
+        render()
+      })
+      groupEl.appendChild(label)
+    }
+
+    document.getElementById('copy-rules')!.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(output.textContent ?? '')
+      const btn = document.getElementById('copy-rules')!
+      const prev = btn.textContent
+      btn.textContent = 'Copied'
+      setTimeout(() => (btn.textContent = prev), 1500)
+    })
+
+    render()
+  </script>
+</Layout>
