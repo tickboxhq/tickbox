@@ -1,6 +1,6 @@
 {
   "name": "@tickboxhq/integration-tests",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Browser-driven smoke tests for Tickbox script-tag gating",
   "type": "module",
