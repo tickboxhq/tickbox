@@ -82,6 +82,8 @@ export function GET() {
 
 ## `robots.txt` rules
 
+Not using the SDK, or just want the rules once? The [free AI crawler robots.txt generator](https://tickbox.dev/ai-robots-generator) does this in the browser — tick the bots to block (grouped by training / search / fetch) and copy the output. No install.
+
 `generateAiBotRobotsRules(config)` emits a `robots.txt` fragment with `User-agent` + `Disallow` per AI crawler. Concatenate it to your existing `robots.txt`:
 
 ```ts
