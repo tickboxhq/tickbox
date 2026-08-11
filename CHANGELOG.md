@@ -4,6 +4,11 @@ Versions follow [Semantic Versioning](https://semver.org/) and the [Keep a Chang
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-11
+
+### Fixed
+- `<ConsentBannerDefault>` ballooned to over half the screen on phones. The mobile media query switches the banner to a column but kept the desktop `flex: 1 1 320px` on `.tb-banner-text` — in column flow that 320px flex-basis becomes *height*, so the text block claimed 320px of empty space (observed live: a 527px banner on a 390×844 viewport, blocking the page's primary actions). The basis is now reset on mobile, the buttons share a wrapping row instead of stacking full-width (Reject stays first, styling identical), padding and gap tighten to phone scale, and the `branding` negative margins are retuned to match. Result: ~230px on a 390px-wide phone, desktop layout unchanged.
+
 ## [1.0.0] - 2026-05-29
 
 First stable release. The public API across `@tickboxhq/{core,react,vue,nuxt,banner-default,cli,cloud}` is now considered stable and follows semver — breaking changes mean a 2.0. No code changes from 0.1.3; this is a confidence/commitment bump alongside the cloud tier going commercially live (paid plans, dashboard, audit log). The OSS SDK remains MIT and fully usable without the cloud.

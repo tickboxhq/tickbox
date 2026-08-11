@@ -356,11 +356,16 @@ export const TICKBOX_STYLES = `
   .tb-banner {
     flex-direction: column;
     align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
   }
-  .tb-banner-actions {
-    flex-direction: column;
-  }
-  .tb-banner-actions .tb-btn { width: 100%; }
+  /* In column flow the desktop flex-basis (320px) would become height,
+     inflating the banner to over half a phone screen. */
+  .tb-banner-text { flex: 0 1 auto; }
+  .tb-banner-actions .tb-btn { flex: 1 1 auto; }
+  /* Negative margins above are tuned to the 16px gap/padding; retune for
+     the tighter mobile spacing. */
+  .tb-branding { margin: -6px 0 -6px; }
 }
 `
 
