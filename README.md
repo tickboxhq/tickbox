@@ -5,8 +5,16 @@ A developer-first cookie consent SDK. UK and EU jurisdictions out of the box.
 If your site only runs privacy-friendly analytics, UK visitors don't see a banner. The new UK Data (Use and Access) Act 2025, in force since February 2026, added a "statistical purposes" exemption to PECR. Notice and an easy opt-out is enough. EU visitors, and anyone using ad or tracking vendors, get a proper opt-in flow on the same config.
 
 ```bash
-npm install @tickboxhq/react   # or @tickboxhq/vue, or add @tickboxhq/nuxt as a module
+npm install @tickboxhq/core @tickboxhq/react   # React / Next.js
+npm install @tickboxhq/core @tickboxhq/vue     # Vue 3
+npm install @tickboxhq/core @tickboxhq/nuxt    # Nuxt module
+npm install @tickboxhq/core                    # vanilla JS
 ```
+
+Install `@tickboxhq/core` explicitly even with an adapter: your
+`consent.config.ts` imports `defineConsent` from it, and the adapters don't
+re-export it. Full instructions, with the optional styled banner and the
+runnable examples, are at [tickbox.dev/#install](https://tickbox.dev/#install).
 
 ## Two scenarios
 

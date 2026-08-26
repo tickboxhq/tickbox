@@ -1,5 +1,6 @@
 ---
 import BannerGallery from '../components/BannerGallery.astro'
+import InstallTabs from '../components/InstallTabs.astro'
 import Layout from '../layouts/Layout.astro'
 
 const props = [
@@ -152,6 +153,10 @@ const softwareSchema = {
       </div>
     </div>
   </section>
+
+  <!-- INSTALL — canonical install instructions for the project. Other
+       surfaces link here rather than restating the commands. -->
+  <InstallTabs />
 
   <!-- THREE PROPS — editorial strip, not cards -->
   <section>

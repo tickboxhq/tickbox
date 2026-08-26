@@ -15,7 +15,7 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components'
+import { Card, CardGrid, TabItem, Tabs } from '@astrojs/starlight/components'
 
 ## What it does
 
@@ -36,13 +36,49 @@ import { Card, CardGrid } from '@astrojs/starlight/components'
 
 ## Install
 
-```bash
-# pick your framework
-npm install @tickboxhq/react       # React / Next.js
-npm install @tickboxhq/vue         # Vue 3
-npm install @tickboxhq/nuxt        # Nuxt module
-npm install @tickboxhq/core        # vanilla JS / other frameworks
-```
+<Tabs syncKey="framework">
+  <TabItem label="React / Next.js">
+    ```bash
+    npm install @tickboxhq/core @tickboxhq/react
+
+    # optional: drop-in styled banner
+    npm install @tickboxhq/banner-default
+    ```
+  </TabItem>
+  <TabItem label="Vue">
+    ```bash
+    npm install @tickboxhq/core @tickboxhq/vue
+
+    # optional: drop-in styled banner
+    npm install @tickboxhq/banner-default
+    ```
+  </TabItem>
+  <TabItem label="Nuxt">
+    ```bash
+    npm install @tickboxhq/core @tickboxhq/nuxt
+
+    # optional: drop-in styled banner
+    npm install @tickboxhq/banner-default
+    ```
+  </TabItem>
+  <TabItem label="Vanilla JS">
+    ```bash
+    npm install @tickboxhq/core
+    ```
+
+    The drop-in styled banner needs React or Vue. On vanilla you render your own
+    markup and call the core store.
+  </TabItem>
+</Tabs>
+
+`@tickboxhq/core` comes along with every adapter, but install it explicitly
+anyway: your `consent.config.ts` imports `defineConsent` and `jurisdictions`
+from it, and the adapters do not re-export them. Depending on the transitive
+copy works under npm and fails under pnpm's strict `node_modules` layout and
+Yarn PnP.
+
+Or skip the choice entirely and run `npx @tickboxhq/cli init`, which writes the
+config and installs the right packages for your project.
 
 ## Five-line example
 

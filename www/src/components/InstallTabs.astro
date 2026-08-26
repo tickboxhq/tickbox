@@ -1,0 +1,217 @@
+---
+/**
+ * Canonical install instructions for the whole project. Every other surface
+ * (docs splash, repo README, package READMEs) should agree with this block
+ * rather than carry its own variant — that drift is what this section exists
+ * to end.
+ *
+ * `@tickboxhq/core` is listed alongside every adapter on purpose. The adapters
+ * do depend on it, but they do not re-export `defineConsent` / `jurisdictions`
+ * — so the consumer's own `consent.config.ts` imports from `@tickboxhq/core`
+ * directly, which makes it a direct dependency of their project. Relying on
+ * the transitive copy works under npm's hoisted layout and breaks under
+ * pnpm's strict one and Yarn PnP.
+ */
+const EXAMPLES_BASE = 'https://github.com/tickboxhq/tickbox/tree/main/examples'
+
+const tabs = [
+  {
+    id: 'react',
+    label: 'React / Next.js',
+    install: 'npm install @tickboxhq/core @tickboxhq/react',
+    addon: 'npm install @tickboxhq/banner-default',
+    docs: 'https://docs.tickbox.dev/getting-started/react/',
+    examples: [
+      { label: 'React example', href: `${EXAMPLES_BASE}/react/basic` },
+      { label: 'Next.js example', href: `${EXAMPLES_BASE}/nextjs/basic` },
+    ],
+  },
+  {
+    id: 'vue',
+    label: 'Vue',
+    install: 'npm install @tickboxhq/core @tickboxhq/vue',
+    addon: 'npm install @tickboxhq/banner-default',
+    docs: 'https://docs.tickbox.dev/getting-started/vue/',
+    examples: [{ label: 'Vue example', href: `${EXAMPLES_BASE}/vue/basic` }],
+  },
+  {
+    id: 'nuxt',
+    label: 'Nuxt',
+    install: 'npm install @tickboxhq/core @tickboxhq/nuxt',
+    addon: 'npm install @tickboxhq/banner-default',
+    docs: 'https://docs.tickbox.dev/getting-started/nuxt/',
+    examples: [{ label: 'Nuxt example', href: `${EXAMPLES_BASE}/nuxt/basic` }],
+  },
+  {
+    id: 'vanilla',
+    label: 'Vanilla JS',
+    install: 'npm install @tickboxhq/core',
+    // banner-default peer-depends on @tickboxhq/react or @tickboxhq/vue, so
+    // there is nothing to offer here. Say so instead of leaving a gap.
+    addon: null,
+    addonNote:
+      'The drop-in styled banner needs React or Vue. On vanilla you render your own markup and call the core store.',
+    docs: 'https://docs.tickbox.dev/getting-started/vanilla/',
+    examples: [{ label: 'Vanilla example', href: `${EXAMPLES_BASE}/vanilla/basic` }],
+  },
+]
+---
+
+<section id="install" class="border-y border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)]">
+  <div class="mx-auto max-w-[78rem] px-6 lg:px-10 py-20">
+    <div class="flex flex-wrap items-baseline justify-between gap-4 mb-10">
+      <h2 class="display text-[clamp(2rem,4.5vw,3.5rem)]">Install</h2>
+      <p class="eyebrow">One command &mdash; pick your framework</p>
+    </div>
+
+    <div class="border border-[color:var(--color-ink)] bg-[color:var(--color-paper)]">
+      <div
+        class="flex flex-wrap border-b border-[color:var(--color-ink)]"
+        role="tablist"
+        aria-label="Framework"
+        data-install-tablist
+      >
+        {
+          tabs.map((tab, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`install-tab-${tab.id}`}
+              aria-controls={`install-panel-${tab.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              class="install-tab"
+            >
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        tabs.map((tab, i) => (
+          <div
+            role="tabpanel"
+            id={`install-panel-${tab.id}`}
+            aria-labelledby={`install-tab-${tab.id}`}
+            hidden={i !== 0}
+          >
+            <div class="p-5 lg:p-7 min-w-0">
+              <p class="eyebrow mb-2">SDK</p>
+              <pre class="code-block !text-[0.8125rem]"><code>{tab.install}</code></pre>
+
+              <p class="eyebrow mt-6 mb-2">Optional &mdash; drop-in styled banner</p>
+              {
+                tab.addon ? (
+                  <pre class="code-block !text-[0.8125rem]"><code>{tab.addon}</code></pre>
+                ) : (
+                  <p class="text-[0.9375rem] text-[color:var(--color-ink-soft)] max-w-2xl">
+                    {tab.addonNote}
+                  </p>
+                )
+              }
+
+              <div class="mt-7 pt-5 border-t border-[color:var(--color-rule-soft)] flex flex-wrap items-center gap-x-6 gap-y-2 eyebrow">
+                <a class="install-link" href={tab.docs} rel="noopener">Full setup &#8599;</a>
+                {
+                  tab.examples.map((example) => (
+                    <a class="install-link" href={example.href} rel="noopener">
+                      {example.label} &#8599;
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        ))
+      }
+
+      <div
+        class="border-t border-[color:var(--color-ink)] bg-[color:var(--color-paper-2)] px-5 lg:px-7 py-4 flex flex-wrap items-center gap-x-3 gap-y-2 eyebrow"
+      >
+        <span>Rather not choose</span>
+        <span class="text-[color:var(--color-rule-soft)]">&#8250;</span>
+        <code class="code-chip">npx @tickboxhq/cli init</code>
+        <span>scaffolds the config and installs the right packages for you</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .install-tab {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.85rem 1.25rem;
+    color: var(--color-muted);
+    background: transparent;
+    border-right: 1px solid var(--color-ink);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .install-tab:last-of-type {
+    border-right: 0;
+  }
+  .install-tab:hover {
+    color: var(--color-ink);
+    background: var(--color-paper-2);
+  }
+  /* Chartreuse marks the current tab. Ink is already spoken for by hover on
+     every other control on the page, so reusing it here read as "hovered". */
+  .install-tab[aria-selected="true"] {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  .install-link {
+    transition: color 0.15s ease;
+  }
+  .install-link:hover {
+    color: var(--color-ink);
+  }
+</style>
+
+<script>
+  const tablist = document.querySelector<HTMLElement>('[data-install-tablist]')
+
+  if (tablist) {
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+
+    const select = (tab: HTMLButtonElement) => {
+      for (const candidate of tabs) {
+        const isCurrent = candidate === tab
+        candidate.setAttribute('aria-selected', String(isCurrent))
+        candidate.tabIndex = isCurrent ? 0 : -1
+
+        const panelId = candidate.getAttribute('aria-controls')
+        const panel = panelId ? document.getElementById(panelId) : null
+        if (panel) panel.hidden = !isCurrent
+      }
+    }
+
+    tablist.addEventListener('click', (event) => {
+      const tab = (event.target as HTMLElement).closest<HTMLButtonElement>('[role="tab"]')
+      if (tab) select(tab)
+    })
+
+    // Arrow keys move between tabs, per the ARIA tabs pattern. Without this
+    // the tablist is reachable but not navigable from the keyboard.
+    tablist.addEventListener('keydown', (event) => {
+      const current = tabs.indexOf(document.activeElement as HTMLButtonElement)
+      if (current === -1) return
+
+      let next = -1
+      if (event.key === 'ArrowRight') next = (current + 1) % tabs.length
+      if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length
+      if (event.key === 'Home') next = 0
+      if (event.key === 'End') next = tabs.length - 1
+      if (next === -1) return
+
+      event.preventDefault()
+      tabs[next].focus()
+      select(tabs[next])
+    })
+  }
+</script>

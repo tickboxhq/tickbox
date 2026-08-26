@@ -8,7 +8,7 @@ The Nuxt module is the easiest path. It auto-imports `useConsent`, auto-register
 ## Install
 
 ```bash
-npm install @tickboxhq/nuxt
+npm install @tickboxhq/core @tickboxhq/nuxt
 ```
 
 ## Config

@@ -5,7 +5,7 @@ Nuxt module for Tickbox. Wires up the Vue adapter, auto-imports `useConsent`, au
 ## Install
 
 ```bash
-npm install @tickboxhq/nuxt
+npm install @tickboxhq/core @tickboxhq/nuxt
 ```
 
 ```ts
