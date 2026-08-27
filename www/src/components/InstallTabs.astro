@@ -165,6 +165,19 @@ const tabs = [
     color: var(--color-accent-ink);
   }
 
+  /* On a phone the install command is wider than the card it sits in, and a
+     sideways scroll inside a black block is easy to miss — the one command
+     this section exists to deliver would sit half off-screen. Wrap it instead.
+     Measured on the deployed page: 392px of content in a ~254px box at 390px
+     viewport. `.code-block` is global, but Astro scopes this rule to the
+     blocks in this component, so the hero's config snippet keeps scrolling. */
+  @media (max-width: 640px) {
+    .code-block {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+
   .install-link {
     transition: color 0.15s ease;
   }
