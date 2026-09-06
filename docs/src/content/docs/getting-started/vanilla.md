@@ -24,6 +24,9 @@ export default defineConsent({
     necessary: { required: true },
     analytics: { vendors: ['google-analytics'], default: false },
   },
+  consentMode: {
+    analytics_storage: { category: 'analytics' },
+  },
 })
 ```
 
