@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
 import { openModal } from '../vanilla/modal.js'
+import { buildNotice } from '../vanilla/notice.js'
 
 const consentConfig = defineConsent({
   jurisdiction: jurisdictions.EU_GDPR,
@@ -19,6 +20,23 @@ function freshStore() {
   // object here (not 'auto'), so it can be passed straight through.
   const store = new ConsentStore(consentConfig, {
     jurisdiction: consentConfig.jurisdiction as Jurisdiction,
+  })
+  store.hydrate()
+  return store
+}
+
+const noticeConfig = defineConsent({
+  jurisdiction: jurisdictions.UK_DUAA,
+  policy: { version: '1' },
+  categories: {
+    necessary: { required: true },
+    analytics: { vendors: ['plausible'], default: true },
+  },
+})
+
+function noticeStore() {
+  const store = new ConsentStore(noticeConfig, {
+    jurisdiction: noticeConfig.jurisdiction as Jurisdiction,
   })
   store.hydrate()
   return store
@@ -179,5 +197,41 @@ describe('openModal', () => {
     close()
     expect(spy).toHaveBeenCalledWith('keydown', expect.any(Function))
     spy.mockRestore()
+  })
+})
+
+describe('buildNotice', () => {
+  it('renders the notice class names and is announced politely', () => {
+    const copy = resolveLocalePack('en').notice
+    const node = buildNotice(noticeStore(), copy, {})
+    expect(node.className).toBe('tb-root tb-notice')
+    expect(node.getAttribute('role')).toBe('status')
+    expect(node.getAttribute('aria-live')).toBe('polite')
+    expect(node.querySelector('.tb-notice-title')?.textContent).toBe(copy.title)
+  })
+
+  it('opt-out denies the named category and saves', () => {
+    const store = noticeStore()
+    const node = buildNotice(store, resolveLocalePack('en').notice, {})
+    node.querySelectorAll<HTMLButtonElement>('.tb-notice-actions .tb-btn')[0]?.click()
+    expect(store.getState().decisions.analytics).toBe(false)
+    expect(store.getState().noticeOpen).toBe(false)
+  })
+
+  it('acknowledge saves without denying anything', () => {
+    const store = noticeStore()
+    const node = buildNotice(store, resolveLocalePack('en').notice, {})
+    node.querySelectorAll<HTMLButtonElement>('.tb-notice-actions .tb-btn')[1]?.click()
+    expect(store.getState().decisions.analytics).toBe(true)
+    expect(store.getState().noticeOpen).toBe(false)
+  })
+
+  it('honours a custom opt-out category and ignores one that does not exist', () => {
+    const store = noticeStore()
+    const node = buildNotice(store, resolveLocalePack('en').notice, { optOutCategoryId: 'nope' })
+    expect(() =>
+      node.querySelectorAll<HTMLButtonElement>('.tb-notice-actions .tb-btn')[0]?.click(),
+    ).not.toThrow()
+    expect(store.getState().decisions.analytics).toBe(true)
   })
 })
