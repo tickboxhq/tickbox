@@ -228,10 +228,13 @@ describe('buildNotice', () => {
 
   it('honours a custom opt-out category and ignores one that does not exist', () => {
     const store = noticeStore()
+    const denySpy = vi.spyOn(store, 'deny')
     const node = buildNotice(store, resolveLocalePack('en').notice, { optOutCategoryId: 'nope' })
-    expect(() =>
-      node.querySelectorAll<HTMLButtonElement>('.tb-notice-actions .tb-btn')[0]?.click(),
-    ).not.toThrow()
+    node.querySelectorAll<HTMLButtonElement>('.tb-notice-actions .tb-btn')[0]?.click()
+
+    expect(denySpy).not.toHaveBeenCalled()
+    expect(store.getState().decisions).not.toHaveProperty('nope')
     expect(store.getState().decisions.analytics).toBe(true)
+    denySpy.mockRestore()
   })
 })
