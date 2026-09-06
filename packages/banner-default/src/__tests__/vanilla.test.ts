@@ -3,6 +3,7 @@ import { ConsentStore, type Jurisdiction, defineConsent, jurisdictions } from '@
 import { afterEach, describe, expect, it } from 'vitest'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
+import { openModal } from '../vanilla/modal.js'
 
 const consentConfig = defineConsent({
   jurisdiction: jurisdictions.EU_GDPR,
@@ -25,6 +26,10 @@ function freshStore() {
 
 afterEach(() => {
   document.cookie = '__tb_consent=; Path=/; Max-Age=0'
+})
+
+afterEach(() => {
+  for (const node of document.querySelectorAll('.tb-modal-backdrop')) node.remove()
 })
 
 describe('buildBanner', () => {
@@ -90,5 +95,92 @@ describe('buildBanner', () => {
     )
     expect(node.querySelector('img')).toBeNull()
     expect(node.querySelector('.tb-banner-title')?.textContent).toContain('<img')
+  })
+})
+
+describe('openModal', () => {
+  it('renders one row per resolved category, with required ones locked on', () => {
+    const store = freshStore()
+    const copy = resolveLocalePack('en').banner
+    const close = openModal(store, copy, {}, null)
+
+    const rows = document.querySelectorAll('.tb-modal-body .tb-cat')
+    expect(rows).toHaveLength(store.getState().resolved.length)
+
+    const necessary = document.querySelector<HTMLInputElement>('#tb-cat-necessary')
+    expect(necessary?.disabled).toBe(true)
+    expect(necessary?.checked).toBe(true)
+    close()
+  })
+
+  it('grants and denies through the store as toggles change', () => {
+    const store = freshStore()
+    const close = openModal(store, resolveLocalePack('en').banner, {}, null)
+    const analytics = document.querySelector<HTMLInputElement>('#tb-cat-analytics')
+
+    analytics!.checked = true
+    analytics!.dispatchEvent(new Event('change'))
+    expect(store.getState().decisions.analytics).toBe(true)
+
+    analytics!.checked = false
+    analytics!.dispatchEvent(new Event('change'))
+    expect(store.getState().decisions.analytics).toBe(false)
+    close()
+  })
+
+  it('is a labelled modal dialog', () => {
+    const close = openModal(freshStore(), resolveLocalePack('en').banner, {}, null)
+    const dialog = document.querySelector('.tb-modal')
+    expect(dialog?.getAttribute('role')).toBe('dialog')
+    expect(dialog?.getAttribute('aria-modal')).toBe('true')
+    expect(dialog?.getAttribute('aria-labelledby')).toBeTruthy()
+    close()
+  })
+
+  it('closes on Escape, on backdrop click, and via the close button', () => {
+    for (const dismiss of [
+      () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })),
+      () => document.querySelector<HTMLElement>('.tb-modal-backdrop')?.click(),
+      () => document.querySelector<HTMLElement>('.tb-modal-head .tb-btn')?.click(),
+    ]) {
+      openModal(freshStore(), resolveLocalePack('en').banner, {}, null)
+      expect(document.querySelector('.tb-modal')).not.toBeNull()
+      dismiss()
+      expect(document.querySelector('.tb-modal')).toBeNull()
+    }
+  })
+
+  it('does not close when the dialog body itself is clicked', () => {
+    const close = openModal(freshStore(), resolveLocalePack('en').banner, {}, null)
+    document.querySelector<HTMLElement>('.tb-modal')?.click()
+    expect(document.querySelector('.tb-modal')).not.toBeNull()
+    close()
+  })
+
+  it('applies remote colours as sanitised custom properties', () => {
+    const close = openModal(
+      freshStore(),
+      resolveLocalePack('en').banner,
+      {},
+      {
+        colors: { accent: 'red;}</style>' },
+      },
+    )
+    const backdrop = document.querySelector<HTMLElement>('.tb-modal-backdrop')
+    const value = backdrop?.style.getPropertyValue('--tb-primary-bg') ?? ''
+    expect(value).not.toContain('<')
+    expect(value).toContain('red')
+    close()
+  })
+
+  it('removes its keydown listener when closed', () => {
+    const store = freshStore()
+    const close = openModal(store, resolveLocalePack('en').banner, {}, null)
+    close()
+    // A stray listener would throw on a null container when Escape fires.
+    expect(() =>
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })),
+    ).not.toThrow()
+    expect(document.querySelector('.tb-modal')).toBeNull()
   })
 })
