@@ -39,9 +39,11 @@ export type VanillaUIOptions = {
 
 /** The credit line, shared by banner and notice. */
 export function buildBranding(): HTMLElement {
-  const link = el('a', { href: 'https://tickbox.dev', target: '_blank', rel: 'noopener noreferrer' }, [
-    'Tickbox',
-  ])
+  const link = el(
+    'a',
+    { href: 'https://tickbox.dev', target: '_blank', rel: 'noopener noreferrer' },
+    ['Tickbox'],
+  )
   return el('p', { class: 'tb-branding' }, ['Powered by ', link])
 }
 
