@@ -3,6 +3,7 @@ import { ConsentStore, type Jurisdiction, defineConsent, jurisdictions } from '@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
+import { mountConsentUI } from '../vanilla/index.js'
 import { openModal } from '../vanilla/modal.js'
 import { buildNotice } from '../vanilla/notice.js'
 
@@ -236,5 +237,91 @@ describe('buildNotice', () => {
     expect(store.getState().decisions).not.toHaveProperty('nope')
     expect(store.getState().decisions.analytics).toBe(true)
     denySpy.mockRestore()
+  })
+})
+
+describe('mountConsentUI', () => {
+  it('shows the banner while the store says it is open, and removes it on save', () => {
+    const store = freshStore()
+    const unmount = mountConsentUI(store, {})
+    expect(document.querySelector('.tb-banner')).not.toBeNull()
+
+    store.grantAll()
+    expect(document.querySelector('.tb-banner')).toBeNull()
+    unmount()
+  })
+
+  it('shows the notice instead when the config is notice-mode', () => {
+    const store = noticeStore()
+    const unmount = mountConsentUI(store, {})
+    expect(document.querySelector('.tb-notice')).not.toBeNull()
+    expect(document.querySelector('.tb-banner')).toBeNull()
+    unmount()
+  })
+
+  it('injects the stylesheet exactly once across mounts', () => {
+    const a = mountConsentUI(freshStore(), {})
+    const b = mountConsentUI(freshStore(), {})
+    expect(document.querySelectorAll('#tickbox-default-styles')).toHaveLength(1)
+    a()
+    b()
+  })
+
+  it('opens the modal from the customise button and closes it with the banner', () => {
+    const store = freshStore()
+    const unmount = mountConsentUI(store, {})
+    document.querySelectorAll<HTMLButtonElement>('.tb-banner-actions .tb-btn')[1]?.click()
+    expect(document.querySelector('.tb-modal')).not.toBeNull()
+
+    store.save()
+    expect(document.querySelector('.tb-modal')).toBeNull()
+    unmount()
+  })
+
+  it('unmount removes every node and stops reacting to the store', () => {
+    const store = freshStore()
+    const listeners = (store as unknown as { listeners: Set<unknown> }).listeners
+    const unmount = mountConsentUI(store, {})
+    expect(listeners.size).toBe(1)
+
+    unmount()
+    expect(document.querySelector('.tb-banner')).toBeNull()
+    // The literal proof of "stops reacting": the listener is actually gone
+    // from the store, not just skipped by an internal flag inside render().
+    expect(listeners.size).toBe(0)
+
+    // Belt-and-braces DOM check. freshStore() already starts with isOpen:
+    // true, so store.open() alone is a documented no-op (ConsentStore guards
+    // it: "if (this.state.isOpen) return") and would prove nothing about the
+    // subscription either way. store.reset() is unconditional — it always
+    // re-derives isOpen and always emits — so it is the one call that would
+    // visibly resurrect the banner if a subscription had leaked.
+    store.reset()
+    expect(document.querySelector('.tb-banner')).toBeNull()
+  })
+
+  it('mounts into a supplied container', () => {
+    const host = document.createElement('div')
+    document.body.append(host)
+    const unmount = mountConsentUI(freshStore(), { container: host })
+    expect(host.querySelector('.tb-banner')).not.toBeNull()
+    unmount()
+    host.remove()
+  })
+
+  it('applies a cached remote theme on the first paint, with no network', () => {
+    localStorage.setItem(
+      '__tb_theme_site_x',
+      JSON.stringify({
+        theme: { colors: { accent: '#abcdef' }, copy: { title: 'Cached' } },
+        fetchedAt: Date.now(),
+      }),
+    )
+    const unmount = mountConsentUI(freshStore(), { siteId: 'site_x' })
+    const root = document.querySelector<HTMLElement>('.tb-banner')
+    expect(root?.style.getPropertyValue('--tb-primary-bg')).toBe('#abcdef')
+    expect(root?.querySelector('.tb-banner-title')?.textContent).toBe('Cached')
+    unmount()
+    localStorage.clear()
   })
 })
