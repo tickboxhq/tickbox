@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { ConsentStore, type Jurisdiction, defineConsent, jurisdictions } from '@tickboxhq/core'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
 import { openModal } from '../vanilla/modal.js'
@@ -174,13 +174,10 @@ describe('openModal', () => {
   })
 
   it('removes its keydown listener when closed', () => {
-    const store = freshStore()
-    const close = openModal(store, resolveLocalePack('en').banner, {}, null)
+    const spy = vi.spyOn(document, 'removeEventListener')
+    const close = openModal(freshStore(), resolveLocalePack('en').banner, {}, null)
     close()
-    // A stray listener would throw on a null container when Escape fires.
-    expect(() =>
-      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })),
-    ).not.toThrow()
-    expect(document.querySelector('.tb-modal')).toBeNull()
+    expect(spy).toHaveBeenCalledWith('keydown', expect.any(Function))
+    spy.mockRestore()
   })
 })
