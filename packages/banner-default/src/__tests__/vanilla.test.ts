@@ -3,7 +3,7 @@ import { ConsentStore, type Jurisdiction, defineConsent, jurisdictions } from '@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
-import { mountConsentUI } from '../vanilla/index.js'
+import { createConsentUI, mountConsentUI } from '../vanilla/index.js'
 import { openModal } from '../vanilla/modal.js'
 import { buildNotice } from '../vanilla/notice.js'
 
@@ -49,6 +49,12 @@ afterEach(() => {
 
 afterEach(() => {
   for (const node of document.querySelectorAll('.tb-modal-backdrop')) node.remove()
+  // A test that throws mid-assertion (or a mutation used to check a test
+  // actually fails) can leave a banner/notice node behind in `document.body`.
+  // Left in place, it poisons every later test's document-wide `querySelector`
+  // calls — reproduced for real by removing `injectStyles()`, where one test
+  // aborting cascaded into three unrelated failures.
+  for (const node of document.querySelectorAll('.tb-root')) node.remove()
 })
 
 describe('buildBanner', () => {
@@ -259,6 +265,46 @@ describe('mountConsentUI', () => {
     unmount()
   })
 
+  it('renders nothing until the store has hydrated, even if opened early, then reflects its decision', () => {
+    // Deliberately skip freshStore()'s hydrate() call — this is the window
+    // between construction and hydration where the store hasn't yet read
+    // the cookie, so it doesn't know whether this visitor already decided.
+    // ConsentStore's constructor already defaults isOpen/noticeOpen to
+    // false, so leaving state untouched wouldn't exercise the `!ready`
+    // check at all (it'd read 'none' either way) — store.open() forces
+    // isOpen: true while ready is still false, the one state combination
+    // where the `!ready` gate is the only thing standing between "not
+    // hydrated yet" and a banner flashing at someone who already consented.
+    const store = new ConsentStore(consentConfig, {
+      jurisdiction: consentConfig.jurisdiction as Jurisdiction,
+    })
+    store.open()
+    const unmount = mountConsentUI(store, {})
+    expect(document.querySelector('.tb-banner')).toBeNull()
+    expect(document.querySelector('.tb-notice')).toBeNull()
+
+    store.hydrate()
+    expect(document.querySelector('.tb-banner')).not.toBeNull()
+    unmount()
+  })
+
+  it('closes an open modal on unmount, even without saving first', () => {
+    const store = freshStore()
+    const unmount = mountConsentUI(store, {})
+    document.querySelectorAll<HTMLButtonElement>('.tb-banner-actions .tb-btn')[1]?.click()
+    expect(document.querySelector('.tb-modal-backdrop')).not.toBeNull()
+
+    unmount()
+    expect(document.querySelector('.tb-modal-backdrop')).toBeNull()
+  })
+
+  it('merges caller copy overrides into the notice as well as the banner', () => {
+    const store = noticeStore()
+    const unmount = mountConsentUI(store, { copy: { title: 'Custom notice title' } })
+    expect(document.querySelector('.tb-notice-title')?.textContent).toBe('Custom notice title')
+    unmount()
+  })
+
   it('injects the stylesheet exactly once across mounts', () => {
     const a = mountConsentUI(freshStore(), {})
     const b = mountConsentUI(freshStore(), {})
@@ -280,24 +326,27 @@ describe('mountConsentUI', () => {
 
   it('unmount removes every node and stops reacting to the store', () => {
     const store = freshStore()
-    const listeners = (store as unknown as { listeners: Set<unknown> }).listeners
+
+    // Wrap subscribe() rather than reaching into core's private `listeners`
+    // Set: the spy delegates to the real store, so behaviour is unchanged,
+    // but it gives a direct, public-contract proof that the specific
+    // teardown function mountConsentUI received was actually invoked.
+    const realSubscribe = store.subscribe.bind(store)
+    const off = vi.fn()
+    vi.spyOn(store, 'subscribe').mockImplementation((fn) => {
+      const teardown = realSubscribe(fn)
+      return () => {
+        off()
+        teardown()
+      }
+    })
+
     const unmount = mountConsentUI(store, {})
-    expect(listeners.size).toBe(1)
-
     unmount()
-    expect(document.querySelector('.tb-banner')).toBeNull()
-    // The literal proof of "stops reacting": the listener is actually gone
-    // from the store, not just skipped by an internal flag inside render().
-    expect(listeners.size).toBe(0)
 
-    // Belt-and-braces DOM check. freshStore() already starts with isOpen:
-    // true, so store.open() alone is a documented no-op (ConsentStore guards
-    // it: "if (this.state.isOpen) return") and would prove nothing about the
-    // subscription either way. store.reset() is unconditional — it always
-    // re-derives isOpen and always emits — so it is the one call that would
-    // visibly resurrect the banner if a subscription had leaked.
-    store.reset()
+    expect(off).toHaveBeenCalledTimes(1)
     expect(document.querySelector('.tb-banner')).toBeNull()
+    vi.restoreAllMocks()
   })
 
   it('mounts into a supplied container', () => {
@@ -323,5 +372,112 @@ describe('mountConsentUI', () => {
     expect(root?.querySelector('.tb-banner-title')?.textContent).toBe('Cached')
     unmount()
     localStorage.clear()
+  })
+
+  it('ignores a remote theme that resolves after unmount, and does not re-render', async () => {
+    let release: (value: Response) => void = () => {}
+    const pending = new Promise<Response>((resolve) => {
+      release = resolve
+    })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockReturnValue(pending)
+
+    const unmount = mountConsentUI(freshStore(), { siteId: 'site_z' })
+    unmount()
+    expect(document.querySelector('.tb-root')).toBeNull()
+
+    release({
+      ok: true,
+      json: async () => ({ theme: { colors: { accent: '#ff0000' } } }),
+    } as unknown as Response)
+    // refreshTheme awaits the fetch and then res.json() — both microtasks —
+    // before mountConsentUI's own .then() runs. A macrotask boundary
+    // guarantees every one of those has already settled.
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(document.querySelector('.tb-root')).toBeNull()
+    fetchSpy.mockRestore()
+    localStorage.clear()
+  })
+})
+
+describe('createConsentUI', () => {
+  it('throws when jurisdiction is "auto" and no jurisdiction option is given', () => {
+    const autoConfig = defineConsent({
+      jurisdiction: 'auto',
+      policy: { version: '1' },
+      categories: { necessary: { required: true } },
+    })
+    expect(() => createConsentUI(autoConfig)).toThrow(/jurisdiction is "auto"/)
+  })
+
+  it('mounts when jurisdiction is "auto" but options.jurisdiction is supplied', () => {
+    const autoConfig = defineConsent({
+      jurisdiction: 'auto',
+      policy: { version: '1' },
+      categories: {
+        necessary: { required: true },
+        analytics: { vendors: ['google-analytics'], default: false },
+      },
+    })
+    const unmount = createConsentUI(autoConfig, { jurisdiction: jurisdictions.EU_GDPR })
+    expect(document.querySelector('.tb-banner')).not.toBeNull()
+    unmount()
+  })
+
+  it('mounts when config.jurisdiction is already a Jurisdiction object', () => {
+    const unmount = createConsentUI(consentConfig)
+    expect(document.querySelector('.tb-banner')).not.toBeNull()
+    unmount()
+  })
+
+  it('honours config.storage, so the cookie name matches whatever else reads it on the site', () => {
+    const customStorageConfig = defineConsent({
+      jurisdiction: jurisdictions.EU_GDPR,
+      policy: { version: '1' },
+      storage: { cookieName: '__custom_consent' },
+      categories: {
+        necessary: { required: true },
+        analytics: { vendors: ['google-analytics'], default: false },
+      },
+    })
+    const unmount = createConsentUI(customStorageConfig)
+    document.querySelectorAll<HTMLButtonElement>('.tb-banner-actions .tb-btn')[2]?.click() // accept
+    // Match on the encoded payload prefix, not a bare `name=` check: other
+    // tests' afterEach hooks write `__tb_consent=; Max-Age=0` to expire their
+    // own cookie, and happy-dom's cookie jar can still surface that as an
+    // empty-valued `__tb_consent=` entry — a false positive for a plain
+    // substring check that has nothing to do with this test's own write.
+    expect(document.cookie).toContain('__custom_consent=%7B')
+    expect(document.cookie).not.toContain('__tb_consent=%7B')
+    unmount()
+    document.cookie = '__custom_consent=; Path=/; Max-Age=0'
+  })
+
+  it('wires applyConsent: granting a category activates its gated script', () => {
+    const script = document.createElement('script')
+    script.type = 'text/plain'
+    script.setAttribute('data-tb-category', 'analytics')
+    script.textContent = ''
+    document.body.append(script)
+
+    const unmount = createConsentUI(consentConfig)
+    // Not granted yet (default: false) — applyConsent's hydration-time call
+    // must leave it blocked.
+    expect(
+      document.querySelector('script[type="text/plain"][data-tb-category="analytics"]'),
+    ).not.toBeNull()
+
+    document.querySelectorAll<HTMLButtonElement>('.tb-banner-actions .tb-btn')[2]?.click() // accept
+    // applyConsent rewrites the tag on grant: the text/plain node is gone,
+    // replaced by one carrying the same data-tb-category but no longer
+    // blocked from executing.
+    expect(
+      document.querySelector('script[type="text/plain"][data-tb-category="analytics"]'),
+    ).toBeNull()
+    expect(document.querySelector('script[data-tb-category="analytics"]')).not.toBeNull()
+
+    unmount()
+    script.remove()
+    document.querySelector('script[data-tb-category="analytics"]')?.remove()
   })
 })

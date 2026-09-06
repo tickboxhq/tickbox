@@ -1,4 +1,4 @@
-import { type ConsentConfig, ConsentStore } from '@tickboxhq/core'
+import { type ConsentConfig, ConsentStore, applyConsent } from '@tickboxhq/core'
 import type { BannerCopy, NoticeCopy } from '../shared/copy.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { injectStyles } from '../shared/styles.js'
@@ -44,7 +44,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
   }
 
   function noticeCopy(): NoticeCopy {
-    const merged = mergeCopy<NoticeCopy>({}, remoteTheme?.copy)
+    const merged = mergeCopy<NoticeCopy>(options.copy ?? {}, remoteTheme?.copy)
     return { ...resolveLocalePack(remoteTheme?.locale ?? options.locale).notice, ...merged }
   }
 
@@ -76,7 +76,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
     // the framework this entry point exists to avoid.
     const next =
       want === 'banner'
-        ? buildBanner(store, bannerCopy(), { ...options, onCustomise: onCustomise })
+        ? buildBanner(store, bannerCopy(), { ...options, onCustomise })
         : buildNotice(store, noticeCopy(), options)
 
     applyThemeColors(next, remoteTheme)
@@ -137,7 +137,15 @@ export function createConsentUI(config: ConsentConfig, options: VanillaUIOptions
     )
   }
 
-  const store = new ConsentStore(config, { jurisdiction: resolved })
+  const store = new ConsentStore(config, {
+    jurisdiction: resolved,
+    storage: config.storage,
+    applyEffects: options.applyEffects ?? true,
+    onApply:
+      options.applyEffects === false
+        ? undefined
+        : (state) => applyConsent(state, { consentMode: config.consentMode }),
+  })
   store.hydrate()
   return mountConsentUI(store, options)
 }

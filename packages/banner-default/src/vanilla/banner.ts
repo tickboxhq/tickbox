@@ -1,5 +1,5 @@
 import type { ConsentStore, Jurisdiction } from '@tickboxhq/core'
-import type { BannerCopy } from '../shared/copy.js'
+import type { BannerCopy, NoticeCopy } from '../shared/copy.js'
 import { el } from './dom.js'
 
 /**
@@ -11,8 +11,13 @@ import { el } from './dom.js'
 export type VanillaUIOptions = {
   /** BCP-47 tag or 'auto'. Built-in: en, de, fr, es, it, nl, pt, pl, uk. */
   locale?: string
-  /** Override individual banner labels, layered on the resolved locale. */
-  copy?: Partial<BannerCopy>
+  /**
+   * Override individual labels, layered on the resolved locale. Applies to
+   * both the banner and the notice — the two share several keys (`title`,
+   * `description`, `policyLinkLabel`), and a merchant setting one of those
+   * expects it to show up on whichever surface the store decides to render.
+   */
+  copy?: Partial<BannerCopy & NoticeCopy>
   /** Privacy-policy URL. The link is hidden when omitted. */
   policyUrl?: string
   /** Force light or dark; by default the stylesheet follows prefers-color-scheme. */
@@ -33,7 +38,20 @@ export type VanillaUIOptions = {
   jurisdiction?: Jurisdiction
   /** Where to attach the UI. Defaults to document.body. */
   container?: HTMLElement
-  /** Called when the customise button is pressed. Wired by mountConsentUI. */
+  /**
+   * Disable script-rewriting + Consent Mode v2 side effects. Defaults to
+   * true. Only meaningful for `createConsentUI`, which constructs the store
+   * and therefore owns `onApply`; passing this to `mountConsentUI` has no
+   * effect because the store already exists by then. Mirrors the
+   * `applyEffects` prop on <ConsentProvider>.
+   */
+  applyEffects?: boolean
+  /**
+   * Called when the customise button is pressed. Wired by `mountConsentUI`
+   * itself to open the preference modal — a value passed in here is
+   * overridden on that path, so this is only meaningful for callers driving
+   * `buildBanner` directly.
+   */
   onCustomise?: () => void
 }
 
