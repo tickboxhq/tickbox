@@ -7,6 +7,7 @@ import { ConsentBannerDefault } from '../react/banner.js'
 import { ConsentNoticeDefault } from '../react/notice.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
 import { buildBanner } from '../vanilla/banner.js'
+import { mountConsentUI } from '../vanilla/index.js'
 import { buildNotice } from '../vanilla/notice.js'
 
 const consentConfig = defineConsent({
@@ -78,18 +79,76 @@ describe('vanilla / react parity', () => {
     })
 
     expect(classShape(vanillaRoot)).toEqual(classShape(reactRoot!))
+    // classShape() walks querySelectorAll('*'), which by DOM spec excludes
+    // the root element itself — so without this line, a change to the root's
+    // own class (e.g. 'tb-notice' renamed) would sail through undetected,
+    // even though .tb-notice is the exact selector shared/styles.ts uses to
+    // lay out the whole card. See the banner test above for the same check.
+    expect(vanillaRoot.className).toBe(reactRoot!.className)
   })
 
-  it('uses the same visible strings for a given locale', () => {
-    const store = new ConsentStore(consentConfig, {
+  it('propagates a copy override through the merge layer for the banner and the notice, on both renderers', () => {
+    // Exercises the layer that actually has room to diverge: resolveLocalePack
+    // is already pinned exhaustively (locales.test.ts, vanilla.test.ts), so a
+    // test that only compares locale-resolved copy proves very little. The
+    // merge of a caller-supplied `copy` override on top of the locale pack is
+    // where the historical bug lived (vanilla's noticeCopy() passing `{}`
+    // instead of the caller's `options.copy`), so that's what this pins.
+    //
+    // The vanilla side goes through mountConsentUI — not buildBanner/buildNotice
+    // directly — because index.ts's bannerCopy()/noticeCopy() closures are
+    // where the merge actually happens; calling buildBanner directly bypasses
+    // them entirely.
+    const override = 'This description text is layered on top of the locale pack.'
+
+    const bannerContainer = document.createElement('div')
+    const bannerStore = new ConsentStore(consentConfig, {
       jurisdiction: consentConfig.jurisdiction as Jurisdiction,
     })
-    store.hydrate()
-    const copy = resolveLocalePack('de').banner
-    const vanillaRoot = buildBanner(store, copy, {})
-    const text = vanillaRoot.textContent ?? ''
-    for (const s of [copy.title, copy.description, copy.acceptLabel, copy.rejectLabel]) {
-      expect(text).toContain(s)
-    }
+    bannerStore.hydrate()
+    const unmountBanner = mountConsentUI(bannerStore, {
+      locale: 'de',
+      copy: { description: override },
+      container: bannerContainer,
+    })
+    const vanillaBannerText = bannerContainer.querySelector('.tb-banner')?.textContent ?? ''
+    unmountBanner()
+
+    const { container: reactBannerContainer } = render(
+      <ConsentProvider config={consentConfig}>
+        <ConsentBannerDefault locale="de" copy={{ description: override }} />
+      </ConsentProvider>,
+    )
+    const reactBannerRoot = reactBannerContainer.querySelector('.tb-banner')
+    expect(reactBannerRoot).not.toBeNull()
+    const reactBannerText = reactBannerRoot!.textContent ?? ''
+
+    expect(vanillaBannerText).toContain(override)
+    expect(vanillaBannerText).toBe(reactBannerText)
+
+    const noticeContainer = document.createElement('div')
+    const noticeStore = new ConsentStore(noticeConfig, {
+      jurisdiction: noticeConfig.jurisdiction as Jurisdiction,
+    })
+    noticeStore.hydrate()
+    const unmountNotice = mountConsentUI(noticeStore, {
+      locale: 'de',
+      copy: { description: override },
+      container: noticeContainer,
+    })
+    const vanillaNoticeText = noticeContainer.querySelector('.tb-notice')?.textContent ?? ''
+    unmountNotice()
+
+    const { container: reactNoticeContainer } = render(
+      <ConsentProvider config={noticeConfig}>
+        <ConsentNoticeDefault locale="de" copy={{ description: override }} />
+      </ConsentProvider>,
+    )
+    const reactNoticeRoot = reactNoticeContainer.querySelector('.tb-notice')
+    expect(reactNoticeRoot).not.toBeNull()
+    const reactNoticeText = reactNoticeRoot!.textContent ?? ''
+
+    expect(vanillaNoticeText).toContain(override)
+    expect(vanillaNoticeText).toBe(reactNoticeText)
   })
 })
