@@ -17,6 +17,9 @@ export type { VanillaUIOptions } from './banner.js'
 export { buildBanner } from './banner.js'
 export { buildNotice } from './notice.js'
 export { openModal } from './modal.js'
+export type { BannerCopy, NoticeCopy } from '../shared/copy.js'
+export { locales, resolveLocalePack, type LocalePack } from '../shared/locales/index.js'
+export type { RemoteTheme } from '../shared/theme.js'
 
 /**
  * Mount the consent UI against an existing store and keep it in sync.
@@ -35,6 +38,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
   const container = options.container ?? document.body
   let remoteTheme: RemoteTheme | null = options.siteId ? readCachedTheme(options.siteId) : null
   let current: HTMLElement | null = null
+  let currentKind: 'banner' | 'notice' | null = null
   let closeModal: (() => void) | null = null
   let unmounted = false
 
@@ -53,7 +57,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
     closeModal = null
   }
 
-  function render() {
+  function render(force = false) {
     if (unmounted) return
     const state = store.getState()
     const want = !state.ready
@@ -68,8 +72,20 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
       teardownModal()
       current?.remove()
       current = null
+      currentKind = null
       return
     }
+
+    // Neither buildBanner nor buildNotice renders anything store-derived —
+    // the store is only read inside click handlers — so a store emission
+    // that keeps the same surface visible (e.g. toggling a category while
+    // the modal is open) never changes what the node should look like.
+    // Skipping the rebuild in that case keeps the node the modal captured
+    // as `previouslyFocused` connected to the document, so focus can return
+    // to it on close. `force` overrides this for the one case where the
+    // surface's content can change without a `want` transition: a remote
+    // theme arriving after the initial paint.
+    if (!force && current && currentKind === want) return
 
     // Rebuild rather than patch. The surfaces are small, they change rarely
     // (a decision closes them for good), and a diffing layer here would be
@@ -83,6 +99,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
     current?.replaceWith(next)
     if (!current) container.append(next)
     current = next
+    currentKind = want
   }
 
   function onCustomise() {
@@ -97,7 +114,7 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
     void refreshTheme(options.siteId, options.cloudEndpoint).then((fresh) => {
       if (unmounted || !fresh) return
       remoteTheme = fresh
-      render()
+      render(true)
     })
   }
 

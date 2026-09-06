@@ -27,6 +27,10 @@ export default defineConsent({
   consentMode: {
     analytics_storage: { category: 'analytics' },
   },
+  // Omitted here means the defaults (cookie name __tb_consent, 365 days).
+  // Declared explicitly so TypeScript keeps `storage` on this config's type
+  // for code that reads `config.storage` — see "Wire it up" below.
+  storage: undefined,
 })
 ```
 
@@ -38,6 +42,7 @@ import config from './consent.config'
 
 const store = new ConsentStore(config, {
   jurisdiction: config.jurisdiction,
+  storage: config.storage,
   onApply: (state) => applyConsent(state, { consentMode: config.consentMode }),
 })
 

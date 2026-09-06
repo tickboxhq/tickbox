@@ -145,11 +145,15 @@ If your site has both kinds of categories, use the banner. The customise modal l
 No framework, no build step required beyond a bundler that understands ESM.
 
 ```js
-import { ConsentStore } from '@tickboxhq/core'
+import { ConsentStore, applyConsent } from '@tickboxhq/core'
 import { mountConsentUI } from '@tickboxhq/banner-default/vanilla'
 import config from './consent.config.js'
 
-const store = new ConsentStore(config, { jurisdiction: config.jurisdiction })
+const store = new ConsentStore(config, {
+  jurisdiction: config.jurisdiction,
+  storage: config.storage,
+  onApply: (state) => applyConsent(state, { consentMode: config.consentMode }),
+})
 store.hydrate()
 
 const unmount = mountConsentUI(store, {

@@ -324,6 +324,32 @@ describe('mountConsentUI', () => {
     unmount()
   })
 
+  it('keeps the customise button connected across a store emission, so Escape returns focus to it', () => {
+    // Regression guard: toggling a category inside the modal calls
+    // store.grant()/deny(), which emits and used to trigger a full banner
+    // rebuild. That replaced the very node the modal captured as
+    // `previouslyFocused`, so close()'s `.focus()` landed on a detached
+    // element — a spec no-op — and Escape silently dropped focus to <body>.
+    const store = freshStore()
+    const unmount = mountConsentUI(store, {})
+    const customiseButton = document.querySelectorAll<HTMLButtonElement>(
+      '.tb-banner-actions .tb-btn',
+    )[1] as HTMLButtonElement
+    customiseButton.focus()
+    customiseButton.click()
+    expect(document.querySelector('.tb-modal')).not.toBeNull()
+
+    const analytics = document.querySelector<HTMLInputElement>('#tb-cat-analytics')
+    analytics!.checked = true
+    analytics!.dispatchEvent(new Event('change'))
+    expect(store.getState().decisions.analytics).toBe(true)
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    expect(document.querySelector('.tb-modal')).toBeNull()
+    expect(document.activeElement).toBe(document.querySelector('.tb-banner .tb-btn-ghost'))
+    unmount()
+  })
+
   it('unmount removes every node and stops reacting to the store', () => {
     const store = freshStore()
 

@@ -8,7 +8,7 @@
 
 **Tech Stack:** TypeScript 5.7, tsup (ESM), vitest + happy-dom, biome. No framework runtime.
 
-**Spec:** No separate spec document. The browser-delivery design is recorded in the private `tickboxhq/platform` repo at `docs/superpowers/specs/2026-09-05-partner-reseller-api-design.md` under "Browser delivery"; this plan is self-contained so an executor needs no access to it. The API-surface decision (both `mountConsentUI` and `createConsentUI`) was taken deliberately: vanilla-JS developers already build their own store, and the phase-3 embed bundle needs the construct-and-mount form.
+**Spec:** No separate spec document. The browser-delivery design is recorded in an internal spec; this plan is self-contained so an executor needs no access to it. The API-surface decision (both `mountConsentUI` and `createConsentUI`) was taken deliberately: vanilla-JS developers already build their own store, and the phase-3 embed bundle needs the construct-and-mount form.
 
 ## Global Constraints
 
@@ -1379,20 +1379,21 @@ git commit -m "docs: vanilla renderer"
 
 `createConsentUI` throws when `config.jurisdiction` is `'auto'` and no jurisdiction is
 supplied — the same contract `<ConsentProvider>` has. That is correct here, because a
-local caller knows its own audience. It will not be correct for the hosted embed bundle:
-that bundle receives a merchant's config from `GET /v1/bootstrap/:site_id` and has no
+local caller knows its own audience. It will not be correct for a hosted embed bundle:
+such a bundle receives a merchant's config from a server it does not control and has no
 way to know whether the visitor is in the UK or the EU, so an `'auto'` config would
 throw on a real visitor's page.
 
-Phase 3 needs to decide where that resolution happens. The natural answer is the
-bootstrap endpoint: the Worker already sees `CF-IPCountry` on the request, and
+Phase 3 needs to decide where that resolution happens. The natural answer is
+server-side, before the config ever reaches the browser: the server delivering that
+config already has enough information to derive a country for the request, and
 `resolveJurisdictionByCountry` in `@tickboxhq/core` maps a country code to a
-jurisdiction — so the endpoint can return an already-resolved jurisdiction rather than
-pushing the problem into the browser. Worth settling before the bundle is built, not
-after.
+jurisdiction — so the config the browser receives can carry an already-resolved
+jurisdiction rather than pushing the problem into client code. Worth settling before the
+bundle is built, not after.
 
 ## What this plan does not do
 
-No CDN bundle. This entry point is ESM on npm, so it still needs a bundler — a CMS-published page cannot use it yet. Phase 3 adds the IIFE build, `cdn.tickbox.dev`, and the `GET /v1/bootstrap/:site_id` endpoint that lets a single script tag configure itself. That phase also has an unresolved Subresource Integrity question that should be settled before the bundle ships.
+No CDN bundle. This entry point is ESM on npm, so it still needs a bundler — a CMS-published page cannot use it yet. Phase 3 adds a script-tag-friendly build and the hosted delivery and per-site configuration service that lets a single script tag configure itself. That phase also has open questions about delivery integrity that should be settled before the bundle ships.
 
 No release. The version bump and npm publish are a separate, deliberate step via `./scripts/bump-version.sh`.

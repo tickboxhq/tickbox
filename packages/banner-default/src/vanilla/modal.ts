@@ -1,7 +1,6 @@
 import type { ConsentStore } from '@tickboxhq/core'
 import type { BannerCopy } from '../shared/copy.js'
-import { sanitiseColor } from '../shared/sanitise.js'
-import type { RemoteTheme } from '../shared/theme.js'
+import { type RemoteTheme, applyThemeColors } from '../shared/theme.js'
 import type { VanillaUIOptions } from './banner.js'
 import { el } from './dom.js'
 
@@ -31,15 +30,7 @@ export function openModal(
     'data-tb-theme': options.theme,
   })
 
-  // Set inline rather than via applyThemeColors so the values are present on
-  // the very first paint — the modal is created and appended in one go, with
-  // no ref-then-effect cycle to wait for.
-  if (remoteTheme?.colors?.accent)
-    backdrop.style.setProperty('--tb-primary-bg', sanitiseColor(remoteTheme.colors.accent))
-  if (remoteTheme?.colors?.background)
-    backdrop.style.setProperty('--tb-bg', sanitiseColor(remoteTheme.colors.background))
-  if (remoteTheme?.colors?.text)
-    backdrop.style.setProperty('--tb-fg', sanitiseColor(remoteTheme.colors.text))
+  applyThemeColors(backdrop, remoteTheme)
 
   const dialog = el('div', {
     class: 'tb-modal',
