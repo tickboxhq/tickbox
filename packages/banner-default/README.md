@@ -140,6 +140,42 @@ Use the notice when you only have `notice`-mode categories — typical for UK si
 
 If your site has both kinds of categories, use the banner. The customise modal lists notice-mode categories too, so the notice card stays out of the way.
 
+## Vanilla JS
+
+No framework, no build step required beyond a bundler that understands ESM.
+
+```js
+import { ConsentStore, jurisdictions } from '@tickboxhq/core'
+import { mountConsentUI } from '@tickboxhq/banner-default/vanilla'
+import config from './consent.config.js'
+
+const store = new ConsentStore(config, {
+  jurisdiction: config.jurisdiction === 'auto' ? jurisdictions.UK_DUAA : config.jurisdiction,
+})
+store.hydrate()
+
+const unmount = mountConsentUI(store, {
+  policyUrl: '/privacy',
+  locale: 'auto',
+})
+```
+
+If you have no other use for the store, `createConsentUI` builds one for you:
+
+```js
+import { createConsentUI } from '@tickboxhq/banner-default/vanilla'
+import config from './consent.config.js'
+
+createConsentUI(config, { policyUrl: '/privacy' })
+```
+
+Prefer `mountConsentUI` when the page reads consent state anywhere else — two
+stores over one cookie will disagree with each other.
+
+Both return an unmount function. The UI decides what to show from the store:
+the banner while a decision is outstanding, the lighter notice card when every
+category is notice-mode, and nothing once a choice is stored.
+
 ## Licence
 
 MIT

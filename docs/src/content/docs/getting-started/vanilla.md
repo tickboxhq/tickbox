@@ -45,6 +45,23 @@ store.subscribe((state) => {
 })
 ```
 
+## Banner UI
+
+If you'd rather not design your own banner, drop in the default styled banner from `@tickboxhq/banner-default/vanilla`. It ships with built-in translations for `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl`, `uk` and a `'auto'` mode that reads `navigator.language`.
+
+```bash
+npm install @tickboxhq/banner-default
+```
+
+```js
+import { createConsentUI } from '@tickboxhq/banner-default/vanilla'
+import config from './consent.config'
+
+createConsentUI(config, { policyUrl: '/privacy' })
+```
+
+Or use `mountConsentUI` if you've already built the store — see the [banner-default reference](/getting-started/banner-default/) for the full option list and theming guide.
+
 ## Gate your scripts
 
 Anywhere you'd normally drop an analytics or marketing tag, do this instead:
