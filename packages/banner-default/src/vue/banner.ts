@@ -3,6 +3,7 @@ import { ConsentBanner } from '@tickboxhq/vue'
 import { type PropType, defineComponent, h, onMounted, ref, watch } from 'vue'
 import type { BannerCopy } from '../shared/copy.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
+import { sanitiseColor } from '../shared/sanitise.js'
 import { injectStyles } from '../shared/styles.js'
 import {
   type RemoteTheme,
@@ -330,8 +331,4 @@ function renderModal(
       ),
     ],
   )
-}
-
-function sanitiseColor(v: string): string {
-  return v.replace(/[<>&"'\n\r\\]/g, '').slice(0, 64)
 }

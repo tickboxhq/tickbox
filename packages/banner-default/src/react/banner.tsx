@@ -2,6 +2,7 @@ import { type ConsentApi, ConsentBanner } from '@tickboxhq/react'
 import { useEffect, useId, useRef, useState } from 'react'
 import type { BannerCopy } from '../shared/copy.js'
 import { resolveLocalePack } from '../shared/locales/index.js'
+import { sanitiseColor } from '../shared/sanitise.js'
 import { injectStyles } from '../shared/styles.js'
 import {
   type RemoteTheme,
@@ -306,8 +307,4 @@ function trapFocus(e: KeyboardEvent, container: HTMLDivElement | null) {
     e.preventDefault()
     first.focus()
   }
-}
-
-function sanitiseColor(v: string): string {
-  return v.replace(/[<>&"'\n\r\\]/g, '').slice(0, 64)
 }

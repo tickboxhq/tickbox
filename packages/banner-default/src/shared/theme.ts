@@ -13,6 +13,8 @@
  * cache or code defaults it had.
  */
 
+import { sanitiseColor } from './sanitise.js'
+
 const DEFAULT_ENDPOINT = 'https://api.tickbox.dev'
 const STORAGE_KEY_PREFIX = '__tb_theme_'
 /** Treat cache older than 24h as suspect. We still render with it (no
@@ -122,12 +124,6 @@ export function applyThemeColors(root: HTMLElement, theme: RemoteTheme | null): 
   if (theme.colors.background)
     root.style.setProperty('--tb-bg', sanitiseColor(theme.colors.background))
   if (theme.colors.text) root.style.setProperty('--tb-fg', sanitiseColor(theme.colors.text))
-}
-
-function sanitiseColor(v: string): string {
-  // Permit common CSS-colour characters: hex digits, color() / rgb() /
-  // hsl() / oklch() function tokens. Block <, >, &, ", ' and newlines.
-  return v.replace(/[<>&"'\n\r\\]/g, '').slice(0, 64)
 }
 
 /**
