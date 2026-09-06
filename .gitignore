@@ -16,3 +16,8 @@ coverage
 # starlight-typedoc plugin in docs/astro.config.mjs.
 docs/src/content/docs/api/
 docs/src/content/docs/concepts/vendors.md
+
+# Agent scratch: git worktrees and subagent-driven-development workspaces.
+# Local coordination state, never part of the repo.
+.claude/
+.superpowers/
