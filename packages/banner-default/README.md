@@ -145,13 +145,11 @@ If your site has both kinds of categories, use the banner. The customise modal l
 No framework, no build step required beyond a bundler that understands ESM.
 
 ```js
-import { ConsentStore, jurisdictions } from '@tickboxhq/core'
+import { ConsentStore } from '@tickboxhq/core'
 import { mountConsentUI } from '@tickboxhq/banner-default/vanilla'
 import config from './consent.config.js'
 
-const store = new ConsentStore(config, {
-  jurisdiction: config.jurisdiction === 'auto' ? jurisdictions.UK_DUAA : config.jurisdiction,
-})
+const store = new ConsentStore(config, { jurisdiction: config.jurisdiction })
 store.hydrate()
 
 const unmount = mountConsentUI(store, {
@@ -159,6 +157,8 @@ const unmount = mountConsentUI(store, {
   locale: 'auto',
 })
 ```
+
+If your config's `jurisdiction` is `'auto'`, resolve it before constructing the store — with `resolveJurisdictionByCountry` from `@tickboxhq/core`, or a per-deployment constant. A local caller knows its own audience; the store cannot guess.
 
 If you have no other use for the store, `createConsentUI` builds one for you:
 

@@ -34,8 +34,8 @@ import { ConsentStore, applyConsent } from '@tickboxhq/core'
 import config from './consent.config'
 
 const store = new ConsentStore(config, {
-  jurisdiction: config.jurisdiction === 'auto' ? jurisdictions.UK_DUAA : config.jurisdiction,
-  onApply: (state) => applyConsent(state, config),
+  jurisdiction: config.jurisdiction,
+  onApply: (state) => applyConsent(state, { consentMode: config.consentMode }),
 })
 
 store.hydrate()
@@ -44,6 +44,8 @@ store.subscribe((state) => {
   // render your banner here based on state.isOpen / state.noticeOpen / state.decisions
 })
 ```
+
+If your config's `jurisdiction` is `'auto'`, resolve it before constructing the store — with `resolveJurisdictionByCountry` from `@tickboxhq/core`, or a per-deployment constant.
 
 ## Banner UI
 
@@ -60,7 +62,7 @@ import config from './consent.config'
 createConsentUI(config, { policyUrl: '/privacy' })
 ```
 
-Or use `mountConsentUI` if you've already built the store — see the [banner-default reference](/getting-started/banner-default/) for the full option list and theming guide.
+Or use `mountConsentUI` if you've already built the store — when the page reads consent state elsewhere in your code, own the store rather than creating two separate ones, or they will disagree on what the cookie says. See the [banner-default README](https://github.com/tickboxhq/tickbox/blob/main/packages/banner-default/README.md#vanilla-js) for the full option list and theming guide.
 
 ## Gate your scripts
 
