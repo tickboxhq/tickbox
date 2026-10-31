@@ -1,5 +1,6 @@
 import type { ConsentStore, Jurisdiction } from '@tickboxhq/core'
 import type { BannerCopy, NoticeCopy } from '../shared/copy.js'
+import type { RemoteTheme } from '../shared/theme.js'
 import { el } from './dom.js'
 
 /**
@@ -24,6 +25,17 @@ export type VanillaUIOptions = {
   theme?: 'light' | 'dark'
   /** Site id from app.tickbox.dev; enables the remote presentation theme. */
   siteId?: string
+  /**
+   * A presentation theme you already hold, applied on the first paint with
+   * no network call. For a host that has the theme to hand — a server that
+   * inlined it, or an editor previewing one that has not been saved yet —
+   * this is the seam `siteId` cannot serve, because `siteId` can only fetch
+   * what the API already stores.
+   *
+   * Setting both is allowed: this one paints first, and the fetched theme
+   * replaces it when it lands.
+   */
+  remoteTheme?: RemoteTheme | null
   /** Defaults to https://api.tickbox.dev. Override only for self-hosting. */
   cloudEndpoint?: string
   /** Adds a "Powered by Tickbox" credit line. Off by default. */

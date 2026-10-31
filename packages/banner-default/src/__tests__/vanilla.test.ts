@@ -424,6 +424,71 @@ describe('mountConsentUI', () => {
     fetchSpy.mockRestore()
     localStorage.clear()
   })
+
+  it('applies a remoteTheme passed by the caller without any fetch', () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    const unmount = mountConsentUI(freshStore(), {
+      remoteTheme: {
+        copy: { title: 'Handed in directly' },
+        colors: { accent: '#ff0066' },
+        locale: 'de',
+      },
+    })
+
+    const root = document.querySelector('.tb-root') as HTMLElement
+    expect(root.querySelector('.tb-banner-title')?.textContent).toBe('Handed in directly')
+    // Set on the root itself, not an ancestor: the stylesheet declares
+    // --tb-primary-bg on .tb-root, so a value inherited from above is shadowed.
+    expect(root.style.getPropertyValue('--tb-primary-bg')).toBe('#ff0066')
+    // locale came from the theme, so the untouched labels are German
+    expect(root.textContent).toContain(resolveLocalePack('de').banner.acceptLabel)
+    expect(fetchSpy).not.toHaveBeenCalled()
+
+    unmount()
+    fetchSpy.mockRestore()
+  })
+
+  it('re-applies a caller remoteTheme to each rebuilt surface', () => {
+    const store = freshStore()
+    const unmount = mountConsentUI(store, {
+      remoteTheme: { colors: { accent: '#ff0066' } },
+    })
+
+    const first = document.querySelector('.tb-root') as HTMLElement
+    expect(first.style.getPropertyValue('--tb-primary-bg')).toBe('#ff0066')
+
+    // Close the banner and re-open it: render() builds a brand-new node, so
+    // a theme applied only once at mount would be lost here.
+    store.save()
+    store.open()
+
+    const rebuilt = document.querySelector('.tb-root') as HTMLElement
+    expect(rebuilt).not.toBe(first)
+    expect(rebuilt.style.getPropertyValue('--tb-primary-bg')).toBe('#ff0066')
+
+    unmount()
+  })
+
+  it('lets a fetched theme supersede the caller remoteTheme', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: true,
+      json: async () => ({ theme: { copy: { title: 'From the API' } } }),
+    } as unknown as Response)
+
+    const unmount = mountConsentUI(freshStore(), {
+      siteId: 'site_y',
+      remoteTheme: { copy: { title: 'Handed in directly' } },
+    })
+    expect(document.querySelector('.tb-banner-title')?.textContent).toBe('Handed in directly')
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(document.querySelector('.tb-banner-title')?.textContent).toBe('From the API')
+
+    unmount()
+    fetchSpy.mockRestore()
+    localStorage.clear()
+  })
 })
 
 describe('createConsentUI', () => {

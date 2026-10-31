@@ -36,7 +36,10 @@ export function mountConsentUI(store: ConsentStore, options: VanillaUIOptions = 
   injectStyles()
 
   const container = options.container ?? document.body
-  let remoteTheme: RemoteTheme | null = options.siteId ? readCachedTheme(options.siteId) : null
+  // A theme handed in by the caller paints first; the cache is the fallback
+  // when only a siteId is given. Either can be superseded by the fetch below.
+  let remoteTheme: RemoteTheme | null =
+    options.remoteTheme ?? (options.siteId ? readCachedTheme(options.siteId) : null)
   let current: HTMLElement | null = null
   let currentKind: 'banner' | 'notice' | null = null
   let closeModal: (() => void) | null = null
