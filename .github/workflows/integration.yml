@@ -15,7 +15,12 @@ concurrency:
 jobs:
   smoke:
     name: Playwright script-tag gating smoke test
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest. That label moved to Ubuntu 26 in October 2026
+    # and Playwright 1.60 has no dependency set for it, so `playwright install
+    # --with-deps chromium` fails outright: "Playwright does not support
+    # chromium on ubuntu26.04-x64". Pinning keeps the browser install on an
+    # image Playwright knows. Revisit when the pinned Playwright supports 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
